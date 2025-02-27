@@ -5,8 +5,7 @@ Functionallities
 Op deze pagina worden alle benodigde en gewilde functies benoemt  
 </h3>
 
-<l> 
-
+<l>
 - Laat de stemresultaten zien van: 
   - het hele land
   - de provinces
@@ -22,8 +21,6 @@ Op deze pagina worden alle benodigde en gewilde functies benoemt
 - kleuren blind vriendelijk, vooral met statistieken 
 - mobile responsive (vooral hier op letten met presentaties, design mobile first)
 - laat tijd + performance moet rond de 2 seconden zitten. Wegens gebruikers interactie.
-
-
 </l>
 
 <h3>
@@ -42,7 +39,6 @@ en overzichtelijk te maken voor jongeren mensen. Deze site is vooral gericht op 
 <h3> extra punten </h3>
 
 <l>
-
 - laten zien van het campagneplan per partij (?)
 - maak een stemwijzer, die zich richt op een nieuwe stemmer
 - vergelijk de partijen die stemmen hebben verloren met de partijen die stemmen hebben gewonnen
