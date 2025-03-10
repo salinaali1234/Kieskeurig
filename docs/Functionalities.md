@@ -33,6 +33,14 @@ Wij richten ons op de mensen die zich in willen lezen op de groei en de vergelij
 en overzichtelijk te maken voor jongeren mensen. Deze site is vooral gericht op mensen die nog nooit of nog niet goed bekend zijn met de partijen.
 
 - 18 / 25 (jong volwassen)
+- Archetype: Student
+- Geslacht: Vrouw
+- Goals: Slagen, huis vinden, wil twee katten
+- Leeftijd: 19 jaar oud
+- Gescheiden ouders en een jongere zusje
+- Om meer inzicht te krijgen in de partijen en kandidaten om een goeie keuze te maken in hun stem
+- Heeft hekel aan veel tekst binnen een site
+
 
 </l>
 
