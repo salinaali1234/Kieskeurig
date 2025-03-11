@@ -30,4 +30,31 @@ We have used the feedback to improve the wireframe, user stories and UML.
 Next week we will be having a product review on a Tuesday due to there being an event this Thursday. 
 Monday is where we will be showing the UML for feedback. 
 
+11-03-2025
+This week we showed our UML, wireframe and user stories to the product owner. 
+We also had a retrospective. We wrote an individual retrospective and a team retrospective.
+We got our feedback over the UML, wireframe and user stories. 
+ 
+User story feedback:
+User story should be written step by step.
+There should be a user story with an info page where you can see the campaign plan of the parties.
+Add a top 5 of the most voted party.
+There should be a filter where you can sort the candidate list per party.
+There should be a filter option.
+There should be a login and register function/user story.
+There should be a function to post and react to posts.
+There should be an admin function/ user story.
+There should be a requirement that when a chart loads it should only take 3 seconds.
+
+UML feedback:
+Look at generics more.
+Don't add functions in a UML
+There is no need for a national candidate.
+There is no need for a map.
+
+Design/wireframe feedback:
+Make the user stories on the basis of the design.
+Make a discussion page in the wireframe.
+
+
 
