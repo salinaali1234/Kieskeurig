@@ -56,5 +56,15 @@ Design/wireframe feedback:
 Make the user stories on the basis of the design.
 Make a discussion page in the wireframe.
 
+24-03-2025
+This week we had a workshop about Vue and how to use it in a project. 
+We learned how to:
++ use an event listener with @click and v-on click.
++ how to use v-"line" ect.
++ how to dynamically show elements with ref and ":"
++ how to connect code with each other.
++ how to use java code with {{}}.
++ how to add path to an index.ts
 
-
+On Thursday there will be an expert review were we will be showing our frontend, our XML parsing and our API's in springboot.
+Next week we will be having our sprint review.
