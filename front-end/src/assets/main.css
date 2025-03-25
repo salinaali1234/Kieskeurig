@@ -1,0 +1,87 @@
+:root {
+  --primary-clr: #3b214b;
+  --secondary-clr: #d1b1e0;
+  --accent-clr: #ffcc00;
+  --text-clr: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--primary-clr);
+  color: var(--text-clr);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  padding: 1.25rem;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+input {
+  font-size: 16px;
+  padding: 0.5rem;
+  border: 1px solid var(--secondary-clr);
+  border-radius: 5px;
+}
+
+/* Knopstijlen */
+.btn {
+  background-color: var(--accent-clr);
+  color: black;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #e6b800;
+}
+
+/* Checkbox */
+.checkbox input[type='checkbox'] {
+  display: none;
+}
+
+.checkbox label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  display: inline-block;
+  color: var(--text-clr);
+}
+
+.checkbox label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--accent-clr);
+  background-color: var(--primary-clr);
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.checkbox input[type='checkbox']:checked + label:before {
+  background-color: var(--accent-clr);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    max-width: 95%;
+  }
+  .btn {
+    width: 100%;
+  }
+}
