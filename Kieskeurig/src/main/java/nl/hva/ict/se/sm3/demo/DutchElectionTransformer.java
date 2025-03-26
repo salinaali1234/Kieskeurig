@@ -1,8 +1,8 @@
 package nl.hva.ict.se.sm3.demo;
 
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+//import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
-import nl.hva.kieskeurig.model.Party;
+
 
 import java.util.Map;
 
@@ -29,8 +29,8 @@ public class DutchElectionTransformer implements Transformer<Election> {
 
     @Override
     public void registerAffiliation(Map<String, String> affiliationData) {
-        String partyName = affiliationData.get(DutchElectionProcessor.REGISTERED_NAME);
-        int partyId = Integer.parseInt(affiliationData.get(DutchElectionProcessor.AFFILIATION_IDENTIFIER));
+      //  String partyName = affiliationData.get(DutchElectionProcessor.REGISTERED_NAME);
+      //  int partyId = Integer.parseInt(affiliationData.get(DutchElectionProcessor.AFFILIATION_IDENTIFIER));
         //  System.out.println(partyName + = = + partyId);
        //  Party party = new Party(partyName, partyId);
       //  System.out.println(party);
