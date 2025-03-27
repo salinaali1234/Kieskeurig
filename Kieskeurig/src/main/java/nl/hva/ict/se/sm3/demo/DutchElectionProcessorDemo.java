@@ -25,11 +25,11 @@ public class DutchElectionProcessorDemo {
 
         // Assuming the election data is contained in {@code src/main/resource} it should be found.
         // Please note that you can also specify an absolute path to the folder!
-        Election election = electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
+        Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
 
         System.out.println("All files are processed.\n");
         // Just print the 'results'
-        System.out.println(election);
+        System.out.println(election.data);
     }
 
 }

@@ -44,6 +44,8 @@ import java.util.logging.Logger;
  * <br>
  * <em>You are encouraged to alter this class so it suits your needs! :-)</em>
  */
+
+//Note to self: E is an Generic for the type. The standard conversion E, one capitol letter.
 public class DutchElectionProcessor<E> {
     private static final Logger LOG = Logger.getLogger(DutchElectionProcessor.class.getName());
     private final Transformer<E> transformer;
@@ -89,6 +91,7 @@ public class DutchElectionProcessor<E> {
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME_PREFIX = "NamePrefix";
     public static final String LAST_NAME = "LastName";
+    public static final String GENDER = "Gender";
 
     /*
      The tag names on the reporting unit level within the XML files which are also used as keys in the maps when calling
@@ -160,24 +163,24 @@ public class DutchElectionProcessor<E> {
 
             String electionId = parser.getAttributeValue(null, ID);
             if (electionData.containsKey(ELECTION_IDENTIFIER) && expectedElectionId.equals(electionId)) {
-                if (parser.findBeginTag(ELECTION_NAME)) {
-                    String electionName = parser.getElementText();
-                    parser.findAndAcceptEndTag(ELECTION_NAME);
-
-                    electionData.put(ELECTION_NAME, electionName);
-                }
-                if (parser.findBeginTag(ELECTION_CATEGORY)) {
-                    String electionCategory = parser.getElementText();
-                    parser.findAndAcceptEndTag(ELECTION_CATEGORY);
-
-                    electionData.put(ELECTION_CATEGORY, electionCategory);
-                }
-                if (parser.findBeginTag(ELECTION_DATE)) {
-                    String electionDate = parser.getElementText();
-                    parser.findAndAcceptEndTag(ELECTION_DATE);
-
-                    electionData.put(ELECTION_DATE, electionDate);
-                }
+//                if (parser.findBeginTag(ELECTION_NAME)) {
+//                    String electionName = parser.getElementText();
+//                    parser.findAndAcceptEndTag(ELECTION_NAME);
+//
+//                    electionData.put(ELECTION_NAME, electionName);
+//                }
+//                if (parser.findBeginTag(ELECTION_CATEGORY)) {
+//                    String electionCategory = parser.getElementText();
+//                    parser.findAndAcceptEndTag(ELECTION_CATEGORY);
+//
+//                    electionData.put(ELECTION_CATEGORY, electionCategory);
+//                }
+//                if (parser.findBeginTag(ELECTION_DATE)) {
+//                    String electionDate = parser.getElementText();
+//                    parser.findAndAcceptEndTag(ELECTION_DATE);
+//
+//                    electionData.put(ELECTION_DATE, electionDate);
+//                }
 
                 transformer.registerElection(electionData);
 
@@ -193,18 +196,19 @@ public class DutchElectionProcessor<E> {
         if (parser.findBeginTag(CONTEST)) {
             int id = 0;
             String name = null;
-            if (parser.findBeginTag(CONTEST_IDENTIFIER)) {
-                id = parser.getIntegerAttributeValue(null, ID, 0);
-                if (parser.findBeginTag(CONTEST_NAME)) {
-                    name = parser.getElementText();
-                    parser.findAndAcceptEndTag(CONTEST_NAME);
-                }
-                parser.findAndAcceptEndTag(CONTEST_IDENTIFIER);
-            }
+//            if (parser.findBeginTag(CONTEST_IDENTIFIER)) {
+//                id = parser.getIntegerAttributeValue(null, ID, 0);
+//                if (parser.findBeginTag(CONTEST_NAME)) {
+//                    name = parser.getElementText();
+//                    parser.findAndAcceptEndTag(CONTEST_NAME);
+//                }
+//                parser.findAndAcceptEndTag(CONTEST_IDENTIFIER);
+//            }
+
 
             Map<String, String> contestData = new HashMap<>(electionData);
-            contestData.put(CONTEST_IDENTIFIER, String.valueOf(id));
-            contestData.put(CONTEST_NAME, name);
+//            contestData.put(CONTEST_IDENTIFIER, String.valueOf(id));
+//            contestData.put(CONTEST_NAME, name);
 
             transformer.registerContest(contestData);
 
@@ -235,8 +239,8 @@ public class DutchElectionProcessor<E> {
             }
 
             Map<String, String> affiliationData = new HashMap<>(contestData);
-            affiliationData.put(AFFILIATION_IDENTIFIER, String.valueOf(id));
-            affiliationData.put(REGISTERED_NAME, name);
+//            affiliationData.put(AFFILIATION_IDENTIFIER, String.valueOf(id));
+//            affiliationData.put(REGISTERED_NAME, name);
 
             transformer.registerAffiliation(affiliationData);
 
@@ -255,6 +259,7 @@ public class DutchElectionProcessor<E> {
         String firstName = null;
         String lastNamePrefix = null;
         String lastName = null;
+        String gender = null;
 
         parser.nextBeginTag(CANDIDATE);
         if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
@@ -275,9 +280,14 @@ public class DutchElectionProcessor<E> {
                     parser.findAndAcceptEndTag(LAST_NAME_PREFIX);
                 }
             }
+
             if (parser.findBeginTag(LAST_NAME)) {
                 lastName = parser.getElementText().trim();
                 parser.findAndAcceptEndTag(LAST_NAME);
+            }
+            if (parser.findAndAcceptEndTag(GENDER)){
+                gender = parser.getElementText().trim();
+                parser.findAndAcceptEndTag(GENDER);
             }
             parser.findAndAcceptEndTag(PERSON_NAME);
         }
@@ -358,7 +368,7 @@ public class DutchElectionProcessor<E> {
                         if (parser.findBeginTag(VALID_VOTES)) {
                             parser.findAndAcceptEndTag(VALID_VOTES);
                         }
-                        reportingUnitData.put(AFFILIATION_IDENTIFIER, String.valueOf(affiliationId));
+                        //reportingUnitData.put(AFFILIATION_IDENTIFIER, String.valueOf(affiliationId));
                         break;
                     case CANDIDATE:
                         int candidateId = 0;
