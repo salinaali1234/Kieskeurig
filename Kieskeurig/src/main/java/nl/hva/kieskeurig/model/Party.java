@@ -1,4 +1,35 @@
 package nl.hva.kieskeurig.model;
 
-public record Party(int id, String partyName) {
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Party{
+    @Getter
+    private final int partyId;
+    private final String partyName;
+    private List<Candidate> candidates = new ArrayList<>();
+
+    public Party (int partyId, String partyName){
+        this.partyId = partyId;
+        this.partyName = partyName;
+    }
+
+    public boolean addCandidate(Candidate candidate){
+        for(Candidate c : candidates){
+            if(c.getId() == candidate.getId()){
+                return false;
+            }
+        }
+        return candidates.add(candidate);
+    }
+
+    @Override
+    public String toString() {
+        return partyName + "(" + partyId + ")";
+    }
+
+
+
 }
