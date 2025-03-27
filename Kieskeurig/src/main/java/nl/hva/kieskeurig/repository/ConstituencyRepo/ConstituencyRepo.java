@@ -44,7 +44,7 @@ public class ConstituencyRepo {
     public List<Constituency> findAll() {return constituencies;}
 
     public Constituency save(Constituency constituency) {
-        constituency.setId(++generatedId);// automatically increment id on creation.
+       // constituency.setId(++generatedId);// automatically increment id on creation.
         constituencies.add(constituency);
         return constituency; // created task
     }
