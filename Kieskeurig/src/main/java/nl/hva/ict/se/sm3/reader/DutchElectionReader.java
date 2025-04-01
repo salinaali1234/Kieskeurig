@@ -33,7 +33,7 @@ public class DutchElectionReader {
         try{
             Election election = electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/%s".formatted(folderName)));
 
-            xmlService.add(election);
+           // xmlService.add(election);
             System.out.printf("There are %d parties read. \n", election.getParties().size());
             return true;
         } catch (IIOException | XMLStreamException | NullPointerException e){

@@ -34,8 +34,8 @@ public class XMLController {
         return service.getParty(partyId);
     }
 
-    @PostMapping("/read/{folderName}")
-    public boolean readResults(@PathVariable String folderName) {
-        return service.readResults(folderName);
-    }
+//    @PostMapping("/read/{folderName}")
+//    public boolean readResults(@PathVariable String folderName) {
+//        return service.readResults(folderName);
+//    }
 }

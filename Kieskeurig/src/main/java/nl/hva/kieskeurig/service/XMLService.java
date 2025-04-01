@@ -30,7 +30,7 @@ public class XMLService {
         return repo.getParty(partyId);
     }
 
-    public boolean readResults(String folderName) {
-        return repo.readResults(folderName);
-    }
+//    public boolean readResults(String folderName) {
+//        return repo.readResults(folderName);
+//    }
 }
