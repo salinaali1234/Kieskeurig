@@ -32,9 +32,12 @@ public class ContituencyReader {
         // Please note that you can also specify an absolute path to the folder!
 
         try{
-            Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
+            Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Kandidatenlijsten/Kandidatenlijsten_TK2023_Amsterdam.eml.xml"));
             System.out.println("All files are processed.\n");
             // Just print the 'results'
+            if (election != null) {
+                System.out.println(election.toString());
+            }
             System.out.println(election.data);
             return true;
 
