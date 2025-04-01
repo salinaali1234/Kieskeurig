@@ -1,5 +1,6 @@
 package nl.hva.kieskeurig.service;
 
+import nl.hva.kieskeurig.controller.CandidateController;
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.repository.CandidateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles the logic of {@link CandidateController}
+ */
 @Service
 public class CandidateService {
     private final CandidateRepo candidateRepo;
