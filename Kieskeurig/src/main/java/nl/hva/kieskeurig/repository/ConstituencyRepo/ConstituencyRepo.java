@@ -10,6 +10,7 @@ public class ConstituencyRepo {
     private final List<Constituency> constituencies = new ArrayList<>();
     private static int generatedId = 0;
 
+
     public ConstituencyRepo() {
         var constiuancy1 = new Constituency(1, "Groningen");
         this.save(constiuancy1);
@@ -48,6 +49,5 @@ public class ConstituencyRepo {
         constituencies.add(constituency);
         return constituency; // created task
     }
-
 
 }
