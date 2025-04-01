@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Repository
 public class CandidateRepo {
-    private final List<Candidate> candidates = new ArrayList<Candidate>();
+    private final List<Candidate> candidates = new ArrayList<>();
 
     public void addCandidate(Candidate candidate) {
         candidates.add(candidate);
