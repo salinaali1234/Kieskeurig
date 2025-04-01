@@ -11,9 +11,9 @@ public class XMLRepo {
     public List<Candidate> getCandidatesOfParty(int partyId) {
         // Test
         List<Candidate> candidates = new ArrayList<>();
-        Candidate testCandidate = new Candidate(1, "D.", "Dilan", "Yeşilgöz", "female", "Amsterdam");
+//        Candidate testCandidate = new Candidate(1, "D.", "Dilan", "Yeşilgöz", "female", "Amsterdam");
 
-        candidates.add(testCandidate);
+//        candidates.add(testCandidate);
         return candidates;
     }
 }

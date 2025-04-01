@@ -1,6 +1,7 @@
 package nl.hva.ict.se.sm3.utils.xml;
 
 import nl.hva.ict.se.sm3.utils.PathUtils;
+import nl.hva.kieskeurig.service.RegisterCandidateService;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -298,6 +299,7 @@ public class DutchElectionProcessor<E> {
             candidateData.put(LAST_NAME, lastName);
         }
 
+//        new RegisterCandidateService().registerCandidate(candidateData);
         transformer.registerCandidate(candidateData);
     }
 
