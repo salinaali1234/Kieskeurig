@@ -1,7 +1,7 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
-import nl.hva.ict.se.sm3.utils.PathUtils;
-import nl.hva.kieskeurig.service.RegisterCandidateService;
+import nl.hva.kieskeurig.utils.PathUtils;
+import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -45,6 +45,7 @@ import java.util.logging.Logger;
  * <br>
  * <em>You are encouraged to alter this class so it suits your needs! :-)</em>
  */
+@Component
 public class DutchElectionProcessor<E> {
     private static final Logger LOG = Logger.getLogger(DutchElectionProcessor.class.getName());
     private final Transformer<E> transformer;

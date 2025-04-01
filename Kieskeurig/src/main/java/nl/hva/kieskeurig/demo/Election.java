@@ -1,9 +1,11 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
+
+import nl.hva.kieskeurig.utils.xml.Transformer;
 
 import java.util.Map;
 
 /**
- * Just a very silly election class that only demonstrates that a {@link nl.hva.ict.se.sm3.utils.xml.Transformer}
+ * Just a very silly election class that only demonstrates that a {@link Transformer}
  * can return an instance of a class.
  * <br>
  * <b>Please do NOT include this code in you project!</b>

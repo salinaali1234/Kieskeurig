@@ -1,9 +1,9 @@
 package nl.hva.kieskeurig;
 
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
-import nl.hva.ict.se.sm3.demo.Election;
-import nl.hva.ict.se.sm3.utils.PathUtils;
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.demo.Election;
+import nl.hva.kieskeurig.utils.PathUtils;
+import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +12,9 @@ import java.io.IOException;
 
 @Component
 public class xmlblah implements CommandLineRunner {
+    @Autowired
+    private DutchElectionProcessor<Election> dutchElectionProcessor;
+
     @Override
     public void run(String... args) throws Exception {
         xmlProcessing();
@@ -22,18 +25,12 @@ public class xmlblah implements CommandLineRunner {
      * @throws IOException
      * @throws XMLStreamException
      */
-    private static void xmlProcessing() throws IOException, XMLStreamException {
+    private void xmlProcessing() throws IOException, XMLStreamException {
         System.out.println("Processing files...");
-
-        // We need a Transformer that has knowledge of your classes.
-        DutchElectionTransformer creator = new DutchElectionTransformer();
-
-        // And the election processor that traverses the folders and processes the XML-files.
-        DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(creator);
 
         // Assuming the election data is contained in {@code src/main/resource} it should be found.
         // Please note that you can also specify an absolute path to the folder!
-        Election election = electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
+        Election election = dutchElectionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
 
         System.out.println("All files are processed.\n");
         // Just print the 'results'

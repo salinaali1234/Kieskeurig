@@ -1,18 +1,13 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
-import nl.hva.ict.se.sm3.utils.xml.Transformer;
-import nl.hva.kieskeurig.KieskeurigApplication;
+import nl.hva.kieskeurig.utils.xml.Transformer;
 import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.repository.CandidateRepo;
 import nl.hva.kieskeurig.service.CandidateService;
 import nl.hva.kieskeurig.transformer.CandidateTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * A dummy {@link Transformer} that just prints the election data so you can get an understanding of what
@@ -22,7 +17,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class DutchElectionTransformer implements Transformer<Election> {
-    private Election election = new Election();
+    private final Election election = new Election();
 
     @Autowired
     private CandidateService candidateService;
