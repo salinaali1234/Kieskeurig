@@ -42,22 +42,17 @@ public class DutchElectionTransformer implements Transformer<Election> {
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-//        ApplicationContext context = new AnnotationConfigApplicationContext(KieskeurigApplication.class);
-//        CandidateService candidateService = context.getBean(CandidateService.class);
-//        CandidateService candidateService = new CandidateService(new CandidateRepo());
-
         election.data = candidateData;
         System.out.printf("Found candidate information: %s\n", candidateData);
 
         Candidate candidate = CandidateTransformer.transformCandidate(candidateData);
-        System.out.println(candidate);
         candidateService.addCandidate(candidate);
     }
 
     @Override
     public void registerVotes(Map<String, String> votesData) {
         election.data = votesData;
-//        System.out.printf("Found votes information: %s\n", votesData);
+        System.out.printf("Found votes information: %s\n", votesData);
     }
 
     @Override
