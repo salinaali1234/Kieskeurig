@@ -1,31 +1,41 @@
 package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
-import nl.hva.kieskeurig.repository.XMLRepo;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import nl.hva.kieskeurig.service.XMLService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/xml")
 public class XMLController {
-    private final XMLRepo repo;
+    private final XMLService service;
 
-    public XMLController(XMLRepo repo) {
-        this.repo = repo;
+    @Autowired
+    public XMLController(XMLService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Election> getAll() {
+        return service.getAll();
     }
 
     @GetMapping("/candidates/{partyId}")
     public List<Candidate> getCandidatesOfParty(@PathVariable int partyId) {
-        return repo.getCandidatesOfParty(partyId);
+        return service.getCandidatesOfParty(partyId);
     }
 
-    @GetMapping("electionresults/parties/{party_id}")
-    public List<Party> getParty(@PathVariable int party_id) {
-        return repo.getParty(party_id);
+    @GetMapping("/election_results/parties/{partyId}")
+    public List<Party> getParty(@PathVariable int partyId) {
+        return service.getParty(partyId);
+    }
+
+    @PostMapping("/read/{folderName}")
+    public boolean readResults(@PathVariable String folderName) {
+        return service.readResults(folderName);
     }
 }
