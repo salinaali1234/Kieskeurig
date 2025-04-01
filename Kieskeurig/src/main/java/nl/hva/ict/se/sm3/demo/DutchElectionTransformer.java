@@ -1,7 +1,9 @@
 package nl.hva.ict.se.sm3.demo;
 
 
+//import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
+//import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
 
@@ -23,8 +25,10 @@ public class DutchElectionTransformer implements Transformer<Election> {
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
-        election = new Election(electionDate); 
         System.out.printf("Found election information: %s\n", electionData);
+        if (election == null) {
+            election = new Election(electionDate);
+        }
     }
 
     @Override
@@ -50,6 +54,12 @@ public class DutchElectionTransformer implements Transformer<Election> {
     public void registerCandidate(Map<String, String> candidateData) {
        // election.data = candidateData;
        // System.out.println(candidateData);
+        int partyId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
+        Party party = election.getParty(partyId);
+        String firstName = candidateData.get(FIRST_NAME);
+        String lastName = candidateData.get(LAST_NAME);
+        int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
+       // Candidate candidate = new Candidate(candidateId, firstName, lastName);
         System.out.printf("Found candidate information: %s\n", candidateData);
     }
 
