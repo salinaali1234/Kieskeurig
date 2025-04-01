@@ -29,7 +29,7 @@ public class XMLController {
         return service.getCandidatesOfParty(partyId);
     }
 
-    @GetMapping("/election_results/parties/{partyId}")
+    @GetMapping("/parties/{partyId}")
     public List<Party> getParty(@PathVariable int partyId) {
         return service.getParty(partyId);
     }

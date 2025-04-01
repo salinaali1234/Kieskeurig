@@ -26,7 +26,6 @@ public class XMLRepo {
     }
 
     public List<Party> getParty(int partyId) {
-        // Test
         List<Party> parties = new ArrayList<>();
         Party testParty = new Party(1, "PVV");
 
