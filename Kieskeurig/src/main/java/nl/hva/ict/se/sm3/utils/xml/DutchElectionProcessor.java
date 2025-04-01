@@ -91,7 +91,7 @@ public class DutchElectionProcessor<E> {
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME_PREFIX = "NamePrefix";
     public static final String LAST_NAME = "LastName";
-    public static final String GENDER = "Gender";
+
 
     /*
      The tag names on the reporting unit level within the XML files which are also used as keys in the maps when calling
@@ -259,7 +259,7 @@ public class DutchElectionProcessor<E> {
         String firstName = null;
         String lastNamePrefix = null;
         String lastName = null;
-        String gender = null;
+
 
         parser.nextBeginTag(CANDIDATE);
         if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
@@ -284,10 +284,6 @@ public class DutchElectionProcessor<E> {
             if (parser.findBeginTag(LAST_NAME)) {
                 lastName = parser.getElementText().trim();
                 parser.findAndAcceptEndTag(LAST_NAME);
-            }
-            if (parser.findAndAcceptEndTag(GENDER)){
-                gender = parser.getElementText().trim();
-                parser.findAndAcceptEndTag(GENDER);
             }
             parser.findAndAcceptEndTag(PERSON_NAME);
         }
