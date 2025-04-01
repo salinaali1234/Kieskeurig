@@ -1,8 +1,7 @@
-package nl.hva.kieskeurig;
+package nl.hva.kieskeurig.utils.xml;
 
 import nl.hva.kieskeurig.demo.Election;
 import nl.hva.kieskeurig.utils.PathUtils;
-import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -10,8 +9,11 @@ import org.springframework.stereotype.Component;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
+/**
+ * Processes all XML
+ */
 @Component
-public class xmlblah implements CommandLineRunner {
+public class XMLProcessor implements CommandLineRunner {
     @Autowired
     private DutchElectionProcessor<Election> dutchElectionProcessor;
 
