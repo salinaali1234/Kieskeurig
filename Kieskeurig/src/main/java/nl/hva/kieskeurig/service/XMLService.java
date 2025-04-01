@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class XMLService {
@@ -17,6 +18,14 @@ public class XMLService {
     public XMLService(XMLRepo repo) {
         this.repo = repo;
     }
+
+//    public List<Party> getAllParties() {
+//        return repo.getAllParties();
+//    }
+//
+//    public Optional<Party> getParty(int partyId) {
+//        return repo.getParty(partyId);
+//    }
 
     public List<Election> getAll() {
         return repo.getAll();
