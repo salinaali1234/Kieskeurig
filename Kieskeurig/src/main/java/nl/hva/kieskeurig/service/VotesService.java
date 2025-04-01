@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Service
 public class VotesService {
     private final List<Votes> votes = new ArrayList<>();
@@ -20,7 +19,6 @@ public class VotesService {
     public void add(Votes vote) {
         votes.add(vote);
     }
-
 
     public boolean readResults(String fileName) {
         try (InputStream inputStream = new FileInputStream(fileName)) {
@@ -42,8 +40,6 @@ public class VotesService {
         }
     }
 
-
-
     public Map<String, Integer> getVotesPerParty() {
         Map<String, Integer> partyVotes = new HashMap<>();
 
@@ -53,6 +49,5 @@ public class VotesService {
 
         return partyVotes;
     }
-
 
 }

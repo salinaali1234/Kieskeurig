@@ -1,11 +1,12 @@
 package nl.hva.kieskeurig.reader;
 
+import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
 
 public class DutchElectionReader {
     private XMLParser xmlParser;
@@ -18,30 +19,41 @@ public class DutchElectionReader {
     public Map<String, Integer> getValidVotes() throws XMLStreamException {
         Map<String, Integer> partyVotes = new HashMap<>();
 
-        while (xmlParser.findBeginTag("Selection")) {
-            String partyName = null;
-            int votes = 0;
+        while (xmlParser.tryNext()) {
 
-            while (xmlParser.tryNext()) {
-                String tagName = xmlParser.getLocalName();
-
-                if ("RegisteredName".equals(tagName) && xmlParser.isStartElement()) {
-                    xmlParser.tryNext();
-                    partyName = xmlParser.getText().trim();
-                }
-                else if ("ValidVotes".equals(tagName) && xmlParser.isStartElement()) {
-                    xmlParser.tryNext();
-                    votes = Integer.parseInt(xmlParser.getText().trim());
-                }
-                else if ("Selection".equals(tagName) && xmlParser.isEndElement()) {
-                    break;
-                }
+            if (xmlParser.isStartElement() && DutchElectionProcessor.TOTAL_COUNTED.equals(xmlParser.getLocalName())) {
+                break;
             }
 
-            if (partyName != null) {
-                partyVotes.put(partyName, partyVotes.getOrDefault(partyName, 0) + votes);
+            if (xmlParser.isStartElement() && DutchElectionProcessor.SELECTION.equals(xmlParser.getLocalName())) {
+                String partyName = null;
+                int votes = 0;
+
+                while (xmlParser.tryNext()) {
+                    if (xmlParser.isStartElement()) {
+                        String tagName = xmlParser.getLocalName();
+
+                        if (DutchElectionProcessor.REGISTERED_NAME.equals(tagName)) {
+                            xmlParser.tryNext();
+                            partyName = xmlParser.getText().trim();
+
+                        } else if (DutchElectionProcessor.VALID_VOTES.equals(tagName)) {
+                            xmlParser.tryNext();
+                            String textValue = xmlParser.getText().trim();
+                            if (!textValue.isEmpty()) {
+                                votes = Integer.parseInt(textValue);
+                            }
+                        }
+                    } else if (xmlParser.isEndElement() && DutchElectionProcessor.SELECTION.equals(xmlParser.getLocalName())) {
+                        break;
+                    }
+                }
+                if (partyName != null) {
+                    partyVotes.put(partyName, partyVotes.getOrDefault(partyName, 0) + votes);
+                }
             }
         }
         return partyVotes;
     }
+
 }
