@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * API handling everything related to candidates.
+ */
 @RestController
 @RequestMapping("/api/candidates")
 public class CandidateController {
