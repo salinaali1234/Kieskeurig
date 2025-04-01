@@ -1,12 +1,11 @@
 package nl.hva.kieskeurig.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Candidate {
     int CandidateIdentifier;
     String Initials;
