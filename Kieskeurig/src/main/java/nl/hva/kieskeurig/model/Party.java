@@ -4,9 +4,9 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Getter
 public class Party{
-    @Getter
+
     private final int partyId;
     private final String partyName;
     private List<Candidate> candidates = new ArrayList<>();
