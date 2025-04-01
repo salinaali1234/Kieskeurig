@@ -8,7 +8,7 @@ import java.util.Map;
 import static java.lang.Integer.parseInt;
 
 /**
- * Transforms candidateData from the XMLParser into an instance of
+ * Transforms candidateData from the XMLParser into an instance of Candidate
  */
 @Service
 public class CandidateTransformer {
