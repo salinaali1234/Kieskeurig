@@ -25,6 +25,7 @@ onMounted(async () => {
     <!-- Renders the party name after the candidates have been fetched -->
     <h1 v-if="candidates.length > 0">{{candidates[0].registeredName}}</h1>
     <hr>
+    <br>
 
     <h1>Candidates</h1>
 
