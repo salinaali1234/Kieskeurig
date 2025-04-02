@@ -25,26 +25,6 @@ public class CandidateController {
         return candidateService.getCandidates();
     }
 
-    @PostMapping()
-    public void addCandidate() {
-        Candidate candidate = new Candidate(
-                1,
-                "D",
-                "Dilan",
-                "",
-                "Yeşilgöz",
-                1,
-                "VVD",
-                9,
-                "Amsterdam",
-                "TK2023",
-                "TK",
-                "Tweede Kamer der Staten-Generaal 2023",
-                "2023-11-22"
-        );
-        candidateService.addCandidate(candidate);
-    }
-
     @GetMapping("/{electionId}/{partyName}")
     public List<Candidate> getCandidatesByElectionByParty(@PathVariable String electionId, @PathVariable String partyName) {
         return candidateService.getCandidatesByElectionByParty(electionId, partyName);
