@@ -7,17 +7,17 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class Candidate {
-    int CandidateIdentifier;
-    String Initials;
-    String FirstName;
-    String NamePrefix;
-    String LastName;
-    int AffiliationIdentifier;
-    String RegisteredName;
-    int ContestIdentifier;
-    String ContestName;
-    String ElectionIdentifier;
-    String ElectionCategory;
-    String ElectionName;
-    String ElectionDate;
+    int candidateIdentifier;
+    String initials;
+    String firstName;
+    String namePrefix;
+    String lastName;
+    int affiliationIdentifier;
+    String registeredName;
+    int contestIdentifier;
+    String contestName;
+    String electionIdentifier;
+    String electionCategory;
+    String electionName;
+    String electionDate;
 }
