@@ -34,7 +34,7 @@ public class ConstituencyController {
 
     @GetMapping("/connect")
     public boolean connectConstituencies(Constituency constituency) throws XMLStreamException, IOException {
-        return service.connectConstituencies();
+        return service.connectConstituencies("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
     }
 
     public Map<Integer, String> getAllConstituencies() {

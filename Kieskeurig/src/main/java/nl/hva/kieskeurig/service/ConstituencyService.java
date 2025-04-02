@@ -64,7 +64,7 @@ public class ConstituencyService {
             }
     }
 
-    public boolean connectConstituencies() {
+    public boolean connectConstituencies(String filename) throws XMLStreamException, IOException {
         try (InputStream inputStream= new FileInputStream(filename)) {
             XMLParser xmlParser = new XMLParser(inputStream);
             ContituencyReader reader = new ContituencyReader(xmlParser);
