@@ -37,11 +37,16 @@ public class XMLRepo {
         return null;
     }
 
-    public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+    public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
+        System.out.println("Fetching candidates for party ID: " + partyId);
         Party party = getPartyById(partyId);
+
         if (party != null) {
+            System.out.println("Found " + party.getCandidates().size() + " candidates");
             return party.getCandidates();
         }
+
+        System.out.println("Party not found");
         return new ArrayList<>();
     }
 

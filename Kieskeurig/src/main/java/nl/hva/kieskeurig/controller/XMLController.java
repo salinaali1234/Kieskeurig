@@ -5,6 +5,7 @@ import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
 import nl.hva.kieskeurig.service.XMLService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -33,12 +34,12 @@ public class XMLController {
     }
 
     @GetMapping("/candidates/{partyId}")
-    public List<Candidate> getCandidatesOfParty(@PathVariable int partyId) {
+    public ResponseEntity<List<Candidate>> getCandidatesOfParty(@PathVariable int partyId) {
         try {
-            return service.getCandidatesOfParty(partyId);
-        } catch (IOException | XMLStreamException e) {
-            e.printStackTrace();
-            return List.of(); // gives empty list in case of an error
+            List<Candidate> candidates = service.getCandidatesOfParty(partyId);
+            return ResponseEntity.ok(candidates);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

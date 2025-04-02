@@ -2,7 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import PartiesView from '../views/PartiesView.vue'
-// import CandidatesView from '../views/CandidatesView.vue'
+import CandidatesView from '../views/CandidatesView.vue'
 // import StatisticsView from '../views/StatisticsView.vue'
 // import VotingGuideView from '../views/VotingGuideView.vue'
 // import RegisterView from '../views/RegisterView.vue'
@@ -20,12 +20,12 @@ const router = createRouter({
       name: 'parties',
       component: PartiesView,
     },
-    // {
-    //   path: '/parties/:partyId/candidates',
-    //   name: 'candidates',
-    //   component: CandidatesView,
-    //   props: true
-    // },
+    {
+      path: '/parties/:partyId/candidates',
+      name: 'candidates',
+      component: CandidatesView,
+      props: true
+    },
     // {
     //   path: '/statistieken',
     //   name: 'statistics',

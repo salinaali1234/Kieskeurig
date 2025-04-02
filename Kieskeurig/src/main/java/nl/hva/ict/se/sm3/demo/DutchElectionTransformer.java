@@ -4,6 +4,7 @@ package nl.hva.ict.se.sm3.demo;
 //import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
 //import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
 
@@ -38,29 +39,43 @@ public class DutchElectionTransformer implements Transformer<Election> {
         System.out.printf("Found contest information: %s\n", contestData);
     }
 
+
     @Override
     public void registerAffiliation(Map<String, String> affiliationData) {
         int partyId = Integer.parseInt(affiliationData.get(AFFILIATION_IDENTIFIER));
         String partyName = affiliationData.get(REGISTERED_NAME);
-        Party party = new Party(partyId ,partyName );
-       // election.data = affiliationData;
-       election.addParty(party);
+
+        System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
+
+        Party party = new Party(partyId, partyName);
+        election.addParty(party);
         System.out.println(election);
-       // System.out.println(party);
-       // System.out.printf("Found affiliation information: %s\n", affiliationData);
     }
+
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-       // election.data = candidateData;
-       // System.out.println(candidateData);
-        int partyId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
+        System.out.println("Registering candidate: " + candidateData);
+
+        int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         Party party = election.getParty(partyId);
-        String firstName = candidateData.get(FIRST_NAME);
-        String lastName = candidateData.get(LAST_NAME);
-        int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
-       // Candidate candidate = new Candidate(candidateId, firstName, lastName);
-        System.out.printf("Found candidate information: %s\n", candidateData);
+
+        if (party != null) {
+
+            int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
+            String firstName = candidateData.get(FIRST_NAME);
+            String lastName = candidateData.get(LAST_NAME);
+            String gender = candidateData.get(GENDER);
+            String localityName = candidateData.getOrDefault("locality", null);
+
+            Candidate candidate = new Candidate(candidateId, partyId, firstName, lastName, gender, "Unknown");
+            party.addCandidate(candidate);
+
+
+            System.out.println("Added candidate " + candidateId + " to party " + partyId);
+        } else {
+            System.out.println("Party " + partyId + " not found for candidate");
+        }
     }
 
     @Override
