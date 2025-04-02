@@ -24,6 +24,10 @@ public class CandidateService {
         return candidateRepo.getCandidates();
     }
 
+    public void addCandidate(Candidate candidate) {
+        candidateRepo.addCandidate(candidate);
+    }
+
     public List<Candidate> getCandidatesByElectionByParty(String electionId, String partyName) {
         List<Candidate> candidateList = candidateRepo.getCandidates();
         
