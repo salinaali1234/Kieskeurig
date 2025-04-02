@@ -4,8 +4,6 @@
 
 ## /candidates
 
----
-
 ### GET
 
 ###### Overview
@@ -20,13 +18,9 @@ Get all candidates saved in the repository.
 `status(200)` and a list containing all candidates saved in the repository.
 Candidates use the `Candidate` class.
 
----
-
 
 
 ## /candidates/{partyId}/{year}
-
----
 
 ### GET
 
@@ -45,5 +39,3 @@ Get all candidates saved in the repository from a specified party in a specified
 ###### Response
 `status(200)` and a list containing all candidates saved in the repository from the specified party in the specified year.
 Candidates use the `Candidate` class.
-
----
