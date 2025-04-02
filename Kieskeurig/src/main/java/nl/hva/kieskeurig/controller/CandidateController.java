@@ -45,8 +45,8 @@ public class CandidateController {
         candidateService.addCandidate(candidate);
     }
 
-    @GetMapping("/{partyId}/{year}")
-    public List<Candidate> getCandidatesOfPartyByYear(@PathVariable int partyId, @PathVariable int year) {
-        return candidateService.getCandidatesOfPartyByYear(partyId, year);
+    @GetMapping("/{electionId}/{partyName}")
+    public List<Candidate> getCandidatesByElectionByParty(@PathVariable String electionId, @PathVariable String partyName) {
+        return candidateService.getCandidatesByElectionByParty(electionId, partyName);
     }
 }

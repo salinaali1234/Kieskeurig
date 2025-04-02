@@ -6,7 +6,6 @@ import nl.hva.kieskeurig.repository.CandidateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,9 +28,12 @@ public class CandidateService {
         candidateRepo.addCandidate(candidate);
     }
 
-    public List<Candidate> getCandidatesOfPartyByYear(int partyId, int year) {
-        List<Candidate> candidateList = new ArrayList<>();
-
-        return candidateList;
+    public List<Candidate> getCandidatesByElectionByParty(String electionId, String partyName) {
+        List<Candidate> candidateList = candidateRepo.getCandidates();
+        
+        return candidateList.stream().filter(candidate ->
+            candidate.getElectionIdentifier().equalsIgnoreCase(electionId) &&
+            candidate.getRegisteredName().equalsIgnoreCase(partyName)
+        ).toList();
     }
 }
