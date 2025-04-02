@@ -44,7 +44,16 @@ public class DutchElectionTransformer implements Transformer<Election> {
     }
 
     @Override
+    public void registerConstituents(Map<String, String> constituentData) {
+        System.out.println(constituentData);
+        election.data = constituentData;
+        System.out.printf("Found constituents information: %s\n", constituentData);
+    }
+
+
+    @Override
     public Election retrieve() {
         return election;
     }
+
 }

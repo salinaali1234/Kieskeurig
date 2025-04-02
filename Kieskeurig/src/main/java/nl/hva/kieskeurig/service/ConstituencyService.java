@@ -1,4 +1,9 @@
 package nl.hva.kieskeurig.service;
+import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
+import nl.hva.ict.se.sm3.demo.Election;
+import nl.hva.ict.se.sm3.utils.PathUtils;
+import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.reader.ContituencyReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
@@ -6,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ConstituencyService {
@@ -27,7 +36,63 @@ public class ConstituencyService {
 
 
     public boolean readConstituencies() throws XMLStreamException, IOException {
-        ContituencyReader reader = new ContituencyReader(this);
-        return reader.readResults();
+                System.out.println("Processing files...");
+
+                DutchElectionTransformer transformer = new DutchElectionTransformer();
+
+                // And the election processor that traverses the folders and processes the XML-files.
+                DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
+
+                // Assuming the election data is contained in {@code src/main/resource} it should be found.
+                // Please note that you can also specify an absolute path to the folder!
+
+                try{
+                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
+                System.out.println("All files are processed.\n");
+                // Just print the 'results'
+                if (election != null) {
+                    System.out.println(election.toString());
+                }
+                System.out.println(election.data);
+                return true;
+
+
+            }catch (IOException | XMLStreamException | NullPointerException e) {
+                System.out.println("Hij kon niets inlezen :(");
+
+                return false;
+            }
     }
+
+    public boolean connectConstituencies() {
+        try (InputStream inputStream= new FileInputStream(filename)) {
+            XMLParser xmlParser = new XMLParser(inputStream);
+            ContituencyReader reader = new ContituencyReader(xmlParser);
+
+            Map<Integer, String> constituencyMap = reader.getContituencyMap();
+
+            for (Map.Entry<Integer, String> entry : constituencyMap.entrySet()) {
+                Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
+                add(constituency);
+            }
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Map<Integer, String> getALlConstituenciesXML() {
+        Map<Integer, String> map = new HashMap<Integer, String>();
+
+        for (Constituency constituency : constituencies) {
+            map.put(constituency.getId(), constituency.getName());
+            System.out.println();
+        }
+        return map;
+    }
+
+
+
 }

@@ -4,10 +4,14 @@ import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
 import nl.hva.ict.se.sm3.demo.Election;
 import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.service.ConstituencyService;
 
+import javax.sql.rowset.spi.XmlReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A very small demo of how the classes {@link DutchElectionProcessor} and {@link nl.hva.ict.se.sm3.utils.xml.Transformer}
@@ -16,39 +20,36 @@ import java.io.IOException;
  * <b>Please do NOT include this code in you project!</b>
  */
 public class ContituencyReader {
+    private XMLParser xmlParser;
 
-    public ContituencyReader(ConstituencyService constituencyService) {
+    public ContituencyReader(XMLParser xmlParser) {
+        this.xmlParser = xmlParser;
     }
 
-    public static boolean readResults() {
-        System.out.println("Processing files...");
+    public  Map<Integer, String> getContituencyMap() throws IOException, XMLStreamException {
+        Map<Integer, String> contituencyMap = new HashMap<Integer, String>();
 
-        DutchElectionTransformer transformer = new DutchElectionTransformer();
+        while (xmlParser.tryNext()) {
+            if (xmlParser.isStartElement() && DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(xmlParser.getLocalName())) {
+                int id = 0;
 
-        // And the election processor that traverses the folders and processes the XML-files.
-        DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
+                while (xmlParser.tryNext()) {
+                    String unitIdentifier = xmlParser.getLocalName();
+                    if (DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(unitIdentifier)) {
+                        xmlParser.tryNext();
+                        String textValue = xmlParser.getText().trim();
+                        if (!textValue.isEmpty()) {
+                            id = Integer.parseInt(textValue);
+                        }
+                    }
 
-        // Assuming the election data is contained in {@code src/main/resource} it should be found.
-        // Please note that you can also specify an absolute path to the folder!
+                }
+                if (id != 0) {
+                    contituencyMap.put(Integer.valueOf((id + "hi")), xmlParser.getText());
+                }
 
-        try{
-            Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Kandidatenlijsten/Kandidatenlijsten_TK2023_Amsterdam.eml.xml"));
-            System.out.println("All files are processed.\n");
-            // Just print the 'results'
-            if (election != null) {
-                System.out.println(election.toString());
             }
-            System.out.println(election.data);
-            return true;
-
-
-        }catch (IOException | XMLStreamException | NullPointerException e) {
-            System.out.println("Hij kon niets inlezen :(");
-
-            return false;
         }
-
+        return contituencyMap;
     }
-
 }
-

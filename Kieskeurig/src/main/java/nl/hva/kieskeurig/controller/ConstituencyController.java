@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/constituencies")
@@ -26,9 +27,18 @@ public class ConstituencyController {
         return service.getAll();}
 
 
-    @GetMapping("/getConstituencies")
-    public boolean getConstituencies() throws XMLStreamException, IOException {
+    @GetMapping("/readConstituencies")
+    public boolean readConstituencies() throws XMLStreamException, IOException {
         return service.readConstituencies();
+    }
+
+    @GetMapping("/connect")
+    public boolean connectConstituencies(Constituency constituency) throws XMLStreamException, IOException {
+        return service.connectConstituencies();
+    }
+
+    public Map<Integer, String> getAllConstituencies() {
+        return service.getALlConstituenciesXML();
     }
 
 
