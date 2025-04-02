@@ -6,9 +6,10 @@ import nl.hva.kieskeurig.model.Party;
 import nl.hva.kieskeurig.repository.XMLRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
+import java.util.List;
+import javax.xml.stream.XMLStreamException;
 
 @Service
 public class XMLService {
@@ -19,27 +20,25 @@ public class XMLService {
         this.repo = repo;
     }
 
-//    public List<Party> getAllParties() {
-//        return repo.getAllParties();
-//    }
-//
-//    public Optional<Party> getParty(int partyId) {
-//        return repo.getParty(partyId);
-//    }
-
-    public List<Election> getAll() {
+    // gets election data
+    public List<Election> getAll() throws IOException, XMLStreamException {
         return repo.getAll();
     }
 
-    public List<Candidate> getCandidatesOfParty(int partyId) {
+    // picks up party
+    public List<Party> getAllParties() throws IOException, XMLStreamException {
+        return repo.getParties();
+    }
+
+    public Optional<Party> getParty(int partyId) throws IOException, XMLStreamException {
+        return Optional.ofNullable(repo.getPartyById(partyId));
+    }
+
+    // note to self: picks up candidate (does not work yet)
+    public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
         return repo.getCandidatesOfParty(partyId);
     }
-
-    public List<Party> getParty(int partyId) {
-        return repo.getParty(partyId);
-    }
-
+}
 //    public boolean readResults(String folderName) {
 //        return repo.readResults(folderName);
 //    }
-}
