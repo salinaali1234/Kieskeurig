@@ -29,13 +29,13 @@ Get all candidates saved in the repository from a specified party in a specified
 
 ###### URL
 ```
-/api/candidates/{partyId}/{year}
+/api/candidates/{electionId}/{partyName}
 ```
 
 ###### Parameters
-- `partyId` - The ID of the party you want the candidates from **(Required)**.
-- `year` - The year you want the data from **(Required)**.
+- `electionId` - The election from which you want the data **(Required)**.
+- `partyName` - The name of the party you want the candidates from **(Required)**.
 
 ###### Response
-`status(200)` and a list containing all candidates saved in the repository from the specified party in the specified year.
+`status(200)` and a list containing all candidates saved in the repository from the specified party in the specified election.
 Candidates use the `Candidate` class.
