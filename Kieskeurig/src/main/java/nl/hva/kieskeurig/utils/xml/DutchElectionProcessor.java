@@ -300,7 +300,6 @@ public class DutchElectionProcessor<E> {
             candidateData.put(LAST_NAME, lastName);
         }
 
-//        new RegisterCandidateService().registerCandidate(candidateData);
         transformer.registerCandidate(candidateData);
     }
 
