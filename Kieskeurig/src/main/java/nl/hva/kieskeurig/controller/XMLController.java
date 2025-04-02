@@ -52,6 +52,15 @@ public class XMLController {
             e.printStackTrace();
             return List.of(); // list empty
         }
+
+    }@GetMapping("/parties")
+    public List<Party> getAllParties() {
+        try {
+            return service.getAllParties();
+        } catch (IOException | XMLStreamException e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 }
 //    @GetMapping("/parties/{partyId}")

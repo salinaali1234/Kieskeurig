@@ -19,7 +19,7 @@ const menuOpen = ref(false);
 
       <nav :class="{ 'open': menuOpen }">
         <RouterLink to="/statistieken" @click="menuOpen = false">Statistieken</RouterLink>
-        <RouterLink to="/partijen" @click="menuOpen = false">Partijen</RouterLink>
+        <RouterLink to="/parties" @click="menuOpen = false">Partijen</RouterLink>
         <RouterLink to="/stemwijzer" @click="menuOpen = false">Stemwijzer</RouterLink>
         <RouterLink to="/register" class="btn" @click="menuOpen = false">Register</RouterLink>
       </nav>

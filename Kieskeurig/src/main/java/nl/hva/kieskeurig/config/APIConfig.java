@@ -15,10 +15,12 @@ public class APIConfig implements WebMvcConfigurer {
         System.out.println("frontendUrl: " + frontendUrl);
         System.out.println("added cors mappings");
 
-        registry.addMapping("/**")
+        registry.addMapping("/api/**")
                 .allowedOriginPatterns(
                         frontendUrl
                         )
+                .allowedHeaders("*")
+                .allowCredentials(true)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
