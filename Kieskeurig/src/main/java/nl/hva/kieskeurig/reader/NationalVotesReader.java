@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class DutchElectionReader {
+public class NationalVotesReader {
     private XMLParser xmlParser;
 
-    public DutchElectionReader(XMLParser xmlParser) {
+    public NationalVotesReader(XMLParser xmlParser) {
         this.xmlParser = xmlParser;
 
     }

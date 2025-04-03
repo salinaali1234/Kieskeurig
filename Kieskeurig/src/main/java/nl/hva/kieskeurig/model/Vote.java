@@ -1,10 +1,10 @@
 package nl.hva.kieskeurig.model;
 
-public class Votes {
+public class Vote {
     private String partyName;
     private int validVotes;
 
-    public Votes(String partyName, int validVotes) {
+    public Vote(String partyName, int validVotes) {
         this.partyName = partyName;
         this.validVotes = validVotes;
     }
