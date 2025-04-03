@@ -1,11 +1,10 @@
 package nl.hva.kieskeurig.service;
 
 import nl.hva.ict.se.sm3.utils.xml.XMLParser;
-import nl.hva.kieskeurig.model.Votes;
-import nl.hva.kieskeurig.reader.DutchElectionReader;
+import nl.hva.kieskeurig.model.Vote;
+import nl.hva.kieskeurig.reader.NationalVotesReader;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,23 +12,29 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class VotesService {
-    private final List<Votes> votes = new ArrayList<>();
+public class VoteService {
+    private final List<Vote> votes = new ArrayList<>();
 
-    public void add(Votes vote) {
+    public void add(Vote vote) {
         votes.add(vote);
     }
 
     public boolean readResults(String fileName) {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+
+            if (inputStream == null) {
+                System.err.println("Bestand niet gevonden: " + "Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+                return false;
+            }
+
             XMLParser xmlParser = new XMLParser(inputStream);
-            DutchElectionReader reader = new DutchElectionReader(xmlParser);
+            NationalVotesReader reader = new NationalVotesReader(xmlParser);
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
-
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
-                Votes vote = new Votes(entry.getKey(), entry.getValue());
+                Vote vote = new Vote(entry.getKey(), entry.getValue());
                 add(vote);
             }
 
@@ -42,12 +47,9 @@ public class VotesService {
 
     public Map<String, Integer> getVotesPerParty() {
         Map<String, Integer> partyVotes = new HashMap<>();
-
-        for (Votes vote : votes) {
+        for (Vote vote : votes) {
             partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
         }
-
         return partyVotes;
     }
-
 }
