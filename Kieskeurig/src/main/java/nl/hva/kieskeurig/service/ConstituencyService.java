@@ -5,9 +5,10 @@ import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
-import nl.hva.kieskeurig.reader.ContituencyReader;
+import nl.hva.kieskeurig.reader.ConstituencyReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.xml.stream.XMLStreamException;
@@ -65,16 +66,23 @@ public class ConstituencyService {
     }
 
     public boolean connectConstituencies(String filename) throws XMLStreamException, IOException {
-        try (InputStream inputStream= new FileInputStream(filename)) {
-            XMLParser xmlParser = new XMLParser(inputStream);
-            ContituencyReader reader = new ContituencyReader(xmlParser);
+        ClassPathResource resource = new ClassPathResource("VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
+        try (InputStream inputStream = resource.getInputStream();) {
 
-            Map<Integer, String> constituencyMap = reader.getContituencyMap();
+            System.out.println("inputstream" + inputStream.available());
+            XMLParser xmlParser = new XMLParser(inputStream);
+//            DutchElectionTransformer transformer = new DutchElectionTransformer();
+//            DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
+//            Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
+            ConstituencyReader reader = new ConstituencyReader(xmlParser);
+
+            Map<Integer, String> constituencyMap = reader.getConstituencyMap();
 
             for (Map.Entry<Integer, String> entry : constituencyMap.entrySet()) {
                 Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
                 add(constituency);
             }
+            System.out.println(constituencyMap.toString());
             return true;
 
         } catch (Exception e) {

@@ -2,9 +2,7 @@ package nl.hva.kieskeurig.controller;
 import nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.service.ConstituencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -32,11 +30,12 @@ public class ConstituencyController {
         return service.readConstituencies();
     }
 
-    @GetMapping("/connect")
-    public boolean connectConstituencies(Constituency constituency) throws XMLStreamException, IOException {
-        return service.connectConstituencies("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
+    @PostMapping("/connect/{fileName}")
+    public boolean connectConstituencies(@PathVariable String fileName) throws XMLStreamException, IOException {
+        return service.connectConstituencies("C:\\Users\\sneeu\\IdeaProjects\\ciijeegoomii63\\Kieskeurig\\src\\main\\resources\\VerkiezingsuitslagTweedeKamer2023");
     }
 
+    @GetMapping("/all/Constituencies")
     public Map<Integer, String> getAllConstituencies() {
         return service.getALlConstituenciesXML();
     }

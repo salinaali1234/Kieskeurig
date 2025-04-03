@@ -155,12 +155,12 @@ public class DutchElectionProcessor<E> {
             processVotes(electionData, parser);
         }
 
-        for (Path TotalCountingFile : PathUtils.findFilesToScan(folderName, "Totaaltelling_%s_".formatted(electionId))) {
-            System.out.println("it reads totaaltelling");
-            LOG.fine("Found: %s".formatted(TotalCountingFile));
-            XMLParser parser = new XMLParser(new FileInputStream(TotalCountingFile.toString()));
-            processConstitution(electionData, parser);
-        }
+//        for (Path TotalCountingFile : PathUtils.findFilesToScan(folderName, "Totaaltelling_%s_".formatted(electionId))) {
+//            System.out.println("it reads totaaltelling");
+//            LOG.fine("Found: %s".formatted(TotalCountingFile));
+//            XMLParser parser = new XMLParser(new FileInputStream(TotalCountingFile.toString()));
+//            processConstitution(electionData, parser);
+//        }
 
         return transformer.retrieve();
     }
@@ -316,21 +316,21 @@ public class DutchElectionProcessor<E> {
     }
 
 
-    private  void processConstitution(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
-        parser.nextBeginTag(REPORTING_UNIT_IDENTIFIER);
-        int constitutionId = 0;
-        if (parser.findBeginTag(REPORTING_UNIT_IDENTIFIER)) {
-            constitutionId = parser.getIntegerAttributeValue(null, ID, 0);
-
-        }
-
-        Map<String, String> constitutionData = new HashMap<>(electionData);
-        constitutionData.put(REPORTING_UNIT_IDENTIFIER, String.valueOf(constitutionId));
-
-        transformer.registerConstituents(constitutionData);
-
-        parser.findAndAcceptEndTag(REPORTING_UNIT_IDENTIFIER);
-    }
+//    private  void processConstitution(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
+//        parser.nextBeginTag(REPORTING_UNIT_IDENTIFIER);
+//        int constitutionId = 0;
+//        if (parser.findBeginTag(REPORTING_UNIT_IDENTIFIER)) {
+//            constitutionId = parser.getIntegerAttributeValue(null, ID, 0);
+//
+//        }
+//
+//        Map<String, String> constitutionData = new HashMap<>(electionData);
+//        constitutionData.put(REPORTING_UNIT_IDENTIFIER, String.valueOf(constitutionId));
+//
+//        transformer.registerConstituents(constitutionData);
+//
+//        parser.findAndAcceptEndTag(REPORTING_UNIT_IDENTIFIER);
+//    }
     private void processVotes(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
         if (parser.findBeginTag(CONTEST)) {
 
