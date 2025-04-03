@@ -68,3 +68,14 @@ We learned how to:
 
 On Thursday there will be an expert review were we will be showing our frontend, our XML parsing and our API's in springboot.
 Next week we will be having our sprint review.
+
+03-04-2025
+This week we had a product review and an expert review.
+In this week we had planned to make 1 user story per person so that we would be right on track.
+We implemented the feedback from the expert review to our code.
+Thursday we had a meeting with the product owner. 
+This was the feedback in general:
++ The hover button colour should be changed
++ make a filter button
++ frontend needs to be better
++ 
