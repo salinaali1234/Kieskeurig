@@ -36,7 +36,7 @@ public class ConstituencyController {
     }
 
     @GetMapping("/all/Constituencies")
-    public Map<Integer, String> getAllConstituencies() {
+    public Map<String, String> getAllConstituencies() {
         return service.getALlConstituenciesXML();
     }
 

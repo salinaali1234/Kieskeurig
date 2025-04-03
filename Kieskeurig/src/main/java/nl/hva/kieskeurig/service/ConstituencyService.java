@@ -71,15 +71,13 @@ public class ConstituencyService {
 
             System.out.println("inputstream" + inputStream.available());
             XMLParser xmlParser = new XMLParser(inputStream);
-//            DutchElectionTransformer transformer = new DutchElectionTransformer();
-//            DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
-//            Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
+//
             ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
-            Map<Integer, String> constituencyMap = reader.getConstituencyMap();
+            Map<String, String> constituencyMap = reader.getConstituencyMap();
 
-            for (Map.Entry<Integer, String> entry : constituencyMap.entrySet()) {
-                Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
+                Constituency constituency = new Constituency(entry.getValue(),entry.getValue());
                 add(constituency);
             }
             System.out.println(constituencyMap.toString());
@@ -91,8 +89,8 @@ public class ConstituencyService {
         }
     }
 
-    public Map<Integer, String> getALlConstituenciesXML() {
-        Map<Integer, String> map = new HashMap<Integer, String>();
+    public Map<String, String> getALlConstituenciesXML() {
+        Map<String, String> map = new HashMap<String, String>();
 
         for (Constituency constituency : constituencies) {
             map.put(constituency.getId(), constituency.getName());
