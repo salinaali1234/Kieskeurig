@@ -3,7 +3,7 @@ package nl.hva.kieskeurig.demo;
 import nl.hva.kieskeurig.utils.xml.Transformer;
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.service.CandidateService;
-import nl.hva.kieskeurig.transformer.CandidateTransformer;
+import nl.hva.kieskeurig.mapper.CandidateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +45,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
         election.data = candidateData;
         System.out.printf("Found candidate information: %s\n", candidateData);
 
-        Candidate candidate = CandidateTransformer.transformCandidate(candidateData);
+        Candidate candidate = new CandidateMapper().apply(candidateData);
         candidateService.addCandidate(candidate);
     }
 
