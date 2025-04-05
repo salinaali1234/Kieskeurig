@@ -32,7 +32,6 @@ public class CandidateService {
 
     public List<CandidateDTO> getCandidatesByElectionByParty(String electionId, String partyName) {
         List<Candidate> candidateList = candidateRepo.getCandidates();
-        CandidateDTOMapper mapper = new CandidateDTOMapper();
 
         // Gets the candidates from the specified party from the specified election, maps Candidate to CandidateDTO and filters out duplicates
         return candidateList.stream()
@@ -40,7 +39,7 @@ public class CandidateService {
                 candidate.getElectionIdentifier().equalsIgnoreCase(electionId) &&
                 candidate.getRegisteredName().equalsIgnoreCase(partyName)
             )
-            .map(mapper)
+            .map(new CandidateDTOMapper())
             .distinct()
             .toList();
     }
