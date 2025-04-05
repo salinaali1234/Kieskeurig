@@ -27,7 +27,7 @@ onMounted(async () => {
     <hr>
     <br>
 
-    <h1>Candidates</h1>
+    <h1>Kandidaten</h1>
 
     <table style="border: 1px solid; width: 100%;"
         v-for="candidate in candidates"
@@ -38,7 +38,7 @@ onMounted(async () => {
             <td>{{candidate.candidateIdentifier}}</td>
         </tr>
         <tr>
-            <td style="width: 50px;">Name</td>
+            <td style="width: 50px;">Naam</td>
             <td>{{candidate.firstName}} {{candidate.namePrefix}} {{candidate.lastName}}</td>
         </tr>
     </table>
