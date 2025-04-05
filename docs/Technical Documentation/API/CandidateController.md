@@ -20,7 +20,7 @@ Candidates use the `Candidate` class.
 
 
 
-## /candidates/{partyId}/{year}
+## /candidates/{electionId}/{partyName}
 
 ### GET
 
@@ -38,4 +38,4 @@ Get all candidates saved in the repository from a specified party in a specified
 
 ###### Response
 `status(200)` and a list containing all candidates saved in the repository from the specified party in the specified election.
-Candidates use the `Candidate` class.
+Candidates use the `CandidateDTO` class.
