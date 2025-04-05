@@ -1,5 +1,6 @@
 package nl.hva.kieskeurig.controller;
 
+import nl.hva.kieskeurig.dto.CandidateDTO;
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class CandidateController {
     }
 
     @GetMapping("/{electionId}/{partyName}")
-    public List<Candidate> getCandidatesByElectionByParty(@PathVariable String electionId, @PathVariable String partyName) {
+    public List<CandidateDTO> getCandidatesByElectionByParty(@PathVariable String electionId, @PathVariable String partyName) {
         return candidateService.getCandidatesByElectionByParty(electionId, partyName);
     }
 }

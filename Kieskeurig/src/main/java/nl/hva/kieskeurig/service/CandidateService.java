@@ -1,6 +1,8 @@
 package nl.hva.kieskeurig.service;
 
 import nl.hva.kieskeurig.controller.CandidateController;
+import nl.hva.kieskeurig.dto.CandidateDTO;
+import nl.hva.kieskeurig.mapper.CandidateDTOMapper;
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.repository.CandidateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,18 @@ public class CandidateService {
         candidateRepo.addCandidate(candidate);
     }
 
-    public List<Candidate> getCandidatesByElectionByParty(String electionId, String partyName) {
+    public List<CandidateDTO> getCandidatesByElectionByParty(String electionId, String partyName) {
         List<Candidate> candidateList = candidateRepo.getCandidates();
-        
-        return candidateList.stream().filter(candidate ->
-            candidate.getElectionIdentifier().equalsIgnoreCase(electionId) &&
-            candidate.getRegisteredName().equalsIgnoreCase(partyName)
-        ).toList();
+        CandidateDTOMapper mapper = new CandidateDTOMapper();
+
+        // Gets the candidates from the specified party from the specified election, maps Candidate to CandidateDTO and filters out duplicates
+        return candidateList.stream()
+            .filter(candidate ->
+                candidate.getElectionIdentifier().equalsIgnoreCase(electionId) &&
+                candidate.getRegisteredName().equalsIgnoreCase(partyName)
+            )
+            .map(mapper)
+            .distinct()
+            .toList();
     }
 }
