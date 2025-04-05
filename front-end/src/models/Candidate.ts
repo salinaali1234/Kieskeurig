@@ -6,8 +6,6 @@ export type Candidate = {
     lastName: string;
     affiliationIdentifier: number;
     registeredName: string;
-    contestIdentifier: number;
-    contestName: string;
     electionIdentifier: string;
     electionCategory: string;
     electionName: string;
