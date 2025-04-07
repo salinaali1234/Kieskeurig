@@ -66,7 +66,7 @@ public class ConstituencyReader {
 
                     if (id != null) {
                         System.out.println("Reading Constituency: " + id);
-                        constituencyMap.put(id, "id");
+                        constituencyMap.put(id, id);
                     } else {
                         System.out.println("id: " + id);
                     }

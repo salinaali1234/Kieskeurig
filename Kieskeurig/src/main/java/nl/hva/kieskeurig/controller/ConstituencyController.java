@@ -32,12 +32,15 @@ public class ConstituencyController {
 
     @PostMapping("/connect/{fileName}")
     public boolean connectConstituencies(@PathVariable String fileName) throws XMLStreamException, IOException {
-        return service.connectConstituencies("C:\\Users\\sneeu\\IdeaProjects\\ciijeegoomii63\\Kieskeurig\\src\\main\\resources\\VerkiezingsuitslagTweedeKamer2023");
+        return service.connectConstituencies();
     }
 
     @GetMapping("/all/Constituencies")
-    public Map<String, String> getAllConstituencies() {
-        return service.getALlConstituenciesXML();
+    public Map<String, Constituency> getAllConstituencies() {
+        System.out.println("hiii");
+        System.out.println(service.getConstituencies());
+
+        return service.getConstituencies();
     }
 
 

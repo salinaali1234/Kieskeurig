@@ -43,10 +43,6 @@ public class ConstituencyService {
 
                 // And the election processor that traverses the folders and processes the XML-files.
                 DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
-
-                // Assuming the election data is contained in {@code src/main/resource} it should be found.
-                // Please note that you can also specify an absolute path to the folder!
-
                 try{
                     Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
                 System.out.println("All files are processed.\n");
@@ -65,22 +61,24 @@ public class ConstituencyService {
             }
     }
 
-    public boolean connectConstituencies(String filename) throws XMLStreamException, IOException {
-        ClassPathResource resource = new ClassPathResource("VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
-        try (InputStream inputStream = resource.getInputStream();) {
 
+    public boolean connectConstituencies() throws XMLStreamException, IOException {
+        ClassPathResource resource = new ClassPathResource("VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
+        System.out.println("getting everthing");
+        try (InputStream inputStream = resource.getInputStream()) {
+            System.out.println("Processing files...");
             System.out.println("inputstream" + inputStream.available());
             XMLParser xmlParser = new XMLParser(inputStream);
-//
             ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
             Map<String, String> constituencyMap = reader.getConstituencyMap();
-
+            System.out.println(reader.getConstituencyMap());
             for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
                 Constituency constituency = new Constituency(entry.getValue(),entry.getValue());
                 add(constituency);
             }
-            System.out.println(constituencyMap.toString());
+            System.out.println("in the service"+ constituencyMap.toString());
+
             return true;
 
         } catch (Exception e) {
@@ -89,16 +87,17 @@ public class ConstituencyService {
         }
     }
 
-    public Map<String, String> getALlConstituenciesXML() {
-        Map<String, String> map = new HashMap<String, String>();
+    public Map<String, Constituency> getConstituencies() {
+
+        Map<String, Constituency> map = new HashMap<String, Constituency>();
 
         for (Constituency constituency : constituencies) {
-            map.put(constituency.getId(), constituency.getName());
+            map.put(constituency.getId(), constituency);
             System.out.println();
         }
-        return map;
-    }
+       return map;
+ }
+
+        }
 
 
-
-}
