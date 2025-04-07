@@ -100,6 +100,7 @@ public class DutchElectionProcessor<E> {
     public static final String REPORTING_UNIT_VOTES = "ReportingUnitVotes";
     public static final String VALID_VOTES = "ValidVotes";
     public static final String ZIPCODE = "ZipCode"; // For convenience, is used as a key in the data-maps.
+    public static final String TOTAL_COUNTED = "TotalCounted";
 
     // Used internally
     private static final String NAME_TYPE = "NameType";

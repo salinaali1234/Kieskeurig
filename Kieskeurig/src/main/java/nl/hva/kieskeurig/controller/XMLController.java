@@ -2,10 +2,8 @@ package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.repository.XMLRepo;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import nl.hva.kieskeurig.service.VoteService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 public class XMLController {
     private final XMLRepo repo;
 
-    public XMLController(XMLRepo repo) {
+    public XMLController(XMLRepo repo, VoteService voteService) {
         this.repo = repo;
     }
 
@@ -22,4 +20,5 @@ public class XMLController {
     public List<Candidate> getCandidatesOfParty(@PathVariable int partyId) {
         return repo.getCandidatesOfParty(partyId);
     }
+
 }
