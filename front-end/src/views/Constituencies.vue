@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { objectToString } from "@vue/shared";
+
 import { ref, onMounted } from "vue";
 
 interface Constituency {
-  id: number;
+  id: string;
   name: string;
 
 }
@@ -14,6 +14,7 @@ const constituencies = ref<Constituency[]>([]);
 onMounted(async () => {
   try {
     const response = await fetch("http://localhost:8080/api/xml/getAll");
+
 
     if (response.ok) {
       const data = await response.json();

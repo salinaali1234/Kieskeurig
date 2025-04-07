@@ -10,6 +10,7 @@ import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class ConstituencyService {
     private final ConstituencyRepo repo;
     private final List<Constituency> constituencies = new ArrayList<Constituency>();
+    private final View error;
 
     public void add(Constituency constituency) {
         constituencies.add(constituency);
@@ -31,7 +33,9 @@ public class ConstituencyService {
 
 
     @Autowired
-    public ConstituencyService(ConstituencyRepo repo) {this.repo = repo;}
+    public ConstituencyService(ConstituencyRepo repo, View error) {this.repo = repo;
+        this.error = error;
+    }
 
     public List<Constituency> getAll() {return repo.findAll();}
 
@@ -87,16 +91,21 @@ public class ConstituencyService {
         }
     }
 
-    public Map<String, Constituency> getConstituencies() {
+    public Map<String, Constituency> getConstituencies() throws XMLStreamException, IOException {
+        if (connectConstituencies()) {
+            Map<String, Constituency> map = new HashMap<String, Constituency>();
 
-        Map<String, Constituency> map = new HashMap<String, Constituency>();
-
-        for (Constituency constituency : constituencies) {
-            map.put(constituency.getId(), constituency);
-            System.out.println();
+            for (Constituency constituency : constituencies) {
+                map.put(constituency.getId(), constituency);
+                System.out.println();
+            }
+            return map;
+        } else {
+            return null;
         }
-       return map;
- }
+
+        }
+
 
         }
 
