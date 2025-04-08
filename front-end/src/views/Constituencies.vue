@@ -3,17 +3,20 @@
 import { ref, onMounted } from "vue";
 
 interface Constituency {
-  id: string;
   name: string;
 
 }
 
 const constituencies = ref<Constituency[]>([]);
+const isVisible = ref(false)
 
+function toggleVisible() {
+  isVisible.value = !isVisible.value
+}
 
 onMounted(async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/xml/getAll");
+    const response = await fetch("http://localhost:8080/api/constituencies/all/Constituencies");
 
 
     if (response.ok) {
@@ -22,8 +25,7 @@ onMounted(async () => {
 
       if (data && typeof data === "object") {
 
-        constituencies.value = Object.entries(data).map(([id, name]) => ({
-          id: Number(id),
+        constituencies.value = Object.entries(data).map(([name]) => ({
           name
         }));
       } else {
@@ -40,23 +42,27 @@ onMounted(async () => {
 
 <template>
   <div class="container">
-    <h1>kieskringen </h1>
+    <h1>Kieskringen</h1>
 
-    <table v-if="constituencies.length > 0" class="party-table">
-      <thead>
-      <tr>
-        <th>Id</th>
-        <th>Constituency</th>
-      </tr>
-      </thead>
+    <div class="header-row">
+      <span>Kieskring</span>
+      <button class="downarrolist" @click="toggleVisible">
+        {{ isVisible ? '˄' : '˅' }}
+      </button>
+    </div>
+
+    <table v-show="isVisible && constituencies.length > 0" class="party-table">
       <tbody>
-
+      <tr v-for="(constituency, index) in constituencies" :key="index">
+        <td>{{ constituency.name }}</td>
+      </tr>
       </tbody>
     </table>
 
-    <p v-else>Geen kieskringen gevonden...</p>
+
   </div>
 </template>
+
 
 <style scoped>
 .container {
@@ -64,10 +70,22 @@ onMounted(async () => {
   padding: 20px;
 }
 
+.downarrolist {
+  padding-right: 12px;
+  margin: 0;
+
+  font-size: 2rem;
+  background: var(--secondary-clr);
+  border: none;
+  color: black;
+  cursor: pointer;
+}
+
 .party-table {
   width: 80%;
   max-width: 600px;
-  margin: 20px auto;
+  margin-right: auto;
+  margin-left: auto;
   border-collapse: collapse;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   background-color: rgba(255, 255, 255, 0.1);
@@ -82,12 +100,31 @@ onMounted(async () => {
 }
 
 .party-table th {
-  background-color: var(--accent-clr);
+  background-color: var(--secondary-clr);
   color: black;
 }
 
 .party-table tr:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
+
+.header-row {
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 12px;
+  border-collapse: collapse;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color:#DEBFE9;
+  border-radius: 8px;
+  overflow: hidden;
+
+}
+
 
 </style>
