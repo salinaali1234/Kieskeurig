@@ -29,16 +29,13 @@ onMounted(async () => {
 
     <h1>Kandidaten</h1>
 
-    <table style="border: 1px solid; width: 100%;"
-        v-for="candidate in candidates"
-        :key="candidate.candidateIdentifier"
-    >
+    <table>
         <tr>
-            <td style="width: 50px;">ID</td>
-            <td>{{candidate.candidateIdentifier}}</td>
+            <th>ID</th>
+            <th>Naam</th>
         </tr>
-        <tr>
-            <td style="width: 50px;">Naam</td>
+        <tr v-for="candidate in candidates" :key="candidate.candidateIdentifier">
+            <td>{{candidate.candidateIdentifier}}</td>
             <td>{{candidate.firstName}} {{candidate.namePrefix}} {{candidate.lastName}}</td>
         </tr>
     </table>
