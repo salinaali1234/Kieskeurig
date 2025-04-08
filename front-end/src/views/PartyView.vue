@@ -8,7 +8,7 @@ const route = useRoute()
 const electionId: string | string[] = route.params.electionId
 const partyName: string | string[] = route.params.partyName
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL
-const url: string = `${VITE_APP_BACKEND_URL}api/candidates/${electionId}/${partyName}`
+const url: string = `${VITE_APP_BACKEND_URL}/api/candidates/${electionId}/${partyName}`
 
 onMounted(async () => {
     try {
