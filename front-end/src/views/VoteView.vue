@@ -7,11 +7,13 @@ interface Party {
 }
 
 const parties = ref<Party[]>([]);
+const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
+const url: string = `${VITE_APP_BACKEND_URL}/api/xml/votes/parties`;
 
 
 onMounted(async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/xml/votes/parties");
+    const response = await fetch(url);
 
     if (response.ok) {
       const data = await response.json();
