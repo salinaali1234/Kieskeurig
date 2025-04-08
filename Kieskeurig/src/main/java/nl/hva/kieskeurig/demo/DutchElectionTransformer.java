@@ -1,4 +1,4 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
 
 //import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
@@ -8,6 +8,12 @@ import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
 
+import nl.hva.kieskeurig.utils.xml.Transformer;
+import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.service.CandidateService;
+import nl.hva.kieskeurig.mapper.CandidateMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -19,9 +25,12 @@ import static nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor.*;
  * <br>
  * <b>Please do NOT include this code in you project!</b>
  */
+@Component
 public class DutchElectionTransformer implements Transformer<Election> {
-  //  private Election election = new Election();
-    private Election election;
+    private final Election election = new Election();
+
+    @Autowired
+    private CandidateService candidateService;
 
     @Override
     public void registerElection(Map<String, String> electionData) {
@@ -55,27 +64,17 @@ public class DutchElectionTransformer implements Transformer<Election> {
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-        System.out.println("Registering candidate: " + candidateData);
 
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         Party party = election.getParty(partyId);
 
-        if (party != null) {
+        election.data = candidateData;
+        System.out.printf("Found candidate information: %s\n", candidateData);
 
-            int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
-            String firstName = candidateData.get(FIRST_NAME);
-            String lastName = candidateData.get(LAST_NAME);
-            String gender = candidateData.get(GENDER);
-            String localityName = candidateData.getOrDefault("locality", null);
-
-            Candidate candidate = new Candidate(candidateId, partyId, firstName, lastName, gender, "Unknown");
-            party.addCandidate(candidate);
-
-
-            System.out.println("Added candidate " + candidateId + " to party " + partyId);
-        } else {
-            System.out.println("Party " + partyId + " not found for candidate");
-        }
+        Candidate candidate = new CandidateMapper().apply(candidateData);
+        candidateService.addCandidate(candidate);
+        
+        party.addCandidate(candidate);
     }
 
     @Override

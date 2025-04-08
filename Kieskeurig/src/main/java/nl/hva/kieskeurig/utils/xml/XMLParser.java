@@ -1,4 +1,4 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;

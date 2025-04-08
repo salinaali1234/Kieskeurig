@@ -7,6 +7,7 @@ import CandidatesView from '../views/CandidatesView.vue'
 // import StatisticsView from '../views/StatisticsView.vue'
 // import VotingGuideView from '../views/VotingGuideView.vue'
 // import RegisterView from '../views/RegisterView.vue'
+import PartyView from '@/views/PartyView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +21,11 @@ const router = createRouter({
       path: '/statistieken',
       name: 'Vote',
       component: VoteView,
-
+    },
+    {
+      path: '/election/:electionId/party/:partyName',
+      name: 'party',
+      component: PartyView,
     },
     {
       path: '/parties',
