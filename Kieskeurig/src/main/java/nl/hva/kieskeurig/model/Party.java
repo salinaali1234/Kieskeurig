@@ -18,7 +18,7 @@ public class Party{
 
     public boolean addCandidate(Candidate candidate){
         for(Candidate c : candidates){
-            if(c.getId() == candidate.getId()){
+            if(c.getCandidateIdentifier() == candidate.getCandidateIdentifier()){
                 return false;
             }
         }

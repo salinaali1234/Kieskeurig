@@ -1,8 +1,10 @@
 package nl.hva.kieskeurig.service;
 
-import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+//import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.NationalVotesReader;
+import nl.hva.kieskeurig.utils.xml.XMLParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;

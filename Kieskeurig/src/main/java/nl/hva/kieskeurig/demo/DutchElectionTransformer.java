@@ -2,10 +2,9 @@ package nl.hva.kieskeurig.demo;
 
 
 //import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-import nl.hva.ict.se.sm3.utils.xml.Transformer;
 //import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.model.Election;
+//import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
 
 import nl.hva.kieskeurig.utils.xml.Transformer;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor.*;
+import static nl.hva.kieskeurig.utils.xml.DutchElectionProcessor.*;
 
 /**
  * A dummy {@link Transformer} that just prints the election data so you can get an understanding of what
@@ -36,9 +35,6 @@ public class DutchElectionTransformer implements Transformer<Election> {
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
         System.out.printf("Found election information: %s\n", electionData);
-        if (election == null) {
-            election = new Election(electionDate);
-        }
     }
 
     @Override
@@ -57,7 +53,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
         System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
 
         Party party = new Party(partyId, partyName);
-        election.addParty(party);
+//        election.addParty(party);
         System.out.println(election);
     }
 
@@ -65,8 +61,8 @@ public class DutchElectionTransformer implements Transformer<Election> {
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
 
-        int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
-        Party party = election.getParty(partyId);
+//        int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
+//        Party party = election.getParty(partyId);
 
         election.data = candidateData;
         System.out.printf("Found candidate information: %s\n", candidateData);
@@ -74,7 +70,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
         Candidate candidate = new CandidateMapper().apply(candidateData);
         candidateService.addCandidate(candidate);
         
-        party.addCandidate(candidate);
+//        party.addCandidate(candidate);
     }
 
     @Override
