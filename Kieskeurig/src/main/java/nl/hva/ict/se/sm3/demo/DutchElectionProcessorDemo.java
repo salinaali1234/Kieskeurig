@@ -2,7 +2,7 @@ package nl.hva.ict.se.sm3.demo;
 
 import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-
+import nl.hva.kieskeurig.model.Election;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class Candidate {
     private final int id;
+    private final int candidateId;
     private final String initials;
     private final String firstName;
     private final String namePrefix;
@@ -12,8 +13,11 @@ public class Candidate {
     private final String gender;
     private final String localityName;
 
-    public Candidate(int id, String initials, String firstName, String namePrefix, String lastName, String gender, String localityName) {
+
+    public Candidate(int id, int candidateId, String initials, String firstName,
+                     String namePrefix, String lastName, String gender, String localityName) {
         this.id = id;
+        this.candidateId = candidateId;
         this.initials = initials;
         this.firstName = firstName;
         this.namePrefix = namePrefix;
@@ -22,10 +26,15 @@ public class Candidate {
         this.localityName = localityName;
     }
 
-    // Second constructor if the person doesn't have a namePrefix
-    public Candidate(int id, String initials, String firstName, String lastName, String gender, String localityName) {
-        this(id, initials, firstName, "", lastName, gender, localityName);
+
+//    public Candidate(int id, int candidateId, String initials, String firstName,
+//                     String lastName, String gender, String localityName) {
+//        this(id, candidateId, initials, firstName, "", lastName, gender, localityName);
+//    }
+
+
+    public Candidate(int id, int candidateId, String firstName,
+                     String lastName, String gender, String localityName) {
+        this(id, candidateId, "", firstName, "", lastName, gender, localityName);
     }
-
-
 }

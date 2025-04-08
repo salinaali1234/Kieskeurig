@@ -1,8 +1,17 @@
 package nl.hva.ict.se.sm3.demo;
 
+
+//import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
+//import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.Election;
+import nl.hva.kieskeurig.model.Party;
+
 
 import java.util.Map;
+
+import static nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor.*;
 
 /**
  * A dummy {@link Transformer} that just prints the election data so you can get an understanding of what
@@ -11,35 +20,67 @@ import java.util.Map;
  * <b>Please do NOT include this code in you project!</b>
  */
 public class DutchElectionTransformer implements Transformer<Election> {
-    private Election election = new Election();
+  //  private Election election = new Election();
+    private Election election;
 
     @Override
     public void registerElection(Map<String, String> electionData) {
-        election.data = electionData;
+        String electionDate = electionData.get(ELECTION_DATE);
         System.out.printf("Found election information: %s\n", electionData);
+        if (election == null) {
+            election = new Election(electionDate);
+        }
     }
 
     @Override
     public void registerContest(Map<String, String> contestData) {
-        election.data = contestData;
+      // election = new Election(electionDate);
+
         System.out.printf("Found contest information: %s\n", contestData);
     }
 
+
     @Override
     public void registerAffiliation(Map<String, String> affiliationData) {
-        election.data = affiliationData;
-        System.out.printf("Found affiliation information: %s\n", affiliationData);
+        int partyId = Integer.parseInt(affiliationData.get(AFFILIATION_IDENTIFIER));
+        String partyName = affiliationData.get(REGISTERED_NAME);
+
+        System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
+
+        Party party = new Party(partyId, partyName);
+        election.addParty(party);
+        System.out.println(election);
     }
+
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-        election.data = candidateData;
-        System.out.printf("Found candidate information: %s\n", candidateData);
+        System.out.println("Registering candidate: " + candidateData);
+
+        int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
+        Party party = election.getParty(partyId);
+
+        if (party != null) {
+
+            int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
+            String firstName = candidateData.get(FIRST_NAME);
+            String lastName = candidateData.get(LAST_NAME);
+            String gender = candidateData.get(GENDER);
+            String localityName = candidateData.getOrDefault("locality", null);
+
+            Candidate candidate = new Candidate(candidateId, partyId, firstName, lastName, gender, "Unknown");
+            party.addCandidate(candidate);
+
+
+            System.out.println("Added candidate " + candidateId + " to party " + partyId);
+        } else {
+            System.out.println("Party " + partyId + " not found for candidate");
+        }
     }
 
     @Override
     public void registerVotes(Map<String, String> votesData) {
-        election.data = votesData;
+       // election.data = votesData;
         System.out.printf("Found votes information: %s\n", votesData);
     }
 

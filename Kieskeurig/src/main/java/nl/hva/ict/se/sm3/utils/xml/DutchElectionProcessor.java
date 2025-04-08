@@ -89,6 +89,7 @@ public class DutchElectionProcessor<E> {
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME_PREFIX = "NamePrefix";
     public static final String LAST_NAME = "LastName";
+    public static final String GENDER = "Gender";
 
     /*
      The tag names on the reporting unit level within the XML files which are also used as keys in the maps when calling
@@ -256,6 +257,7 @@ public class DutchElectionProcessor<E> {
         String firstName = null;
         String lastNamePrefix = null;
         String lastName = null;
+        String gender = null;
 
         parser.nextBeginTag(CANDIDATE);
         if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
@@ -282,6 +284,11 @@ public class DutchElectionProcessor<E> {
             }
             parser.findAndAcceptEndTag(PERSON_NAME);
         }
+        //note to self: added a gender finder
+        if (parser.findBeginTag(GENDER)){
+            gender = parser.getElementText().trim();
+            parser.findAndAcceptEndTag(GENDER);
+        }
         parser.findAndAcceptEndTag(CANDIDATE);
 
         Map<String, String> candidateData = new HashMap<>(affiliationData);
@@ -297,6 +304,9 @@ public class DutchElectionProcessor<E> {
         }
         if (lastName != null) {
             candidateData.put(LAST_NAME, lastName);
+        }
+        if (gender != null) {
+            candidateData.put(GENDER, gender);
         }
 
         transformer.registerCandidate(candidateData);
