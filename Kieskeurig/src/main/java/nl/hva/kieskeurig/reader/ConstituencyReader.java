@@ -1,17 +1,12 @@
 package nl.hva.kieskeurig.reader;
 
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
-import nl.hva.ict.se.sm3.demo.Election;
-import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.XMLParser;
-import nl.hva.kieskeurig.service.ConstituencyService;
-
-import javax.sql.rowset.spi.XmlReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +24,7 @@ public class ConstituencyReader {
 
     public Map<String, String> getConstituencyMap() throws IOException, XMLStreamException {
         Map<String, String> constituencyMap = new HashMap<>();
+        List<String> allConstituencies = new ArrayList<>();
 
         while (xmlParser.tryNext()) {
             System.out.println(xmlParser.getLocalName());
@@ -67,7 +63,9 @@ public class ConstituencyReader {
                     if (id != null) {
                         System.out.println("Reading Constituency: " + id);
                         constituencyMap.put(id, id);
+                        allConstituencies.add(id);
                     } else {
+
                         System.out.println("id: " + id);
                     }
                 }
