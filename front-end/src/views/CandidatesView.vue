@@ -76,6 +76,7 @@ h1 {
 }
 
 .candidate-card {
+  color: black;
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
