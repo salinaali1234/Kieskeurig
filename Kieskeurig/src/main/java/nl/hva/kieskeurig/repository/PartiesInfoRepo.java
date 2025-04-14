@@ -1,11 +1,11 @@
 package nl.hva.kieskeurig.repository;
 
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
+import nl.hva.ict.se.sm3.demo.DutchElectionTransformerForParties;
 import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.model.Election;
-import nl.hva.kieskeurig.model.Party;
+import nl.hva.kieskeurig.model.ElectionForParty;
+import nl.hva.kieskeurig.model.PartyWithInfo;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -14,22 +14,22 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 @Repository
-public class XMLRepo {
+public class PartiesInfoRepo {
 
-    public Election loadElectionData() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
-        DutchElectionTransformer transformer = new DutchElectionTransformer();
-        DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
+    public ElectionForParty loadElectionData() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+        DutchElectionTransformerForParties transformer = new DutchElectionTransformerForParties();
+        DutchElectionProcessor<ElectionForParty> electionProcessor = new DutchElectionProcessor<>(transformer);
 
         return electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
     }
 
-    public List<Party> getParties() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
-        Election election = loadElectionData();
+    public List<PartyWithInfo> getParties() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+        ElectionForParty election = loadElectionData();
         return election.getParties();
     }
 
-    public Party getPartyById(int partyId) throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
-        for (Party party : getParties()) {
+    public PartyWithInfo getPartyById(int partyId) throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+        for (PartyWithInfo party : getParties()) {
             if (party.getPartyId() == partyId) {
                 return party;
             }
@@ -39,7 +39,7 @@ public class XMLRepo {
 
     public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
         System.out.println("Fetching candidates for party ID: " + partyId);
-        Party party = getPartyById(partyId);
+        PartyWithInfo party = getPartyById(partyId);
 
         if (party != null) {
             System.out.println("Found " + party.getCandidates().size() + " candidates");
@@ -50,7 +50,7 @@ public class XMLRepo {
         return new ArrayList<>();
     }
 
-    public List<Election> getAll() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+    public List<ElectionForParty> getAll() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
         return List.of(loadElectionData());
     }
 }

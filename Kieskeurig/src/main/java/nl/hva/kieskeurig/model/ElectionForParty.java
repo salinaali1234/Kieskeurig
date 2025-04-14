@@ -8,14 +8,14 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Election {
+public class ElectionForParty {
     private String electionDate;
 
-    private List<Party> parties = new ArrayList<>();
+    private List<PartyWithInfo> parties = new ArrayList<>();
 
-    public Election(String electionDate) {this.electionDate = electionDate;}
-    public Party getParty(int partyId) {
-        for (Party party : parties) {
+    public ElectionForParty(String electionDate) {this.electionDate = electionDate;}
+    public PartyWithInfo getParty(int partyId) {
+        for (PartyWithInfo party : parties) {
             if (party.getPartyId() == partyId) {
                 return party;
             }
@@ -23,7 +23,7 @@ public class Election {
         return null;
     }
 
-    public boolean addParty(Party party) {
+    public boolean addParty(PartyWithInfo party) {
         return parties.add(party);
     }
 

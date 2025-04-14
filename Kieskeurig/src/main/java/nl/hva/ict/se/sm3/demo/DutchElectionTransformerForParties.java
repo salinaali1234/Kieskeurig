@@ -5,8 +5,8 @@ package nl.hva.ict.se.sm3.demo;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
 //import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.model.Election;
-import nl.hva.kieskeurig.model.Party;
+import nl.hva.kieskeurig.model.ElectionForParty;
+import nl.hva.kieskeurig.model.PartyWithInfo;
 
 
 import java.util.Map;
@@ -19,16 +19,16 @@ import static nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor.*;
  * <br>
  * <b>Please do NOT include this code in you project!</b>
  */
-public class DutchElectionTransformer implements Transformer<Election> {
+public class DutchElectionTransformerForParties implements Transformer<ElectionForParty> {
   //  private Election election = new Election();
-    private Election election;
+    private ElectionForParty election;
 
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
         System.out.printf("Found election information: %s\n", electionData);
         if (election == null) {
-            election = new Election(electionDate);
+            election = new ElectionForParty(electionDate);
         }
     }
 
@@ -47,7 +47,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
 
         System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
 
-        Party party = new Party(partyId, partyName);
+        PartyWithInfo party = new PartyWithInfo(partyId, partyName);
         election.addParty(party);
         System.out.println(election);
     }
@@ -58,7 +58,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
         System.out.println("Registering candidate: " + candidateData);
 
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
-        Party party = election.getParty(partyId);
+        PartyWithInfo party = election.getParty(partyId);
 
         if (party != null) {
 
@@ -85,7 +85,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
     }
 
     @Override
-    public Election retrieve() {
+    public ElectionForParty retrieve() {
         return election;
     }
 }

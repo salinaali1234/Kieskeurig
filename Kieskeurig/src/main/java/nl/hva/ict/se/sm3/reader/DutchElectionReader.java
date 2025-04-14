@@ -1,10 +1,10 @@
 package nl.hva.ict.se.sm3.reader;
 
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
+import nl.hva.ict.se.sm3.demo.DutchElectionTransformerForParties;
 import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-import nl.hva.kieskeurig.model.Election;
-import nl.hva.kieskeurig.repository.XMLRepo;
+import nl.hva.kieskeurig.model.ElectionForParty;
+import nl.hva.kieskeurig.repository.PartiesInfoRepo;
 
 import org.springframework.stereotype.Service;
 import javax.xml.stream.XMLStreamException;
@@ -16,9 +16,9 @@ import java.io.IOException;
 
 @Service
 public class DutchElectionReader {
-    private XMLRepo xmlService;
+    private PartiesInfoRepo xmlService;
 
-    public DutchElectionReader(XMLRepo xmlService) {
+    public DutchElectionReader(PartiesInfoRepo xmlService) {
         this.xmlService = xmlService;
 
     }
@@ -26,12 +26,12 @@ public class DutchElectionReader {
     public boolean readResults(String folderName, int Party) {
         System.out.println("Reading results");
 
-        DutchElectionTransformer transformer = new DutchElectionTransformer();
+        DutchElectionTransformerForParties transformer = new DutchElectionTransformerForParties();
 
-        DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
+        DutchElectionProcessor<ElectionForParty> electionProcessor = new DutchElectionProcessor<>(transformer);
 
         try{
-            Election election = electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/%s".formatted(folderName)));
+            ElectionForParty election = electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/%s".formatted(folderName)));
 
            // xmlService.add(election);
             System.out.printf("There are %d parties read. \n", election.getParties().size());

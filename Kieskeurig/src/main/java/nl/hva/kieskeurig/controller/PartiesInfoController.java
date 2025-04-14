@@ -1,9 +1,9 @@
 package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.model.Election;
-import nl.hva.kieskeurig.model.Party;
-import nl.hva.kieskeurig.service.XMLService;
+import nl.hva.kieskeurig.model.ElectionForParty;
+import nl.hva.kieskeurig.model.PartyWithInfo;
+import nl.hva.kieskeurig.service.PartiesInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +13,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/xml")
-public class XMLController {
-    private final XMLService service;
+@RequestMapping("/api/partiesInfo")
+public class PartiesInfoController {
+    private final PartiesInfoService service;
 
     @Autowired
-    public XMLController(XMLService service) {
+    public PartiesInfoController(PartiesInfoService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<Election> getAll() {
+    public List<ElectionForParty> getAll() {
         try {
             return service.getAll();
         } catch (IOException | XMLStreamException e) {
@@ -44,7 +44,7 @@ public class XMLController {
     }
 
     @GetMapping("/parties/{partyId}")
-    public List<Party> getParty(@PathVariable int partyId) {
+    public List<PartyWithInfo> getParty(@PathVariable int partyId) {
         try {
             return service.getParty(partyId)
                     .map(List::of)
@@ -55,7 +55,7 @@ public class XMLController {
         }
 
     }@GetMapping("/parties")
-    public List<Party> getAllParties() {
+    public List<PartyWithInfo> getAllParties() {
         try {
             return service.getAllParties();
         } catch (IOException | XMLStreamException e) {
