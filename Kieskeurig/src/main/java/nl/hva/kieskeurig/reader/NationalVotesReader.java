@@ -1,8 +1,8 @@
 package nl.hva.kieskeurig.reader;
 
 
-import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
-import nl.hva.kieskeurig.utils.xml.XMLParser;
+import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.HashMap;

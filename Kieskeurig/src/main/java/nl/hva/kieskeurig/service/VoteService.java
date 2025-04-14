@@ -3,8 +3,7 @@ package nl.hva.kieskeurig.service;
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.NationalVotesReader;
-import nl.hva.kieskeurig.utils.xml.XMLParser;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -23,7 +22,7 @@ public class VoteService {
 
     public boolean readResults(String fileName) {
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("VerkiezingsuitslagTweedeKamer2023/" + fileName);
 
             if (inputStream == null) {
                 System.err.println("Bestand niet gevonden: " + "Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);

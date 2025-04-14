@@ -1,11 +1,11 @@
 package nl.hva.kieskeurig.repository;
 
-import nl.hva.kieskeurig.demo.DutchElectionTransformer;
+import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
 import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.Election;
 import nl.hva.kieskeurig.model.Party;
-import nl.hva.kieskeurig.utils.PathUtils;
-import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
+import nl.hva.ict.se.sm3.utils.PathUtils;
+import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +19,7 @@ public class XMLRepo {
 
     @Autowired
     private DutchElectionProcessor<Election> electionProcessor;
+
 
     public Election loadElectionData() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
         DutchElectionTransformer transformer = new DutchElectionTransformer();

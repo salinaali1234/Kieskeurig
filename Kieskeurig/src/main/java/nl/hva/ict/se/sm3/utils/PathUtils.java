@@ -1,4 +1,4 @@
-package nl.hva.kieskeurig.utils;
+package nl.hva.ict.se.sm3.utils;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,6 @@
-package nl.hva.kieskeurig.demo;
+package nl.hva.ict.se.sm3.demo;
 
-import nl.hva.kieskeurig.utils.xml.Transformer;
+import nl.hva.ict.se.sm3.utils.xml.Transformer;
 
 import java.util.Map;
 

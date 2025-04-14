@@ -1,7 +1,7 @@
-package nl.hva.kieskeurig.utils.xml;
+package nl.hva.ict.se.sm3.utils.xml;
 
-import nl.hva.kieskeurig.demo.Election;
-import nl.hva.kieskeurig.utils.PathUtils;
+import nl.hva.ict.se.sm3.demo.Election;
+import nl.hva.ict.se.sm3.utils.PathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

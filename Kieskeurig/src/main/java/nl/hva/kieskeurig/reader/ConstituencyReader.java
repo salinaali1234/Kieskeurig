@@ -1,7 +1,9 @@
 package nl.hva.kieskeurig.reader;
 
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+
 import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.ArrayList;
