@@ -67,7 +67,7 @@ public class ConstituencyService {
 
 
     public boolean connectConstituencies() throws XMLStreamException, IOException {
-        ClassPathResource resource = new ClassPathResource("VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml");
+        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Totaaltelling_TK2023.eml.xml");
         System.out.println("getting everthing");
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");

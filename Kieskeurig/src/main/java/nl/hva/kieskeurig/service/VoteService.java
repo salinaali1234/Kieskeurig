@@ -22,7 +22,7 @@ public class VoteService {
 
     public boolean readResults(String fileName) {
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("VerkiezingsuitslagTweedeKamer2023/" + fileName);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
 
             if (inputStream == null) {
                 System.err.println("Bestand niet gevonden: " + "Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
