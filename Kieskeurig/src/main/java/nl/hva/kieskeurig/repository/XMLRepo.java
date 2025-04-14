@@ -17,7 +17,7 @@ import javax.xml.stream.XMLStreamException;
 @Repository
 public class XMLRepo {
 
-    @Autowired
+    //@Autowired
     private DutchElectionProcessor<Election> electionProcessor;
 
 
