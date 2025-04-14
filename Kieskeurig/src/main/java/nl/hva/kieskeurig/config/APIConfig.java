@@ -15,4 +15,20 @@ public class APIConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
-
+//@Value("${kieskeurig.frontend.url}")
+//    private String frontendUrl;
+//
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        System.out.println("frontendUrl: " + frontendUrl);
+//        System.out.println("added cors mappings");
+//
+//        registry.addMapping("/api/**")
+//                .allowedOriginPatterns(
+//                        frontendUrl
+//                        )
+//                .allowedHeaders("*")
+//                .allowCredentials(true)
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+//    }
+//}

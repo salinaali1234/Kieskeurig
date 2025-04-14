@@ -1,4 +1,4 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
 import java.util.Map;
 
