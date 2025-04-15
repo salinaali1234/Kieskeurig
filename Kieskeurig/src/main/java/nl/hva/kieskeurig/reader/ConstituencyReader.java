@@ -1,8 +1,9 @@
 package nl.hva.kieskeurig.reader;
 
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
 
-import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+import nl.hva.kieskeurig.utils.xml.Transformer;
+import nl.hva.kieskeurig.utils.xml.XMLParser;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A very small demo of how the classes {@link DutchElectionProcessor} and {@link nl.hva.ict.se.sm3.utils.xml.Transformer}
+ * A very small demo of how the classes {@link DutchElectionProcessor} and {@link Transformer}
  * can be used to process the XML-files.
  * <br>
  * <b>Please do NOT include this code in you project!</b>

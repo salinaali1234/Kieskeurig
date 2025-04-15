@@ -1,5 +1,7 @@
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import PartiesInfoView from '../views/PartiesInfoView.vue'
 import Constituencies from "@/views/Constituencies.vue";
 import PartiesView from '../views/PartiesView.vue'
 import CandidatesView from '../views/CandidatesView.vue'
@@ -27,7 +29,7 @@ const router = createRouter({
     {
       path: '/parties',
       name: 'parties',
-      component: PartiesView,
+      component: PartiesInfoView,
     },
     {
       path: '/parties/:partyId/candidates',

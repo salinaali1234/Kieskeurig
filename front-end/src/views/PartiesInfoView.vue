@@ -18,7 +18,7 @@ const fetchParties = async () => {
     loading.value = true;
     error.value = null;
 
-    const response = await fetch('http://localhost:8080/api/xml/parties');
+    const response = await fetch('http://localhost:8080/api/partiesInfo/parties');
 
     console.log('Response status:', response.status); // Debug log
 

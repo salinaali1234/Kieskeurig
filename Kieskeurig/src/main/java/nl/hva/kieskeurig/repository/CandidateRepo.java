@@ -2,6 +2,7 @@ package nl.hva.kieskeurig.repository;
 
 import lombok.Getter;
 import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.service.CandidateService;
 import org.springframework.stereotype.Repository;
 

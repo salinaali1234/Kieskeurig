@@ -1,9 +1,9 @@
 package nl.hva.kieskeurig.service;
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformer;
-import nl.hva.ict.se.sm3.demo.Election;
-import nl.hva.ict.se.sm3.utils.PathUtils;
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+import nl.hva.kieskeurig.demo.DutchElectionTransformer;
+import nl.hva.kieskeurig.demo.Election;
+import nl.hva.kieskeurig.utils.PathUtils;
+import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.reader.ConstituencyReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
-import nl.hva.ict.se.sm3.utils.xml.Transformer;
+import nl.hva.kieskeurig.utils.xml.Transformer;
 
 import java.util.Map;
 
@@ -13,8 +13,8 @@ import java.util.Map;
 public class Election {
     public Map<String, String> data;
 
-    @Override
-    public String toString() {
-        return "The last information received is: %s".formatted(data);
-    }
+//    @Override
+//    public String toString() {
+//        return "The last information received is: %s".formatted(data);
+//    }
 }

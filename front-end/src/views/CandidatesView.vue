@@ -22,7 +22,7 @@ const partyName = ref('');
 onMounted(async () => {
   try {
     // First get party info for the name
-    const partyResponse = await fetch(`http://localhost:8080/api/xml/parties/${props.partyId}`);
+    const partyResponse = await fetch(`http://localhost:8080/api/partiesInfo/parties/${props.partyId}`);
     if (!partyResponse.ok) throw new Error('Party not found');
     const partyData = await partyResponse.json();
     if (partyData.length > 0) {
@@ -30,7 +30,7 @@ onMounted(async () => {
     }
 
     // Then get candidates
-    const candidatesResponse = await fetch(`http://localhost:8080/api/xml/candidates/${props.partyId}`);
+    const candidatesResponse = await fetch(`http://localhost:8080/api/partiesInfo/candidates/${props.partyId}`);
     if (!candidatesResponse.ok) throw new Error('Failed to load candidates');
     candidates.value = await candidatesResponse.json();
   } catch (err) {
@@ -76,6 +76,7 @@ h1 {
 }
 
 .candidate-card {
+  color: black;
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
