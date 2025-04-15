@@ -63,6 +63,7 @@ public class PartiesInfoController {
             return List.of();
         }
     }
+
 }
 //    @GetMapping("/parties/{partyId}")
 //    public List<Party> getParty(@PathVariable int partyId) {

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * The XMLParser does the low-level  and has default scope on purpose because it is to be used only
  * by an instance of DutchElectionProcessor!
  */
-class XMLParser extends StreamReaderDelegate {
+public class XMLParser extends StreamReaderDelegate {
     private static final Logger LOG = Logger.getLogger(XMLParser.class.getName());
 
     static {
@@ -25,7 +25,7 @@ class XMLParser extends StreamReaderDelegate {
         }
     }
 
-    XMLParser(InputStream inputStream) {
+    public XMLParser(InputStream inputStream) {
         super(createXMLStreamReader(inputStream));
     }
 
@@ -40,7 +40,7 @@ class XMLParser extends StreamReaderDelegate {
         return xmlStreamReader;
     }
 
-    boolean tryNext() throws XMLStreamException {
+    public boolean tryNext() throws XMLStreamException {
         if (hasNext()) {
             next();
             return true;
@@ -93,7 +93,7 @@ class XMLParser extends StreamReaderDelegate {
         return tag.equals(hit);
     }
 
-    boolean findBeginTag(String tag) throws XMLStreamException {
+    public boolean findBeginTag(String tag) throws XMLStreamException {
         boolean hit = nextBeginTag(tag);
         while (!hit && hasNext()) {
             next();

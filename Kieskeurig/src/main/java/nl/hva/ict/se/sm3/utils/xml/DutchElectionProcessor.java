@@ -1,6 +1,7 @@
 package nl.hva.ict.se.sm3.utils.xml;
 
 import nl.hva.ict.se.sm3.utils.PathUtils;
+import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -44,6 +45,9 @@ import java.util.logging.Logger;
  * <br>
  * <em>You are encouraged to alter this class so it suits your needs! :-)</em>
  */
+
+
+//@Component
 public class DutchElectionProcessor<E> {
     private static final Logger LOG = Logger.getLogger(DutchElectionProcessor.class.getName());
     private final Transformer<E> transformer;
@@ -101,6 +105,7 @@ public class DutchElectionProcessor<E> {
     public static final String REPORTING_UNIT_VOTES = "ReportingUnitVotes";
     public static final String VALID_VOTES = "ValidVotes";
     public static final String ZIPCODE = "ZipCode"; // For convenience, is used as a key in the data-maps.
+    public static final String TOTAL_COUNTED = "TotalCounted";
 
     // Used internally
     private static final String NAME_TYPE = "NameType";

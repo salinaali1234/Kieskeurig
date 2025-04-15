@@ -51,7 +51,7 @@ const showCandidates = (partyId: number) => {
 
 <template>
   <div class="parties-container">
-    <h1>Political Parties</h1>
+    <h1>Politieke partijen</h1>
 
     <div v-if="loading" class="loading">Loading parties...</div>
 
