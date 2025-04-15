@@ -1,6 +1,5 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.repository.XMLRepo;
 import nl.hva.kieskeurig.service.VoteService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,7 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    public VoteController(XMLRepo repo, VoteService voteService) {
+    public VoteController(VoteService voteService) {
         this.voteService = voteService;
     }
 

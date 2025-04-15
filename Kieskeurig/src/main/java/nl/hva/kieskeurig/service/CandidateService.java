@@ -4,6 +4,7 @@ import nl.hva.kieskeurig.controller.CandidateController;
 import nl.hva.kieskeurig.dto.CandidateDTO;
 import nl.hva.kieskeurig.mapper.CandidateDTOMapper;
 import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.repository.CandidateRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

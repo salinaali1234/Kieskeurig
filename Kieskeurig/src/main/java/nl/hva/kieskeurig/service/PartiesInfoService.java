@@ -1,6 +1,6 @@
 package nl.hva.kieskeurig.service;
 
-import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;
 import nl.hva.kieskeurig.repository.PartiesInfoRepo;
@@ -35,7 +35,7 @@ public class PartiesInfoService {
     }
 
     // note to self: picks up candidate (does not work yet)
-    public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
+    public List<CandidateForPartyInfo> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
         return repo.getCandidatesOfParty(partyId);
     }
 }

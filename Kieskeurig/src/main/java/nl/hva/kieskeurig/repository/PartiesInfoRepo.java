@@ -3,7 +3,7 @@ package nl.hva.kieskeurig.repository;
 import nl.hva.ict.se.sm3.demo.DutchElectionTransformerForParties;
 import nl.hva.ict.se.sm3.utils.PathUtils;
 import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;
 import org.springframework.stereotype.Repository;
@@ -17,14 +17,16 @@ import javax.xml.stream.XMLStreamException;
 public class PartiesInfoRepo {
 
     public ElectionForParty loadElectionData() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
+        System.out.println("loadElectionData");
         DutchElectionTransformerForParties transformer = new DutchElectionTransformerForParties();
         DutchElectionProcessor<ElectionForParty> electionProcessor = new DutchElectionProcessor<>(transformer);
-
+        System.out.println("PartiesInfoRepo.loadElectionData()");
         return electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
     }
 
     public List<PartyWithInfo> getParties() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
         ElectionForParty election = loadElectionData();
+        System.out.println("listwith parties" + election.getParties());
         return election.getParties();
     }
 
@@ -37,12 +39,13 @@ public class PartiesInfoRepo {
         return null;
     }
 
-    public List<Candidate> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
+    public List<CandidateForPartyInfo> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
         System.out.println("Fetching candidates for party ID: " + partyId);
         PartyWithInfo party = getPartyById(partyId);
 
-        if (party != null) {
+                if (party != null) {
             System.out.println("Found " + party.getCandidates().size() + " candidates");
+            System.out.println(party.getCandidates());
             return party.getCandidates();
         }
 

@@ -29,7 +29,7 @@ public class DutchElectionProcessorDemo {
 
         System.out.println("All files are processed.\n");
         // Just print the 'results'
-        System.out.println(election);
+        //System.out.println(election);
     }
 
 }

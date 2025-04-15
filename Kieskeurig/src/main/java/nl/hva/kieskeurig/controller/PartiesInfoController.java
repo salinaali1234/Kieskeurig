@@ -1,6 +1,6 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;
 import nl.hva.kieskeurig.service.PartiesInfoService;
@@ -34,9 +34,9 @@ public class PartiesInfoController {
     }
 
     @GetMapping("/candidates/{partyId}")
-    public ResponseEntity<List<Candidate>> getCandidatesOfParty(@PathVariable int partyId) {
+    public ResponseEntity<List<CandidateForPartyInfo>> getCandidatesOfParty(@PathVariable int partyId) {
         try {
-            List<Candidate> candidates = service.getCandidatesOfParty(partyId);
+            List<CandidateForPartyInfo> candidates = service.getCandidatesOfParty(partyId);
             return ResponseEntity.ok(candidates);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

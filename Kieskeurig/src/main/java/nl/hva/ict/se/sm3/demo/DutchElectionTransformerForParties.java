@@ -4,7 +4,7 @@ package nl.hva.ict.se.sm3.demo;
 //import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
 import nl.hva.ict.se.sm3.utils.xml.Transformer;
 //import nl.hva.kieskeurig.model.Candidate;
-import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;
 
@@ -26,7 +26,7 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
-        System.out.printf("Found election information: %s\n", electionData);
+        //System.out.printf("Found election information: %s\n", electionData);
         if (election == null) {
             election = new ElectionForParty(electionDate);
         }
@@ -36,7 +36,7 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     public void registerContest(Map<String, String> contestData) {
       // election = new Election(electionDate);
 
-        System.out.printf("Found contest information: %s\n", contestData);
+        //System.out.printf("Found contest information: %s\n", contestData);
     }
 
 
@@ -45,17 +45,17 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
         int partyId = Integer.parseInt(affiliationData.get(AFFILIATION_IDENTIFIER));
         String partyName = affiliationData.get(REGISTERED_NAME);
 
-        System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
+        //System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
 
         PartyWithInfo party = new PartyWithInfo(partyId, partyName);
         election.addParty(party);
-        System.out.println(election);
+        //System.out.println(election);
     }
 
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-        System.out.println("Registering candidate: " + candidateData);
+        //System.out.println("Registering candidate: " + candidateData);
 
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         PartyWithInfo party = election.getParty(partyId);
@@ -68,11 +68,11 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
             String gender = candidateData.get(GENDER);
             String localityName = candidateData.getOrDefault("locality", null);
 
-            Candidate candidate = new Candidate(candidateId, partyId, firstName, lastName, gender, "Unknown");
+            CandidateForPartyInfo candidate = new CandidateForPartyInfo(candidateId, partyId, firstName, lastName, gender, "Unknown");
             party.addCandidate(candidate);
 
 
-            System.out.println("Added candidate " + candidateId + " to party " + partyId);
+            System.out.println("Added candidate " + candidateId + firstName + " to party " + partyId);
         } else {
             System.out.println("Party " + partyId + " not found for candidate");
         }
@@ -81,7 +81,12 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerVotes(Map<String, String> votesData) {
        // election.data = votesData;
-        System.out.printf("Found votes information: %s\n", votesData);
+       // System.out.printf("Found votes information: %s\n", votesData);
+    }
+
+    @Override
+    public void registerConstituents(Map<String, String> constituentData) {
+
     }
 
     @Override
