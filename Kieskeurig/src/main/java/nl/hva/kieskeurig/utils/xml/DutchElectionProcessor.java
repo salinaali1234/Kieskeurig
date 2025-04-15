@@ -1,6 +1,6 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
-import nl.hva.ict.se.sm3.utils.PathUtils;
+import nl.hva.kieskeurig.utils.PathUtils;
 import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamException;
@@ -47,9 +47,10 @@ import java.util.logging.Logger;
  */
 
 
-//@Component
+@Component
 public class DutchElectionProcessor<E> {
     private static final Logger LOG = Logger.getLogger(DutchElectionProcessor.class.getName());
+
     private final Transformer<E> transformer;
 
     // Common attribute name that is use on multiple tags.

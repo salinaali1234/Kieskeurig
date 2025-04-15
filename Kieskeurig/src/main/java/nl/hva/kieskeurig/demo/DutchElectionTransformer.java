@@ -1,6 +1,11 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
-import nl.hva.ict.se.sm3.utils.xml.Transformer;
+import nl.hva.kieskeurig.mapper.CandidateMapper;
+import nl.hva.kieskeurig.model.Candidate;
+import nl.hva.kieskeurig.service.CandidateService;
+import nl.hva.kieskeurig.utils.xml.Transformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -10,8 +15,12 @@ import java.util.Map;
  * <br>
  * <b>Please do NOT include this code in you project!</b>
  */
+@Component
 public class DutchElectionTransformer implements Transformer<Election> {
     private Election election = new Election();
+
+    @Autowired
+    CandidateService candidateService;
 
     @Override
     public void registerElection(Map<String, String> electionData) {
@@ -35,6 +44,9 @@ public class DutchElectionTransformer implements Transformer<Election> {
     public void registerCandidate(Map<String, String> candidateData) {
         election.data = candidateData;
         System.out.printf("Found candidate information: %s\n", candidateData);
+
+        Candidate candidate = new CandidateMapper().apply(election.data);
+        candidateService.addCandidate(candidate);
     }
 
     @Override

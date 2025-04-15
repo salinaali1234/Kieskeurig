@@ -1,13 +1,15 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
-import nl.hva.ict.se.sm3.utils.PathUtils;
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.utils.PathUtils;
+import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
 import nl.hva.kieskeurig.model.ElectionForParty;
+import nl.hva.kieskeurig.utils.xml.Transformer;
+
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
 /**
- * A very small demo of how the classes {@link DutchElectionProcessor} and {@link nl.hva.ict.se.sm3.utils.xml.Transformer}
+ * A very small demo of how the classes {@link DutchElectionProcessor} and {@link Transformer}
  * can be used to process the XML-files.
  * <br>
  * <b>Please do NOT include this code in you project!</b>

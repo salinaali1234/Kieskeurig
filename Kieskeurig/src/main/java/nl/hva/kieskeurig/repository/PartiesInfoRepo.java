@@ -1,8 +1,8 @@
 package nl.hva.kieskeurig.repository;
 
-import nl.hva.ict.se.sm3.demo.DutchElectionTransformerForParties;
-import nl.hva.ict.se.sm3.utils.PathUtils;
-import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.demo.DutchElectionTransformerForParties;
+import nl.hva.kieskeurig.utils.PathUtils;
+import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
 import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;

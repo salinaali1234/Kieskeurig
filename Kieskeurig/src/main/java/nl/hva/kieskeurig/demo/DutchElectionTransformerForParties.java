@@ -1,8 +1,8 @@
-package nl.hva.ict.se.sm3.demo;
+package nl.hva.kieskeurig.demo;
 
 
 //import nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor;
-import nl.hva.ict.se.sm3.utils.xml.Transformer;
+import nl.hva.kieskeurig.utils.xml.Transformer;
 //import nl.hva.kieskeurig.model.Candidate;
 import nl.hva.kieskeurig.model.CandidateForPartyInfo;
 import nl.hva.kieskeurig.model.ElectionForParty;
@@ -11,7 +11,7 @@ import nl.hva.kieskeurig.model.PartyWithInfo;
 
 import java.util.Map;
 
-import static nl.hva.ict.se.sm3.utils.xml.DutchElectionProcessor.*;
+import static nl.hva.kieskeurig.utils.xml.DutchElectionProcessor.*;
 
 /**
  * A dummy {@link Transformer} that just prints the election data so you can get an understanding of what
