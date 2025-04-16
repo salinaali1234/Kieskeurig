@@ -27,62 +27,40 @@ public class ConstituencyReader {
 
     public Map<String, String> getConstituencyMap() throws IOException, XMLStreamException {
         Map<String, String> constituencyMap = new HashMap<>();
-        List<String> allConstituencies = new ArrayList<>();
 
         while (xmlParser.tryNext()) {
-            System.out.println(xmlParser.getLocalName());
-            System.out.println("this is the reader Constituency");
-            while (xmlParser.tryNext()) {
-                if (xmlParser.isStartElement() && DutchElectionProcessor.ELECTION.equals(xmlParser.getLocalName())) {
-                    String id = null;
-                    String value = null;
+            // Find <kr:Region> elements
+            if (xmlParser.isStartElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
+                // Get RegionNumber attribute
+                int regionNumber = xmlParser.getIntegerAttributeValue(null, DutchElectionProcessor.REGIONNUMBER, 0);
+                String regionName = null;
 
-
-                    while (xmlParser.tryNext()) {
-                        if (xmlParser.isStartElement()) {
-                            String unitIdentifier = xmlParser.getLocalName();
-                            if (DutchElectionProcessor.REGION_NAME.equals(unitIdentifier)) {
-                                if (xmlParser.tryNext() && xmlParser.isCharacters()){
-                                    String textValue = xmlParser.getText().trim();
-
-                                    if (!textValue.isEmpty()) {
-                                        try {
-                                            id = textValue;
-                                            System.out.println(id);
-                                        } catch (NumberFormatException e) {
-                                            System.err.println("Invalid ID format: " + textValue);
-                                            continue;
-                                        }
-                                    }
-
-                                }
-
-
-                            } else {
-                                if (xmlParser.tryNext() && xmlParser.isCharacters()){
-                                    value = xmlParser.getText().trim();
-                                }
-
-                            }
-                        }
-                        if (id != null) {
-                            System.out.println("Reading Constituency: " + id);
-                            constituencyMap.put(id, id);
-                            allConstituencies.add(id);
-                        } else {
-
-                            System.out.println("id: " + id);
-                        }
-
-                        if (xmlParser.isEndElement() && DutchElectionProcessor.ELECTIONTREE.equals(xmlParser.getLocalName())) {
-                            break;
+                // Inside <kr:Region> loop
+                while (xmlParser.tryNext()) {
+                    if (xmlParser.isStartElement() && DutchElectionProcessor.REGION_NAME.equals(xmlParser.getLocalName())) {
+                        // Move to text content inside <kr:RegionName>
+                        if (xmlParser.tryNext() && xmlParser.isCharacters()) {
+                            regionName = xmlParser.getText().trim();
+                            //System.out.println("Found RegionName: " + regionName);
                         }
                     }
 
+                    // End of this <kr:Region> element
+                    if (xmlParser.isEndElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
+                        break;
+                    }
                 }
-            }
 
+                // Add to map if both values are present
+                if (regionName != null && !regionName.isEmpty()) {
+                    constituencyMap.put(String.valueOf(regionNumber), regionName);
+
+                }
+                System.out.println(constituencyMap);
+            }
         }
+
         return constituencyMap;
-    }}
+    }
+}
 
