@@ -15,12 +15,15 @@ import java.util.Map;
 @Service
 public class VoteService {
     private final List<Vote> votes = new ArrayList<>();
+    private boolean dataLoaded = false;
 
     public void add(Vote vote) {
         votes.add(vote);
     }
 
     public boolean readResults(String fileName) {
+        if (dataLoaded) return true; // voorkom dubbel laden
+
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
 
@@ -39,6 +42,7 @@ public class VoteService {
                 add(vote);
             }
 
+            dataLoaded = true;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
