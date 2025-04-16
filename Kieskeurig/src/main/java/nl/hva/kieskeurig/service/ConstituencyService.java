@@ -46,11 +46,10 @@ public class ConstituencyService {
 
     public List<Constituency> getAll() {return repo.findAll();}
 
-    public boolean connectElectionDefinition(String type, Integer idConstituency) throws XMLStreamException, IOException {
+    public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
 
-        System.out.println(idConstituency);
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
@@ -79,9 +78,7 @@ public class ConstituencyService {
                                 superiorRegionNumber
 
                         );
-                        if( idConstituency == 0) {
-                            add(municipality); // assuming you have some `add()` method
-                        }
+                        add(municipality);
                     }
 
                 }
@@ -97,7 +94,7 @@ public class ConstituencyService {
 
 
     public Map<String, String> getConstituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
-        if (connectElectionDefinition(type, constistuencyId)) {
+        if (connectElectionDefinition(type)) {
             Map<String, String> map = new HashMap<>();
             System.out.println("constituecny id in the service"+constistuencyId);
 
@@ -108,10 +105,22 @@ public class ConstituencyService {
             }
             if (type.equals("municipalities")) {
 
-                for (Municipality municipality : municipalities){
-                    System.out.println(municipality.getName() + municipality.getIdConstituency());
-                    map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                if (constistuencyId == 0){
+
+                    for (Municipality municipality : municipalities){
+                        System.out.println(municipality.getName() + municipality.getIdConstituency());
+                        map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                    }
+                } else {
+                    for (Municipality municipality : municipalities) {
+                        if (constistuencyId.equals(municipality.getIdConstituency())){
+                            map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                        } else {
+                            System.out.println("couldn't find Municipality");
+                        }
+                    }
                 }
+
             }
 
             return map;
