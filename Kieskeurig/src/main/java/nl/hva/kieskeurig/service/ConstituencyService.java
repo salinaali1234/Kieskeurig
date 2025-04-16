@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,15 +51,13 @@ public class ConstituencyService {
                 // And the election processor that traverses the folders and processes the XML-files.
                 DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
                 try{
-                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
+                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/Verkiezingsuitslag_TweedeKamer_2023/Verkiezingsdefinitie_TK2023.eml.xml"));
                 System.out.println("All files are processed.\n");
                 // Just print the 'results'
                 if (election != null) {
                     System.out.println(election.toString());
                 }
-                System.out.println(election.data);
                 return true;
-
 
             }catch (IOException | XMLStreamException | NullPointerException e) {
                 System.out.println("Hij kon niets inlezen :(");
@@ -66,21 +68,18 @@ public class ConstituencyService {
 
 
     public boolean connectConstituencies() throws XMLStreamException, IOException {
-        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Totaaltelling_TK2023.eml.xml");
+        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
-            System.out.println("inputstream" + inputStream.available());
             XMLParser xmlParser = new XMLParser(inputStream);
             ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
             Map<String, String> constituencyMap = reader.getConstituencyMap();
-            System.out.println(reader.getConstituencyMap());
             for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
-                Constituency constituency = new Constituency(entry.getValue(),entry.getValue());
+                Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
                 add(constituency);
             }
-            System.out.println("in the service"+ constituencyMap.toString());
 
             return true;
 
@@ -90,22 +89,18 @@ public class ConstituencyService {
         }
     }
 
-    public Map<String, Constituency> getConstituencies() throws XMLStreamException, IOException {
+    public Map<String, String> getConstituencies() throws XMLStreamException, IOException {
         if (connectConstituencies()) {
-            Map<String, Constituency> map = new HashMap<String, Constituency>();
+            Map<String, String> map = new HashMap<>();
 
             for (Constituency constituency : constituencies) {
-                map.put(constituency.getId(), constituency);
-                System.out.println();
+                map.put(constituency.getName(), constituency.getId());
             }
             return map;
         } else {
             return null;
         }
-
-        }
-
-
-        }
+    }
+}
 
 

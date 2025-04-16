@@ -36,7 +36,7 @@ public class ConstituencyController {
     }
 
     @GetMapping("/all/Constituencies")
-    public Map<String, Constituency> getAllConstituencies() throws XMLStreamException, IOException {
+    public Map<String, String> getAllConstituencies() throws XMLStreamException, IOException {
         System.out.println("hiii");
         System.out.println(service.getConstituencies());
 

@@ -7,10 +7,7 @@ import nl.hva.kieskeurig.utils.xml.XMLParser;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A very small demo of how the classes {@link DutchElectionProcessor} and {@link Transformer}
@@ -27,54 +24,39 @@ public class ConstituencyReader {
 
     public Map<String, String> getConstituencyMap() throws IOException, XMLStreamException {
         Map<String, String> constituencyMap = new HashMap<>();
-        List<String> allConstituencies = new ArrayList<>();
 
         while (xmlParser.tryNext()) {
-            System.out.println(xmlParser.getLocalName());
-            System.out.println("this is the reader Constituency");
-            while (xmlParser.tryNext()) {
-                if (xmlParser.isStartElement() && DutchElectionProcessor.REPORTING_UNIT_VOTES.equals(xmlParser.getLocalName())) {
-                    String id = null;
-                    String value = null;
+            // Find <kr:Region> elements
+            if (xmlParser.isStartElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
+                // Get RegionNumber attribute
+                int regionNumber = xmlParser.getIntegerAttributeValue(null, DutchElectionProcessor.REGION_NUMBER, 0);
+                String regionName = null;
+                String regionCatogory = xmlParser.getAttributeValue(null, DutchElectionProcessor.REGION_CATEGORY);
 
-
-                    while (xmlParser.tryNext()) {
-                        if (xmlParser.isStartElement()) {
-                            String unitIdentifier = xmlParser.getLocalName();
-                            if (DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(unitIdentifier)) {
-                                xmlParser.tryNext();
-                                String textValue = xmlParser.getText().trim();
-
-                                if (!textValue.isEmpty()) {
-                                    try {
-                                        id = textValue;
-                                    } catch (NumberFormatException e) {
-                                        System.err.println("Invalid ID format: " + textValue);
-                                        continue;
-                                    }
-                                }
-                            } else {
-                                value = xmlParser.getText().trim();
-                            }
-                        }
-
-                        if (xmlParser.isEndElement() && DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(xmlParser.getLocalName())) {
-                            break;
+                // Inside <kr:Region> loop
+                while (xmlParser.tryNext()) {
+                    if (xmlParser.isStartElement() && DutchElectionProcessor.REGION_NAME.equals(xmlParser.getLocalName())) {
+                        // Move to text content inside <kr:RegionName>
+                        if (xmlParser.tryNext() && xmlParser.isCharacters()) {
+                            regionName = xmlParser.getText().trim();
                         }
                     }
 
-                    if (id != null) {
-                        System.out.println("Reading Constituency: " + id);
-                        constituencyMap.put(id, id);
-                        allConstituencies.add(id);
-                    } else {
 
-                        System.out.println("id: " + id);
+                    // End of this <kr:Region> element
+                    if (xmlParser.isEndElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
+                        break;
                     }
                 }
-            }
 
+                // Add to map if both values are present
+                if (regionName != null && !regionName.isEmpty() && Objects.equals(regionCatogory, "KIESKRING") ) {
+                    constituencyMap.put(String.valueOf(regionNumber), regionName);
+
+                }
+            }
         }
         return constituencyMap;
-    }}
+    }
+}
 
