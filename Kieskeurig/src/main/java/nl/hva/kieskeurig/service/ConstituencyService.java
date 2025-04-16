@@ -57,7 +57,6 @@ public class ConstituencyService {
                 if (election != null) {
                     System.out.println(election.toString());
                 }
-                System.out.println(election.data);
                 return true;
 
             }catch (IOException | XMLStreamException | NullPointerException e) {
@@ -73,17 +72,14 @@ public class ConstituencyService {
         System.out.println("getting everthing");
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
-            System.out.println("inputstream" + inputStream.available());
             XMLParser xmlParser = new XMLParser(inputStream);
             ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
             Map<String, String> constituencyMap = reader.getConstituencyMap();
-            System.out.println(constituencyMap);
             for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
                 Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
                 add(constituency);
             }
-            System.out.println("in the service"+ constituencyMap.toString());
 
             return true;
 
@@ -100,15 +96,11 @@ public class ConstituencyService {
             for (Constituency constituency : constituencies) {
                 map.put(constituency.getName(), constituency.getId());
             }
-            System.out.println(map);
             return map;
         } else {
             return null;
         }
-
-        }
-
-
-        }
+    }
+}
 
 

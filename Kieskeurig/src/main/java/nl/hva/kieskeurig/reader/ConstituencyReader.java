@@ -39,7 +39,6 @@ public class ConstituencyReader {
                         // Move to text content inside <kr:RegionName>
                         if (xmlParser.tryNext() && xmlParser.isCharacters()) {
                             regionName = xmlParser.getText().trim();
-                            //System.out.println("Found RegionName: " + regionName);
                         }
                     }
 
@@ -57,7 +56,6 @@ public class ConstituencyReader {
                 }
             }
         }
-
         return constituencyMap;
     }
 }
