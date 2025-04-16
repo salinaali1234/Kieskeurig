@@ -9,7 +9,7 @@ interface Constituency {
 const constituencies = ref<Constituency[]>([]);
 const isVisible = ref(false);
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
-const url = `${backendUrl}/api/constituencies/all/Constituencies`;
+const url = `${backendUrl}/api/constituencies/all/Constituencies/0`;
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;

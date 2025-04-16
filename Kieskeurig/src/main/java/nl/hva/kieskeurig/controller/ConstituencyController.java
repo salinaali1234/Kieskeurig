@@ -25,23 +25,14 @@ public class ConstituencyController {
         return service.getAll();}
 
 
-    @GetMapping("/readConstituencies")
-    public boolean readConstituencies() throws XMLStreamException, IOException {
-        return service.readConstituencies();
+    @GetMapping("/all/{type}/{consistencyId}")
+    public Map<String, String> getAllConstituencies(@PathVariable String type, @PathVariable Integer consistencyId) throws XMLStreamException, IOException {
+        System.out.println("hiii"+ consistencyId);
+        System.out.println(service.getConstituencies(type, consistencyId));
+
+        return service.getConstituencies(type, consistencyId);
     }
 
-    @PostMapping("/connect/{fileName}")
-    public boolean connectConstituencies(@PathVariable String fileName) throws XMLStreamException, IOException {
-        return service.connectConstituencies();
-    }
-
-    @GetMapping("/all/Constituencies")
-    public Map<String, String> getAllConstituencies() throws XMLStreamException, IOException {
-        System.out.println("hiii");
-        System.out.println(service.getConstituencies());
-
-        return service.getConstituencies();
-    }
 
 
 //    look at the names for the api-endpoint

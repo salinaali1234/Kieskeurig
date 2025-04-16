@@ -1,6 +1,8 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.demo.DutchElectionTransformer;
 import nl.hva.kieskeurig.demo.Election;
+import nl.hva.kieskeurig.model.Municipality;
+import nl.hva.kieskeurig.reader.MunicipalitiesReader;
 import nl.hva.kieskeurig.utils.PathUtils;
 import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
@@ -28,11 +30,13 @@ import java.util.Map;
 public class ConstituencyService {
     private final ConstituencyRepo repo;
     private final List<Constituency> constituencies = new ArrayList<Constituency>();
+    private final List<Municipality> municipalities = new ArrayList<Municipality>();
     private final View error;
 
     public void add(Constituency constituency) {
         constituencies.add(constituency);
     }
+    public void add(Municipality municipality) {municipalities.add(municipality);}
 
 
     @Autowired
@@ -42,45 +46,46 @@ public class ConstituencyService {
 
     public List<Constituency> getAll() {return repo.findAll();}
 
-
-    public boolean readConstituencies() throws XMLStreamException, IOException {
-                System.out.println("Processing files...");
-
-                DutchElectionTransformer transformer = new DutchElectionTransformer();
-
-                // And the election processor that traverses the folders and processes the XML-files.
-                DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
-                try{
-                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/Verkiezingsuitslag_TweedeKamer_2023/Verkiezingsdefinitie_TK2023.eml.xml"));
-                System.out.println("All files are processed.\n");
-                // Just print the 'results'
-                if (election != null) {
-                    System.out.println(election.toString());
-                }
-                return true;
-
-            }catch (IOException | XMLStreamException | NullPointerException e) {
-                System.out.println("Hij kon niets inlezen :(");
-
-                return false;
-            }
-    }
-
-
-    public boolean connectConstituencies() throws XMLStreamException, IOException {
+    public boolean connectElectionDefinition(String type, Integer idConstituency) throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
+
+        System.out.println(idConstituency);
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
-            ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
-            Map<String, String> constituencyMap = reader.getConstituencyMap();
-            for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
-                Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
-                add(constituency);
+            if (type.equals("Constituencies")) {
+                ConstituencyReader reader = new ConstituencyReader(xmlParser);
+
+                Map<String, String> constituencyMap = reader.getConstituencyMap();
+                for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
+                    Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
+                    add(constituency);
+                }
             }
 
+            if (type.equals("municipalities")) {
+                MunicipalitiesReader reader = new MunicipalitiesReader(xmlParser);
+
+                Map<Integer, List<String>> municipalitiesMap = reader.getAllMunicipallies();
+                for (Map.Entry<Integer, List<String>> entry : municipalitiesMap.entrySet()) {
+                    Integer superiorRegionNumber = entry.getKey();
+                    List<String> municipalities = entry.getValue();
+
+                    for (String municipalityName : municipalities) {
+                        Municipality municipality = new Municipality(
+                                municipalityName,
+                                superiorRegionNumber
+
+                        );
+                        if( idConstituency == 0) {
+                            add(municipality); // assuming you have some `add()` method
+                        }
+                    }
+
+                }
+            }
             return true;
 
         } catch (Exception e) {
@@ -89,13 +94,26 @@ public class ConstituencyService {
         }
     }
 
-    public Map<String, String> getConstituencies() throws XMLStreamException, IOException {
-        if (connectConstituencies()) {
-            Map<String, String> map = new HashMap<>();
 
-            for (Constituency constituency : constituencies) {
-                map.put(constituency.getName(), constituency.getId());
+
+    public Map<String, String> getConstituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
+        if (connectElectionDefinition(type, constistuencyId)) {
+            Map<String, String> map = new HashMap<>();
+            System.out.println("constituecny id in the service"+constistuencyId);
+
+            if (type.equals("Constituencies")) {
+                for (Constituency constituency : constituencies) {
+                    map.put(constituency.getName(), constituency.getId());
+                }
             }
+            if (type.equals("municipalities")) {
+
+                for (Municipality municipality : municipalities){
+                    System.out.println(municipality.getName() + municipality.getIdConstituency());
+                    map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                }
+            }
+
             return map;
         } else {
             return null;

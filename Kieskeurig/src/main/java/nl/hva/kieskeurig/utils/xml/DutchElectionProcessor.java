@@ -57,6 +57,7 @@ public class DutchElectionProcessor<E> {
     public static final String ID = "Id";
     public static final String REGION_NUMBER = "RegionNumber";
     public static final String REGION_CATEGORY= "RegionCategory";
+    public static final String SUPERIOR_REGION_NUMBER= "SuperiorRegionNumber";
 
     /*
      The tag names on the election level within the XML files which are also used as keys in the maps when calling
