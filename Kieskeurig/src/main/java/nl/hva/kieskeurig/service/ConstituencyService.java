@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
 import javax.xml.stream.XMLStreamException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +51,7 @@ public class ConstituencyService {
                 // And the election processor that traverses the folders and processes the XML-files.
                 DutchElectionProcessor<Election> electionProcessor = new DutchElectionProcessor<>(transformer);
                 try{
-                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/VerkiezingsuitslagTweedeKamer2023/Totaaltelling_TK2023.eml.xml"));
+                    Election election= electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/Verkiezingsuitslag_TweedeKamer_2023/Verkiezingsdefinitie_TK2023.eml.xml"));
                 System.out.println("All files are processed.\n");
                 // Just print the 'results'
                 if (election != null) {
@@ -55,7 +59,6 @@ public class ConstituencyService {
                 }
                 System.out.println(election.data);
                 return true;
-
 
             }catch (IOException | XMLStreamException | NullPointerException e) {
                 System.out.println("Hij kon niets inlezen :(");
@@ -66,7 +69,7 @@ public class ConstituencyService {
 
 
     public boolean connectConstituencies() throws XMLStreamException, IOException {
-        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Totaaltelling_TK2023.eml.xml");
+        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");

@@ -33,7 +33,7 @@ public class ConstituencyReader {
             System.out.println(xmlParser.getLocalName());
             System.out.println("this is the reader Constituency");
             while (xmlParser.tryNext()) {
-                if (xmlParser.isStartElement() && DutchElectionProcessor.REPORTING_UNIT_VOTES.equals(xmlParser.getLocalName())) {
+                if (xmlParser.isStartElement() && DutchElectionProcessor.ELECTION.equals(xmlParser.getLocalName())) {
                     String id = null;
                     String value = null;
 
@@ -41,36 +41,44 @@ public class ConstituencyReader {
                     while (xmlParser.tryNext()) {
                         if (xmlParser.isStartElement()) {
                             String unitIdentifier = xmlParser.getLocalName();
-                            if (DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(unitIdentifier)) {
-                                xmlParser.tryNext();
-                                String textValue = xmlParser.getText().trim();
+                            if (DutchElectionProcessor.REGION_NAME.equals(unitIdentifier)) {
+                                if (xmlParser.tryNext() && xmlParser.isCharacters()){
+                                    String textValue = xmlParser.getText().trim();
 
-                                if (!textValue.isEmpty()) {
-                                    try {
-                                        id = textValue;
-                                    } catch (NumberFormatException e) {
-                                        System.err.println("Invalid ID format: " + textValue);
-                                        continue;
+                                    if (!textValue.isEmpty()) {
+                                        try {
+                                            id = textValue;
+                                            System.out.println(id);
+                                        } catch (NumberFormatException e) {
+                                            System.err.println("Invalid ID format: " + textValue);
+                                            continue;
+                                        }
                                     }
+
                                 }
+
+
                             } else {
-                                value = xmlParser.getText().trim();
+                                if (xmlParser.tryNext() && xmlParser.isCharacters()){
+                                    value = xmlParser.getText().trim();
+                                }
+
                             }
                         }
+                        if (id != null) {
+                            System.out.println("Reading Constituency: " + id);
+                            constituencyMap.put(id, id);
+                            allConstituencies.add(id);
+                        } else {
 
-                        if (xmlParser.isEndElement() && DutchElectionProcessor.REPORTING_UNIT_IDENTIFIER.equals(xmlParser.getLocalName())) {
+                            System.out.println("id: " + id);
+                        }
+
+                        if (xmlParser.isEndElement() && DutchElectionProcessor.ELECTIONTREE.equals(xmlParser.getLocalName())) {
                             break;
                         }
                     }
 
-                    if (id != null) {
-                        System.out.println("Reading Constituency: " + id);
-                        constituencyMap.put(id, id);
-                        allConstituencies.add(id);
-                    } else {
-
-                        System.out.println("id: " + id);
-                    }
                 }
             }
 

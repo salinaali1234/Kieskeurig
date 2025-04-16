@@ -65,6 +65,9 @@ public class DutchElectionProcessor<E> {
     public static final String ELECTION_NAME = "ElectionName";
     public static final String ELECTION_CATEGORY = "ElectionCategory";
     public static final String ELECTION_DATE = "ElectionDate";
+    public static final String ELECTIONTREE = "ElectionTree";
+    public static final String REGION_NAME = "RegionName";
+
 
     /*
      The tag names on the contest level within the XML files which are also used as keys in the maps when calling
@@ -107,6 +110,7 @@ public class DutchElectionProcessor<E> {
     public static final String VALID_VOTES = "ValidVotes";
     public static final String ZIPCODE = "ZipCode"; // For convenience, is used as a key in the data-maps.
     public static final String TOTAL_COUNTED = "TotalCounted";
+
 
     // Used internally
     private static final String NAME_TYPE = "NameType";
