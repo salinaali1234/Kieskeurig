@@ -7,10 +7,7 @@ import nl.hva.kieskeurig.utils.xml.XMLParser;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A very small demo of how the classes {@link DutchElectionProcessor} and {@link Transformer}
@@ -32,8 +29,9 @@ public class ConstituencyReader {
             // Find <kr:Region> elements
             if (xmlParser.isStartElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
                 // Get RegionNumber attribute
-                int regionNumber = xmlParser.getIntegerAttributeValue(null, DutchElectionProcessor.REGIONNUMBER, 0);
+                int regionNumber = xmlParser.getIntegerAttributeValue(null, DutchElectionProcessor.REGION_NUMBER, 0);
                 String regionName = null;
+                String regionCatogory = xmlParser.getAttributeValue(null, DutchElectionProcessor.REGION_CATEGORY);
 
                 // Inside <kr:Region> loop
                 while (xmlParser.tryNext()) {
@@ -45,6 +43,7 @@ public class ConstituencyReader {
                         }
                     }
 
+
                     // End of this <kr:Region> element
                     if (xmlParser.isEndElement() && DutchElectionProcessor.REGION.equals(xmlParser.getLocalName())) {
                         break;
@@ -52,11 +51,10 @@ public class ConstituencyReader {
                 }
 
                 // Add to map if both values are present
-                if (regionName != null && !regionName.isEmpty()) {
+                if (regionName != null && !regionName.isEmpty() && Objects.equals(regionCatogory, "KIESKRING") ) {
                     constituencyMap.put(String.valueOf(regionNumber), regionName);
 
                 }
-                System.out.println(constituencyMap);
             }
         }
 

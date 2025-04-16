@@ -55,7 +55,8 @@ public class DutchElectionProcessor<E> {
 
     // Common attribute name that is use on multiple tags.
     public static final String ID = "Id";
-    public static final String REGIONNUMBER = "RegionNumber";
+    public static final String REGION_NUMBER = "RegionNumber";
+    public static final String REGION_CATEGORY= "RegionCategory";
 
     /*
      The tag names on the election level within the XML files which are also used as keys in the maps when calling

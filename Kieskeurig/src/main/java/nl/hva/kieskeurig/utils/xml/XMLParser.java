@@ -122,6 +122,7 @@ public class XMLParser extends StreamReaderDelegate {
         return false;
     }
 
+
     double getDoubleAttributeValue(String ns, String name, double defaultValue) {
         String value = getAttributeValue(ns, name);
         return (value != null ? Double.parseDouble(value) : defaultValue);

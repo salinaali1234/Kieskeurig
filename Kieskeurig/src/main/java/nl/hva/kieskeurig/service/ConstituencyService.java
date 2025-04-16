@@ -78,9 +78,9 @@ public class ConstituencyService {
             ConstituencyReader reader = new ConstituencyReader(xmlParser);
 
             Map<String, String> constituencyMap = reader.getConstituencyMap();
-            System.out.println(reader.getConstituencyMap());
+            System.out.println(constituencyMap);
             for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
-                Constituency constituency = new Constituency(entry.getValue(),entry.getValue());
+                Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
                 add(constituency);
             }
             System.out.println("in the service"+ constituencyMap.toString());
@@ -93,14 +93,14 @@ public class ConstituencyService {
         }
     }
 
-    public Map<String, Constituency> getConstituencies() throws XMLStreamException, IOException {
+    public Map<String, String> getConstituencies() throws XMLStreamException, IOException {
         if (connectConstituencies()) {
-            Map<String, Constituency> map = new HashMap<String, Constituency>();
+            Map<String, String> map = new HashMap<>();
 
             for (Constituency constituency : constituencies) {
-                map.put(constituency.getId(), constituency);
-                System.out.println();
+                map.put(constituency.getName(), constituency.getId());
             }
+            System.out.println(map);
             return map;
         } else {
             return null;
