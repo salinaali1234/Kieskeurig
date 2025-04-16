@@ -11,16 +11,14 @@ public class PartyService {
     public Map<String, Integer> getVotesPerPartyByElectionByProvince(String electionId, String province) {
         Map<String, Integer> map = new HashMap<>();
 
-            for (Province value : Province.values()) {
-                if (value.getDisplayName().equalsIgnoreCase(province)) {
-                    String party = "VVD"; // Temp
-                    int votes = 727; // Temp
+        for (Province value : Province.values()) {
+            if (value.getDisplayName().equalsIgnoreCase(province)) {
+                String party = "VVD"; // Temp
+                int votes = 727; // Temp
 
-                    map.put(party, votes);
-                }
+                map.put(party, votes);
             }
-
-
+        }
 
         return map;
     }
