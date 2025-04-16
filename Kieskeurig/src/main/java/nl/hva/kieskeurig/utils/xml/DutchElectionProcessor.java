@@ -1,6 +1,7 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
-import nl.hva.ict.se.sm3.utils.PathUtils;
+import nl.hva.kieskeurig.utils.PathUtils;
+import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileInputStream;
@@ -44,12 +45,18 @@ import java.util.logging.Logger;
  * <br>
  * <em>You are encouraged to alter this class so it suits your needs! :-)</em>
  */
+
+
+@Component
 public class DutchElectionProcessor<E> {
     private static final Logger LOG = Logger.getLogger(DutchElectionProcessor.class.getName());
+
     private final Transformer<E> transformer;
 
     // Common attribute name that is use on multiple tags.
     public static final String ID = "Id";
+    public static final String REGION_NUMBER = "RegionNumber";
+    public static final String REGION_CATEGORY= "RegionCategory";
 
     /*
      The tag names on the election level within the XML files which are also used as keys in the maps when calling
@@ -60,6 +67,10 @@ public class DutchElectionProcessor<E> {
     public static final String ELECTION_NAME = "ElectionName";
     public static final String ELECTION_CATEGORY = "ElectionCategory";
     public static final String ELECTION_DATE = "ElectionDate";
+    public static final String ELECTIONTREE = "ElectionTree";
+    public static final String REGION = "Region";
+    public static final String REGION_NAME = "RegionName";
+
 
     /*
      The tag names on the contest level within the XML files which are also used as keys in the maps when calling
@@ -89,6 +100,7 @@ public class DutchElectionProcessor<E> {
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME_PREFIX = "NamePrefix";
     public static final String LAST_NAME = "LastName";
+    public static final String GENDER = "Gender";
 
     /*
      The tag names on the reporting unit level within the XML files which are also used as keys in the maps when calling
@@ -100,6 +112,8 @@ public class DutchElectionProcessor<E> {
     public static final String REPORTING_UNIT_VOTES = "ReportingUnitVotes";
     public static final String VALID_VOTES = "ValidVotes";
     public static final String ZIPCODE = "ZipCode"; // For convenience, is used as a key in the data-maps.
+    public static final String TOTAL_COUNTED = "TotalCounted";
+
 
     // Used internally
     private static final String NAME_TYPE = "NameType";
@@ -255,6 +269,7 @@ public class DutchElectionProcessor<E> {
         String firstName = null;
         String lastNamePrefix = null;
         String lastName = null;
+        String gender = null;
 
         parser.nextBeginTag(CANDIDATE);
         if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
@@ -281,6 +296,11 @@ public class DutchElectionProcessor<E> {
             }
             parser.findAndAcceptEndTag(PERSON_NAME);
         }
+        //note to self: added a gender finder
+        if (parser.findBeginTag(GENDER)){
+            gender = parser.getElementText().trim();
+            parser.findAndAcceptEndTag(GENDER);
+        }
         parser.findAndAcceptEndTag(CANDIDATE);
 
         Map<String, String> candidateData = new HashMap<>(affiliationData);
@@ -296,6 +316,9 @@ public class DutchElectionProcessor<E> {
         }
         if (lastName != null) {
             candidateData.put(LAST_NAME, lastName);
+        }
+        if (gender != null) {
+            candidateData.put(GENDER, gender);
         }
 
         transformer.registerCandidate(candidateData);

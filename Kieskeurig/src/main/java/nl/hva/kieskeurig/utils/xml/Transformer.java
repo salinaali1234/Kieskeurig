@@ -1,4 +1,4 @@
-package nl.hva.ict.se.sm3.utils.xml;
+package nl.hva.kieskeurig.utils.xml;
 
 import java.util.Map;
 
@@ -73,6 +73,11 @@ public interface Transformer<E> {
      */
     void registerVotes(Map<String, String> votesData);
 
+    /**
+     *
+     * @param constituentData a {@code map} contains information about the different constituencies: The id and name
+     */
+    void registerConstituents(Map<String, String> constituentData);
     /**
      * Returns an instance that encapsulates all the registered data about the election.
      * @return an instance that encapsulates all the data for an election.
