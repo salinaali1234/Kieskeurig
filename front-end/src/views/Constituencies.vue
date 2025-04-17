@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import {ref, onMounted, type Ref} from "vue";
 import "../assets/tableStyle.css"
+import Constituencies from "@/views/Constituencies.vue";
 
 interface Constituency {
+  id: number;
   name: string;
 }
 
-const constituencies = ref<Constituency[]>([]);
+const constituencies: Ref<any[]> = ref([]);
 const isVisible = ref(false);
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
 const url = `${backendUrl}/api/constituencies/all/Constituencies/0`;
@@ -19,13 +21,17 @@ onMounted(async () => {
   try {
     const response = await fetch(url);
     if (response.ok) {
-      const data: Record<string, string> = await response.json();
+      const data= await response.json();
+      console.log(data)
 
-      constituencies.value = Object.entries(data).map(([name, id]) => ({
-        id,
-        name,
-      }));b
+
+      for(const constituency of Object.entries(data)) {
+        constituencies.value.push(constituency)
+      }
+      console.log(constituencies)
     }
+
+
   } catch (error) {
     console.error(error);
   }
@@ -37,8 +43,9 @@ onMounted(async () => {
 
     <table class="data-table">
       <tbody>
-      <tr v-for="(constituency, index) in constituencies" :key="index">
-        <td @click="">{{ constituency.name }}</td>
+      <tr v-for="constituency in constituencies" :key="constituency[0]">
+        <td @click="console.log(constituency[1])">{{ constituency[0] }}</td>
+
       </tr>
       </tbody>
     </table>
