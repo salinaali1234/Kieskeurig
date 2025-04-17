@@ -19,11 +19,15 @@ onMounted(async () => {
   try {
     const response = await fetch(url);
     if (response.ok) {
-      const data = await response.json();
-      constituencies.value = Object.entries(data).map(([name]) => ({ name }));
+      const data: Record<string, string> = await response.json();
+
+      constituencies.value = Object.entries(data).map(([name, id]) => ({
+        id,
+        name,
+      }));b
     }
   } catch (error) {
-    console.error("Fout bij ophalen kieskringen:", error);
+    console.error(error);
   }
 });
 </script>
@@ -34,7 +38,7 @@ onMounted(async () => {
     <table class="data-table">
       <tbody>
       <tr v-for="(constituency, index) in constituencies" :key="index">
-        <td>{{ constituency.name }}</td>
+        <td @click="">{{ constituency.name }}</td>
       </tr>
       </tbody>
     </table>

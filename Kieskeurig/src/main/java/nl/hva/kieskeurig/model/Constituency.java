@@ -8,7 +8,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Constituency {
 
-    private String id;
+    private Integer id;
     private String name;
 
 

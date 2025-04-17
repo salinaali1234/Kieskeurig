@@ -53,36 +53,34 @@ public class ConstituencyService {
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
-
-            if (type.equals("Constituencies")) {
-                ConstituencyReader reader = new ConstituencyReader(xmlParser);
-
-                Map<String, String> constituencyMap = reader.getConstituencyMap();
-                for (Map.Entry<String, String> entry : constituencyMap.entrySet()) {
-                    Constituency constituency = new Constituency(entry.getKey(), entry.getValue());
-                    add(constituency);
-                }
-            }
-
-            if (type.equals("municipalities")) {
                 MunicipalitiesReader reader = new MunicipalitiesReader(xmlParser);
 
-                Map<Integer, List<String>> municipalitiesMap = reader.getAllMunicipallies();
-                for (Map.Entry<Integer, List<String>> entry : municipalitiesMap.entrySet()) {
-                    Integer superiorRegionNumber = entry.getKey();
-                    List<String> municipalities = entry.getValue();
+                Map<Integer, Map<String, Integer>> municipalitiesMap = reader.getAllMunicipallies();
 
-                    for (String municipalityName : municipalities) {
-                        Municipality municipality = new Municipality(
-                                municipalityName,
-                                superiorRegionNumber
+                    for (Map.Entry<Integer, Map<String, Integer>> outerEntry : municipalitiesMap.entrySet()) {
+                        Integer id = outerEntry.getKey();
+                        Map<String, Integer> innerMap = outerEntry.getValue();
 
-                        );
-                        add(municipality);
+                        for (Map.Entry<String, Integer> innerEntry : innerMap.entrySet()) {
+                            String name = innerEntry.getKey();
+                            Integer superiorRegionId = innerEntry.getValue();
+
+                            System.out.println(name + id + superiorRegionId);
+
+                            if (superiorRegionId != null) {
+                                if (superiorRegionId == 0) {
+                                    Constituency constituency = new Constituency(id, name);
+                                    add(constituency);
+                                } else {
+                                    Municipality municipality = new Municipality(name, id, superiorRegionId);
+                                    add(municipality);
+                                }
+                            }
+                        }
                     }
 
-                }
-            }
+
+
             return true;
 
         } catch (Exception e) {
@@ -93,35 +91,37 @@ public class ConstituencyService {
 
 
 
-    public Map<String, String> getConstituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
+    public Map<String, Integer> getConstituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
         if (connectElectionDefinition(type)) {
-            Map<String, String> map = new HashMap<>();
+            Map<String, Integer> map = new HashMap<>();
             System.out.println("constituecny id in the service"+constistuencyId);
 
-            if (type.equals("Constituencies")) {
-                for (Constituency constituency : constituencies) {
-                    map.put(constituency.getName(), constituency.getId());
-                }
-            }
+
             if (type.equals("municipalities")) {
 
                 if (constistuencyId == 0){
 
                     for (Municipality municipality : municipalities){
-                        System.out.println(municipality.getName() + municipality.getIdConstituency());
-                        map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                        //System.out.println(municipality.getName() + municipality.getId());
+                        map.put(municipality.getName(), municipality.getId());
                     }
                 } else {
                     for (Municipality municipality : municipalities) {
                         if (constistuencyId.equals(municipality.getIdConstituency())){
-                            map.put(municipality.getName(), String.valueOf(municipality.getIdConstituency()));
+                            map.put(municipality.getName(), municipality.getIdConstituency());
                         } else {
                             System.out.println("couldn't find Municipality");
                         }
                     }
                 }
 
+            } else {
+                for (Constituency constituency : constituencies) {
+                    //System.out.println("this is the constituency "+constituency.getName() + constituency.getId());
+                    map.put(constituency.getName(), constituency.getId());
+                }
             }
+
 
             return map;
         } else {

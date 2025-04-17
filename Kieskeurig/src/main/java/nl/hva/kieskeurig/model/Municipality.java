@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Municipality {
     private String name;
+    private Integer Id;
     private Integer IdConstituency;
 
 }

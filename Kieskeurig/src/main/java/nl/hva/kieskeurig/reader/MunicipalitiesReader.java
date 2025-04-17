@@ -12,11 +12,11 @@ public class MunicipalitiesReader {
 
     public MunicipalitiesReader(XMLParser parser) {this.xmlParser = parser;}
 
-    public Map<Integer, List<String>> getAllMunicipallies() throws IOException, XMLStreamException {
-        Map<String, Integer> municipalliesInfoMap  = new HashMap<>();
+    public Map<Integer, Map<String, Integer>> getAllMunicipallies() throws IOException, XMLStreamException {
+        //Map<String, Integer> municipalliesInfoMap  = new HashMap<>();
         Map<String, Integer> municipalliesMap = new HashMap<>();
         Map<Integer, List<String>> groupedMunicipalities = new HashMap<>();
-
+        Map<Integer, Map<String, Integer>> municipalityMap = new HashMap<>();
 
         while (xmlParser.tryNext()) {
             // Find <kr:Region> elements
@@ -42,20 +42,22 @@ public class MunicipalitiesReader {
                     }
                 }
 
-                if (regionName != null && !regionName.isEmpty() && Objects.equals(regionCatogory, "GEMEENTE")) {
-                    municipalliesMap.put(regionName, regionNumber);
-                    municipalliesInfoMap.put(regionName, superiorRegionNumber);
 
-                    // Grouping logic
-                    groupedMunicipalities.computeIfAbsent(superiorRegionNumber, k -> new ArrayList<>())
-                            .add(regionName);
+                Map<String, Integer> municipalliesInfoMap  = new HashMap<>();
+                if (regionName != null && !regionName.isEmpty()) {
+                    if (Objects.equals(regionCatogory, "KIESKRING")) {
+                        superiorRegionNumber = 0;
+                    }
+                    municipalliesInfoMap.put(regionName, superiorRegionNumber);
+                    municipalityMap.put(regionNumber,municipalliesInfoMap);
                 }
+
 
             }
         }
-        System.out.println(groupedMunicipalities);
+        //System.out.println(municipalityMap);
 
-        return groupedMunicipalities;
+        return municipalityMap;
     }
 
 }
