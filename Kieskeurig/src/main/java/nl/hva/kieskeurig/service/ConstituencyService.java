@@ -1,13 +1,8 @@
 package nl.hva.kieskeurig.service;
-import nl.hva.kieskeurig.demo.DutchElectionTransformer;
-import nl.hva.kieskeurig.demo.Election;
 import nl.hva.kieskeurig.model.Municipality;
-import nl.hva.kieskeurig.reader.MunicipalitiesReader;
-import nl.hva.kieskeurig.utils.PathUtils;
-import nl.hva.kieskeurig.utils.xml.DutchElectionProcessor;
+import nl.hva.kieskeurig.reader.RegionReader;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
-import nl.hva.kieskeurig.reader.ConstituencyReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -15,12 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,9 +44,9 @@ public class ConstituencyService {
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
-                MunicipalitiesReader reader = new MunicipalitiesReader(xmlParser);
+                RegionReader reader = new RegionReader(xmlParser);
 
-                Map<Integer, Map<String, Integer>> municipalitiesMap = reader.getAllMunicipallies();
+                Map<Integer, Map<String, Integer>> municipalitiesMap = reader.getAllRegions();
 
                     for (Map.Entry<Integer, Map<String, Integer>> outerEntry : municipalitiesMap.entrySet()) {
                         Integer id = outerEntry.getKey();
@@ -91,7 +82,7 @@ public class ConstituencyService {
 
 
 
-    public Map<String, Integer> getConstituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
+    public Map<String, Integer> getAllRegions(String type, Integer constistuencyId) throws XMLStreamException, IOException {
         if (connectElectionDefinition(type)) {
             Map<String, Integer> map = new HashMap<>();
             System.out.println("constituecny id in the service"+constistuencyId);

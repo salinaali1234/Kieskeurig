@@ -30,7 +30,7 @@ public class ConstituencyController {
         //System.out.println("hiii"+ consistencyId);
         //System.out.println(service.getConstituencies(type, consistencyId));
 
-        return service.getConstituencies(type, consistencyId);
+        return service.getAllRegions(type, consistencyId);
     }
 
 
