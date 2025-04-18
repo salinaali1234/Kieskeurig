@@ -24,7 +24,6 @@
 .data-table th,
 .data-table td {
   padding: 12px;
-  border-bottom: 1px solid var(--secondary-clr);
   text-align: left;
 }
 
@@ -35,4 +34,12 @@
 
 .data-table tr:hover {
   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.data-table tr {
+  border-bottom: 1px solid var(--secondary-clr);
+}
+
+.data-table tr:last-child {
+  border-bottom: none;
 }
