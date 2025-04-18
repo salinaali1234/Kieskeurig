@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class NationalVotesReader {
+public class VoteReader {
     private XMLParser xmlParser;
 
-    public NationalVotesReader(XMLParser xmlParser) {
+    public VoteReader(XMLParser xmlParser) {
         this.xmlParser = xmlParser;
 
     }
