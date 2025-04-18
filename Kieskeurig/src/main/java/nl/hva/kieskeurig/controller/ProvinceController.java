@@ -1,6 +1,5 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.enums.Province;
 import nl.hva.kieskeurig.service.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * API handling everything related to provinces.
+ */
 @RestController
 @RequestMapping("/api/provinces")
 public class ProvinceController {

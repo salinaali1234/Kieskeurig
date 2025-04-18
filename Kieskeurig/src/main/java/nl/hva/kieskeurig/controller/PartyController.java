@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * API handling everything related to parties.
+ */
 @RestController
 @RequestMapping("/api/party")
 public class PartyController {

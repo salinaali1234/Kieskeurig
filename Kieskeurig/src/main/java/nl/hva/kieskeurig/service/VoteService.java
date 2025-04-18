@@ -70,8 +70,6 @@ public class VoteService {
             }
         }
 
-        System.out.println(votes);
-
         for (Vote vote : votes) {
             partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
         }

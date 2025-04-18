@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Enum that contains each province and their corresponding constituencies
+ */
 @Getter
 @AllArgsConstructor
 @ToString
