@@ -39,7 +39,6 @@ const selectedView = ref("");
 </template>
 
 <style scoped>
-
 .page-title {
   text-align: center;
   font-size: 2rem;
@@ -47,37 +46,4 @@ const selectedView = ref("");
   font-weight: bold;
   color: white;
 }
-
-
-.dropdown-wrapper {
-  position: relative;
-  width: 80%;
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-.dropdown {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--secondary-clr);
-  background-color: #DEBFE9;
-  color: black;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-}
-
-.dropdown-icon {
-  margin: 0;
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: black; /* zwarte pijl */
-}
-
 </style>
