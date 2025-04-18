@@ -2,22 +2,25 @@ package nl.hva.kieskeurig.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public enum Province {
-    DRENTHE("Drenthe"),
-    FLEVOLAND("Flevoland"),
-    FRIESLAND("Friesland"),
-    GELDERLAND("Gelderland"),
-    GRONINGEN("Groningen"),
-    LIMBURG("Limburg"),
-    NOORD_BRABANT("Noord-Brabant"),
-    NOORD_HOLLAND("Noord-Holland"),
-    OVERIJSSEL("Overijssel"),
-    UTRECHT("Utrecht"),
-    ZEELAND("Zeeland"),
-    ZUID_HOLLAND("Zuid-Holland");
+    DRENTHE("Drenthe", new String[]{"Assen"}),
+    FLEVOLAND("Flevoland", new String[]{"Lelystad"}),
+    FRIESLAND("Friesland", new String[]{"Leeuwarden"}),
+    GELDERLAND("Gelderland", new String[]{"Nijmegen", "Arnhem"}),
+    GRONINGEN("Groningen", new String[]{"Groningen"}),
+    LIMBURG("Limburg", new String[]{"Maastricht"}),
+    NOORD_BRABANT("Noord-Brabant", new String[]{"Tilburg", "'s-Hertogenbosch"}),
+    NOORD_HOLLAND("Noord-Holland", new String[]{"Amsterdam", "Haarlem", "Den Helder"}),
+    OVERIJSSEL("Overijssel", new String[]{"Zwolle"}),
+    UTRECHT("Utrecht", new String[]{"Utrecht"}),
+    ZEELAND("Zeeland", new String[]{"Middelburg"}),
+    ZUID_HOLLAND("Zuid-Holland", new String[]{"'s-Gravenhage", "Rotterdam", "Dordrecht", "Leiden"});
 
     private final String displayName;
+    private final String[] constituencies;
 }
