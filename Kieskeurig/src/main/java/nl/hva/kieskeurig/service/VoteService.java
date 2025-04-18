@@ -1,29 +1,24 @@
 package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+import nl.hva.kieskeurig.enums.Province;
 import nl.hva.kieskeurig.model.Vote;
-import nl.hva.kieskeurig.reader.NationalVotesReader;
+import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class VoteService {
     private final List<Vote> votes = new ArrayList<>();
-    private boolean dataLoaded = false;
 
     public void add(Vote vote) {
         votes.add(vote);
     }
 
     public boolean readResults(String fileName) {
-        if (dataLoaded) return true; // voorkom dubbel laden
-
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
 
@@ -33,7 +28,7 @@ public class VoteService {
             }
 
             XMLParser xmlParser = new XMLParser(inputStream);
-            NationalVotesReader reader = new NationalVotesReader(xmlParser);
+            VoteReader reader = new VoteReader(xmlParser);
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
@@ -42,7 +37,6 @@ public class VoteService {
                 add(vote);
             }
 
-            dataLoaded = true;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,6 +49,34 @@ public class VoteService {
         for (Vote vote : votes) {
             partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
         }
+
+        votes.clear();
+        return partyVotes;
+    }
+
+    public Map<String, Integer> getVotesPerPartyByElectionByProvince(String electionId, String province) {
+        Map<String, Integer> partyVotes = new HashMap<>();
+        String fileName;
+
+        for (Province provinceName : Province.values()) {
+            if (provinceName.getDisplayName().equalsIgnoreCase(province)) {
+                for (String constituency : provinceName.getConstituencies()) {
+                    fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
+                            electionId.toUpperCase(),
+                            constituency.replaceAll("'", "")
+                    );
+                    readResults(fileName);
+                }
+            }
+        }
+
+        System.out.println(votes);
+
+        for (Vote vote : votes) {
+            partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
+        }
+
+        votes.clear();
         return partyVotes;
     }
 }

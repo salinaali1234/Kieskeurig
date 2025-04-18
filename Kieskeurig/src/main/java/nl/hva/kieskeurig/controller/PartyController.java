@@ -1,6 +1,6 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.service.PartyService;
+import nl.hva.kieskeurig.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,15 +12,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/party")
 public class PartyController {
-    private final PartyService partyService;
+    private final VoteService voteService;
 
     @Autowired
-    public PartyController(PartyService partyService) {
-        this.partyService = partyService;
+    public PartyController(VoteService voteService) {
+        this.voteService = voteService;
     }
 
     @GetMapping("/{electionId}/{province}")
     public Map<String, Integer> getVotesPerPartyByElectionByProvince(@PathVariable String electionId, @PathVariable String province) {
-        return partyService.getVotesPerPartyByElectionByProvince(electionId, province);
+        return voteService.getVotesPerPartyByElectionByProvince(electionId, province);
     }
 }
