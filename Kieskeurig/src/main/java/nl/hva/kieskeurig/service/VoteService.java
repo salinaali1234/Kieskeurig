@@ -7,28 +7,27 @@ import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class VoteService {
-    private final List<Vote> votes = new ArrayList<>();
-    private boolean dataLoaded = false;
 
-    public void add(Vote vote) {
-        votes.add(vote);
+    private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
+    private final Set<String> loadedYears = new HashSet<>();
+
+    public void add(String year, Vote vote) {
+        votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
 
-    public boolean readResults(String fileName) {
-        if (dataLoaded) return true; // voorkom dubbel laden
+    public boolean readResults(String folder, String fileName, String year) {
+        if (loadedYears.contains(year)) return true;
 
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+            InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream(folder + "/" + fileName);
 
             if (inputStream == null) {
-                System.err.println("Bestand niet gevonden: " + "Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+                System.err.println("Bestand niet gevonden: " + folder + "/" + fileName);
                 return false;
             }
 
@@ -39,10 +38,10 @@ public class VoteService {
 
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
                 Vote vote = new Vote(entry.getKey(), entry.getValue());
-                add(vote);
+                add(year, vote);
             }
 
-            dataLoaded = true;
+            loadedYears.add(year);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,10 +49,13 @@ public class VoteService {
         }
     }
 
-    public Map<String, Integer> getVotesPerParty() {
+    public Map<String, Integer> getVotesPerParty(String year) {
         Map<String, Integer> partyVotes = new HashMap<>();
+        List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
+
         for (Vote vote : votes) {
-            partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
+            partyVotes.put(vote.getPartyName(),
+                    partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
         }
         return partyVotes;
     }
