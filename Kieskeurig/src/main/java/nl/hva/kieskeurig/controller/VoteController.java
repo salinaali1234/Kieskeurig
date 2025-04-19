@@ -3,6 +3,7 @@ package nl.hva.kieskeurig.controller;
 import nl.hva.kieskeurig.service.VoteService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -18,8 +19,11 @@ public class VoteController {
     }
 
     @GetMapping("/votes/parties")
-    public Map<String, Integer> getVotesPerParty() {
-        voteService.readResults("Totaaltelling_TK2023.eml.xml");
-        return voteService.getVotesPerParty();
+    public Map<String, Integer> getVotesPerParty(@RequestParam(defaultValue = "2023") String year) {
+        String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
+        String fileName = year.equals("2021") ? "Totaaltelling_TK2021.eml.xml" : "Totaaltelling_TK2023.eml.xml";
+
+        voteService.readResults(folder, fileName, year);
+        return voteService.getVotesPerParty(year);
     }
 }
