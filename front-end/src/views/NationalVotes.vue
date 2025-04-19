@@ -50,6 +50,5 @@ onMounted(async () => {
       </tr>
       </tbody>
     </table>
-    <p >Geen partijen gevonden...</p>
   </div>
 </template>
