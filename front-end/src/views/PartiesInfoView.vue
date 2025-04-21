@@ -20,6 +20,7 @@ interface PartySeatInfo {
 const candidates = ref<Candidate[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
+const sortOrder = ref<'seats' | 'alphabetical'>('seats'); // Nieuwe state voor sorteeroptie
 
 const fetchCandidates = async () => {
   try {
@@ -28,7 +29,7 @@ const fetchCandidates = async () => {
 
     const response = await fetch('http://localhost:8080/api/partiesInfo/parties');
 
-    console.log('Response status:', response.status); // Debug log
+    console.log('Response status:', response.status);
 
     if (!response.ok) {
       throw new Error('Failed to load candidates');
@@ -42,7 +43,6 @@ const fetchCandidates = async () => {
   }
 };
 
-// Groepeer kandidaten op partij en tel het aantal kandidaten (zetels)
 const groupedByParty = computed<PartySeatInfo[]>(() => {
   const map = new Map<number, PartySeatInfo>();
 
@@ -58,8 +58,19 @@ const groupedByParty = computed<PartySeatInfo[]>(() => {
     }
   }
 
-  return Array.from(map.values()).sort((a, b) => b.seats - a.seats); // sorteer op zetels aflopend
+  const parties = Array.from(map.values());
+
+  // Sorteer op basis van geselecteerde optie
+  if (sortOrder.value === 'seats') {
+    return parties.sort((a, b) => b.seats - a.seats);
+  } else {
+    return parties.sort((a, b) => a.partyName.localeCompare(b.partyName));
+  }
 });
+
+const toggleSortOrder = () => {
+  sortOrder.value = sortOrder.value === 'seats' ? 'alphabetical' : 'seats';
+};
 
 onMounted(() => {
   fetchCandidates();
@@ -68,7 +79,12 @@ onMounted(() => {
 
 <template>
   <div class="parties-container">
-    <h1>Verkozen zetels per partij</h1>
+    <div class="header-container">
+      <h1>Verkozen zetels per partij</h1>
+      <button @click="toggleSortOrder" class="sort-btn">
+        Sorteer op {{ sortOrder === 'seats' ? 'alfabet' : 'zetels' }}
+      </button>
+    </div>
 
     <div v-if="loading" class="loading">Laden...</div>
 
@@ -96,6 +112,27 @@ onMounted(() => {
   padding: 2rem;
   max-width: 900px;
   margin: 0 auto;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.sort-btn {
+  background: #42b983;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.sort-btn:hover {
+  background: #3aa876;
 }
 
 .party-grid {
