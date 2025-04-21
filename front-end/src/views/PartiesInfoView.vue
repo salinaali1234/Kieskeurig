@@ -20,7 +20,13 @@ interface PartySeatInfo {
 const candidates = ref<Candidate[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const sortOrder = ref<'seats' | 'alphabetical'>('seats'); // Nieuwe state voor sorteeroptie
+const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
+
+const sortOptions = [
+  { value: 'seats-desc', label: 'Zetels (hoog → laag)' },
+  { value: 'seats-asc', label: 'Zetels (laag → hoog)' },
+  { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
+];
 
 const fetchCandidates = async () => {
   try {
@@ -28,8 +34,6 @@ const fetchCandidates = async () => {
     error.value = null;
 
     const response = await fetch('http://localhost:8080/api/partiesInfo/parties');
-
-    console.log('Response status:', response.status);
 
     if (!response.ok) {
       throw new Error('Failed to load candidates');
@@ -60,17 +64,17 @@ const groupedByParty = computed<PartySeatInfo[]>(() => {
 
   const parties = Array.from(map.values());
 
-  // Sorteer op basis van geselecteerde optie
-  if (sortOrder.value === 'seats') {
-    return parties.sort((a, b) => b.seats - a.seats);
-  } else {
-    return parties.sort((a, b) => a.partyName.localeCompare(b.partyName));
+  switch (sortOrder.value) {
+    case 'seats-desc':
+      return parties.sort((a, b) => b.seats - a.seats);
+    case 'seats-asc':
+      return parties.sort((a, b) => a.seats - b.seats);
+    case 'alphabetical':
+      return parties.sort((a, b) => a.partyName.localeCompare(b.partyName));
+    default:
+      return parties;
   }
 });
-
-const toggleSortOrder = () => {
-  sortOrder.value = sortOrder.value === 'seats' ? 'alphabetical' : 'seats';
-};
 
 onMounted(() => {
   fetchCandidates();
@@ -81,9 +85,22 @@ onMounted(() => {
   <div class="parties-container">
     <div class="header-container">
       <h1>Verkozen zetels per partij</h1>
-      <button @click="toggleSortOrder" class="sort-btn">
-        Sorteer op {{ sortOrder === 'seats' ? 'alfabet' : 'zetels' }}
-      </button>
+      <div class="sort-container">
+        <label for="sort-select">Sorteer op:</label>
+        <select
+          id="sort-select"
+          v-model="sortOrder"
+          class="sort-select"
+        >
+          <option
+            v-for="option in sortOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <div v-if="loading" class="loading">Laden...</div>
@@ -106,6 +123,7 @@ onMounted(() => {
   </div>
 </template>
 
+
 <style scoped>
 .parties-container {
   color: black;
@@ -115,25 +133,43 @@ onMounted(() => {
 }
 
 .header-container {
-  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: white; /* Nu werkt dit wel */
+  background-color: #4a148c; /* Paarse achtergrond voor header */
+  padding: 1rem;
+  border-radius: 8px;
 }
 
-.sort-btn {
-  background: #FFCC00FF;
-  color: black;
-  border: none;
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-select {
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  cursor: pointer;
+  border: 1px solid #d1a5e6;
+  background-color: #DEBFE9;
   font-size: 0.9rem;
+  cursor: pointer;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c3e50'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
 }
 
-.sort-btn:hover {
-  background: #e6b800;
+.sort-select:hover {
+  background-color: #d1a5e6;
 }
 
 .party-grid {
@@ -147,6 +183,11 @@ onMounted(() => {
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.party-card:hover {
+  transform: translateY(-3px);
 }
 
 .loading {
@@ -174,5 +215,26 @@ onMounted(() => {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.retry-btn:hover {
+  background: #1565c0;
+}
+
+/* Responsive aanpassingen */
+@media (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+  }
+
+  .sort-container {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
 }
 </style>
