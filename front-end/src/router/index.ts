@@ -5,6 +5,7 @@ import PartiesInfoView from '../views/PartiesInfoView.vue'
 import CandidatesView from '../views/CandidatesView.vue'
 import PartyView from '@/views/PartyView.vue'
 import VoteView from "@/views/VoteView.vue";
+import CompareVotes from "@/views/CompareVotes.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       name: 'candidates',
       component: CandidatesView,
       props: true
+    },
+    {
+      path: '/vergelijken',
+      name: 'Vergelijken',
+      component: CompareVotes,
     },
   ],
 })
