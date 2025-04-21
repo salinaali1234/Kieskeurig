@@ -97,6 +97,7 @@ watch([selectedYearA, selectedYearB], loadVotes);
 
 .dropdowns {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
@@ -119,5 +120,6 @@ label {
 
 .compare-table-wrapper {
   overflow-x: auto;
+  padding: 0 1rem;
 }
 </style>
