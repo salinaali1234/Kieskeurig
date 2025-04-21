@@ -63,6 +63,16 @@ public class PartiesInfoController {
             return List.of();
         }
     }
+//    @GetMapping("/candidates/resultaat")
+//    public ResponseEntity<List<CandidateForPartyInfo>> getElectedCandidatesFromResultaatFile() {
+//        try {
+//            List<CandidateForPartyInfo> electedCandidates = service.getElectedCandidatesFromResultaatFile();
+//            return ResponseEntity.ok(electedCandidates);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
 }
 //    @GetMapping("/parties/{partyId}")

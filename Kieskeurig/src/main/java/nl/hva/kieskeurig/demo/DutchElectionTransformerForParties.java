@@ -26,9 +26,9 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
-        //System.out.printf("Found election information: %s\n", electionData);
         if (election == null) {
             election = new ElectionForParty(electionDate);
+//            LOG.info("Election initialized with date: " + electionDate);
         }
     }
 
@@ -44,46 +44,54 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     public void registerAffiliation(Map<String, String> affiliationData) {
         int partyId = Integer.parseInt(affiliationData.get(AFFILIATION_IDENTIFIER));
         String partyName = affiliationData.get(REGISTERED_NAME);
-
-        //System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
-
         PartyWithInfo party = new PartyWithInfo(partyId, partyName);
         election.addParty(party);
-        //System.out.println(election);
+//        LOG.info("Registered party: " + partyName);
     }
 
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-        //System.out.println("Registering candidate: " + candidateData);
-
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         PartyWithInfo party = election.getParty(partyId);
 
         if (party != null) {
-
             int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
             String firstName = candidateData.get(FIRST_NAME);
             String lastName = candidateData.get(LAST_NAME);
             String gender = candidateData.get(GENDER);
-            String localityName = candidateData.getOrDefault("locality", null);
+            String localityName = candidateData.getOrDefault("locality", "Unknown");
 
-            CandidateForPartyInfo candidate = new CandidateForPartyInfo(candidateId, partyId, firstName, lastName, gender, "Unknown");
+            // Haal de elected-status op uit candidateData (standaard "no" als niet aanwezig)
+            String elected = candidateData.getOrDefault(ELECTED, "no");
+            boolean isElected = "yes".equalsIgnoreCase(elected);
+
+            CandidateForPartyInfo candidate = new CandidateForPartyInfo(
+                    candidateId, partyId, firstName, lastName, gender, localityName, isElected
+            );
+
             party.addCandidate(candidate);
-
-
-            System.out.println("Added candidate " + candidateId + firstName + " to party " + partyId);
-        } else {
-            System.out.println("Party " + partyId + " not found for candidate");
         }
     }
 
     @Override
     public void registerVotes(Map<String, String> votesData) {
-       // election.data = votesData;
-       // System.out.printf("Found votes information: %s\n", votesData);
-    }
+        System.out.println("📥 registerVotes: " + votesData); // 👈 logging!
 
+        int partyId = Integer.parseInt(votesData.get(AFFILIATION_IDENTIFIER));
+        int candidateId = Integer.parseInt(votesData.get(CANDIDATE_IDENTIFIER));
+        PartyWithInfo party = election.getParty(partyId);
+
+        if (party != null) {
+            CandidateForPartyInfo candidate = new CandidateForPartyInfo(
+                    candidateId,
+                    partyId,
+                    "", "", "", "Onbekend", false
+            );
+            party.addCandidate(candidate);
+            party.incrementSeats();
+        }
+    }
     @Override
     public void registerConstituents(Map<String, String> constituentData) {
 

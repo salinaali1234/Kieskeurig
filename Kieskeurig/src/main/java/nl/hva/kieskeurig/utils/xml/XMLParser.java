@@ -139,4 +139,8 @@ public class XMLParser extends StreamReaderDelegate {
                 " whitespace=" + isWhiteSpace() +
                 " name=" + getLocalName());
     }
+
+    public void skipTag() {
+
+    }
 }

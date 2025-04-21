@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
 
-interface Party {
+interface Candidate {
+  candidateId: number;
   partyId: number;
   partyName: string;
-  candidates: any[];
+  firstName: string;
+  lastName: string;
+  gender: string;
+  elected: boolean;
 }
 
-const parties = ref<Party[]>([]);
+interface PartySeatInfo {
+  partyId: number;
+  partyName: string;
+  seats: number;
+}
+
+const candidates = ref<Candidate[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const router = useRouter();
 
-const fetchParties = async () => {
+const fetchCandidates = async () => {
   try {
     loading.value = true;
     error.value = null;
@@ -23,56 +31,60 @@ const fetchParties = async () => {
     console.log('Response status:', response.status); // Debug log
 
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      throw new Error('Failed to load candidates');
     }
 
-    const data = await response.json();
-    console.log('Received data:', data); // Debug log
-
-
-    parties.value = data;
-
+    candidates.value = await response.json();
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Fetch error:', err);
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(() => {
-  fetchParties();
+// Groepeer kandidaten op partij en tel het aantal kandidaten (zetels)
+const groupedByParty = computed<PartySeatInfo[]>(() => {
+  const map = new Map<number, PartySeatInfo>();
+
+  for (const candidate of candidates.value) {
+    if (!map.has(candidate.partyId)) {
+      map.set(candidate.partyId, {
+        partyId: candidate.partyId,
+        partyName: candidate.partyName,
+        seats: 1,
+      });
+    } else {
+      map.get(candidate.partyId)!.seats++;
+    }
+  }
+
+  return Array.from(map.values()).sort((a, b) => b.seats - a.seats); // sorteer op zetels aflopend
 });
 
-const showCandidates = (partyId: number) => {
-  router.push(`/parties/${partyId}/candidates`);
-};
+onMounted(() => {
+  fetchCandidates();
+});
 </script>
 
 <template>
   <div class="parties-container">
-    <h1>Politieke partijen</h1>
+    <h1>Verkozen zetels per partij</h1>
 
-    <div v-if="loading" class="loading">Loading parties...</div>
+    <div v-if="loading" class="loading">Laden...</div>
 
     <div v-else-if="error" class="error">
-      Error loading parties: {{ error }}
-      <button @click="fetchParties" class="retry-btn">Try Again</button>
+      {{ error }}
+      <button @click="fetchCandidates" class="retry-btn">Opnieuw</button>
     </div>
 
-    <div v-else-if="parties.length === 0" class="empty">
-      No parties found
+    <div v-else-if="groupedByParty.length === 0" class="empty">
+      Geen verkozen kandidaten gevonden
     </div>
 
     <div v-else class="party-grid">
-      <div
-        v-for="party in parties"
-        :key="party.partyId"
-        class="party-card"
-        @click="showCandidates(party.partyId)"
-      >
+      <div v-for="party in groupedByParty" :key="party.partyId" class="party-card">
         <h2>{{ party.partyName }}</h2>
-        <p>{{ party.candidates?.length || 0 }} candidates</p>
+        <p><strong>Zetels:</strong> {{ party.seats }}</p>
       </div>
     </div>
   </div>
@@ -80,9 +92,23 @@ const showCandidates = (partyId: number) => {
 
 <style scoped>
 .parties-container {
+  color: black;
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
+}
+
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.party-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .loading {
@@ -110,31 +136,5 @@ const showCandidates = (partyId: number) => {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-}
-
-.party-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.party-card {
-  color: black;
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.party-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.party-card h2 {
-  margin-top: 0;
-  color: #1976d2;
 }
 </style>

@@ -1,8 +1,10 @@
 package nl.hva.kieskeurig.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CandidateForPartyInfo {
     private final int id;
     private final int candidateId;
@@ -12,10 +14,11 @@ public class CandidateForPartyInfo {
     private final String lastName;
     private final String gender;
     private final String localityName;
-
+    private final boolean elected;  // New field
 
     public CandidateForPartyInfo(int id, int candidateId, String initials, String firstName,
-                                 String namePrefix, String lastName, String gender, String localityName) {
+                                 String namePrefix, String lastName, String gender,
+                                 String localityName, boolean elected) {
         this.id = id;
         this.candidateId = candidateId;
         this.initials = initials;
@@ -24,17 +27,12 @@ public class CandidateForPartyInfo {
         this.lastName = lastName;
         this.gender = gender;
         this.localityName = localityName;
+        this.elected = elected;
     }
 
-
-//    public Candidate(int id, int candidateId, String initials, String firstName,
-//                     String lastName, String gender, String localityName) {
-//        this(id, candidateId, initials, firstName, "", lastName, gender, localityName);
-//    }
-
-
+    // Existing constructors should be updated to include elected status
     public CandidateForPartyInfo(int id, int candidateId, String firstName,
-                                 String lastName, String gender, String localityName) {
-        this(id, candidateId, "", firstName, "", lastName, gender, localityName);
+                                 String lastName, String gender, String localityName, boolean elected) {
+        this(id, candidateId, "", firstName, "", lastName, gender, localityName, elected);
     }
 }

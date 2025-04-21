@@ -95,6 +95,7 @@ public class DutchElectionProcessor<E> {
     public static final String LAST_NAME_PREFIX = "NamePrefix";
     public static final String LAST_NAME = "LastName";
     public static final String GENDER = "Gender";
+    public static final String ELECTED = "Elected";
 
     /*
      The tag names on the reporting unit level within the XML files which are also used as keys in the maps when calling
@@ -152,6 +153,12 @@ public class DutchElectionProcessor<E> {
         }
 
         for (Path votesPerReportingStationFile : PathUtils.findFilesToScan(folderName, "Telling_%s_gemeente".formatted(electionId))) {
+            LOG.fine("Found: %s".formatted(votesPerReportingStationFile));
+            XMLParser parser = new XMLParser(new FileInputStream(votesPerReportingStationFile.toString()));
+            processElection(electionData, parser);
+            processVotes(electionData, parser);
+        }
+        for (Path votesPerReportingStationFile : PathUtils.findFilesToScan(folderName, "Resultaat_%s_".formatted(electionId))) {
             LOG.fine("Found: %s".formatted(votesPerReportingStationFile));
             XMLParser parser = new XMLParser(new FileInputStream(votesPerReportingStationFile.toString()));
             processElection(electionData, parser);
@@ -263,6 +270,7 @@ public class DutchElectionProcessor<E> {
         String lastNamePrefix = null;
         String lastName = null;
         String gender = null;
+        String elected = "no";
 
         parser.nextBeginTag(CANDIDATE);
         if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
@@ -294,6 +302,10 @@ public class DutchElectionProcessor<E> {
             gender = parser.getElementText().trim();
             parser.findAndAcceptEndTag(GENDER);
         }
+        if (parser.getLocalName().equals(ELECTED)) {
+            elected = parser.getElementText().trim();
+            parser.findAndAcceptEndTag(ELECTED);
+        }
         parser.findAndAcceptEndTag(CANDIDATE);
 
         Map<String, String> candidateData = new HashMap<>(affiliationData);
@@ -313,6 +325,8 @@ public class DutchElectionProcessor<E> {
         if (gender != null) {
             candidateData.put(GENDER, gender);
         }
+
+        candidateData.put(ELECTED, elected);
 
         transformer.registerCandidate(candidateData);
     }
