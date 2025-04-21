@@ -4,6 +4,7 @@ import NationalVotes from "./NationalVotes.vue";
 import Constituencies from "./Constituencies.vue";
 
 const selectedView = ref("");
+const selectedYear = ref("2023");
 
 </script>
 
@@ -20,8 +21,22 @@ const selectedView = ref("");
       <span class="dropdown-icon">˅</span>
     </div>
 
+
+    <div
+      v-if="selectedView === 'national'"
+      class="dropdown-wrapper"
+    >
+      <select v-model="selectedYear" class="dropdown">
+        <option disabled value="">Selecteer jaar</option>
+        <option value="2023">2023</option>
+        <option value="2021">2021</option>
+      </select>
+      <span class="dropdown-icon">˅</span>
+    </div>
+
+
     <div v-if="selectedView === 'national'">
-      <NationalVotes />
+      <NationalVotes v-if="selectedView === 'national'" :year="selectedYear" />
     </div>
 
     <div v-else-if="selectedView === 'constituencies'">
@@ -69,7 +84,7 @@ const selectedView = ref("");
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.2rem;
-  color: black; /* zwarte pijl */
+  color: black;
   pointer-events: none;
 }
 
