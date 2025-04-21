@@ -115,6 +115,7 @@ onMounted(() => {
 }
 
 .header-container {
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -122,8 +123,8 @@ onMounted(() => {
 }
 
 .sort-btn {
-  background: #42b983;
-  color: white;
+  background: #FFCC00FF;
+  color: black;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -132,7 +133,7 @@ onMounted(() => {
 }
 
 .sort-btn:hover {
-  background: #3aa876;
+  background: #e6b800;
 }
 
 .party-grid {
