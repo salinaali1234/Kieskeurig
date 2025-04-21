@@ -8,7 +8,7 @@ interface Party {
   votes: number;
 }
 
-const election = "tk2023" // Temp
+const electionId = "TK2023" // Temp
 
 const selectedProvince = ref("");
 const provinces = ref<string[]>([]);
@@ -35,7 +35,7 @@ onMounted(async () => {
 });
 
 async function onClick(province: string) {
-  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${election}/${province}`;
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}`;
   isVisible.value = true;
 
   try {
@@ -60,7 +60,7 @@ async function onClick(province: string) {
     <select v-model="selectedProvince" class="dropdown">
       <option disabled value="">Selecteer niveau</option>
       <option
-        v-for="province: string in provinces"
+        v-for="province in provinces"
         :key="province"
         :value="province"
         @click="onClick(province)"

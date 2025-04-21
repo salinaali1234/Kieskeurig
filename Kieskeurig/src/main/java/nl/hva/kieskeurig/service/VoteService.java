@@ -12,18 +12,22 @@ import java.util.*;
 
 @Service
 public class VoteService {
-    private final List<Vote> votes = new ArrayList<>();
 
-    public void add(Vote vote) {
-        votes.add(vote);
+    private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
+
+    public void add(String year, Vote vote) {
+        votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
 
-    public boolean readResults(String fileName) {
+    public boolean readResults(String folder, String fileName, String year) {
+
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
+            System.out.println("Trying to load: " + folder + "/" + fileName);
+
+            InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream(folder + "/" + fileName);
 
             if (inputStream == null) {
-                System.err.println("Bestand niet gevonden: " + "Verkiezingsuitslag_Tweede_Kamer_2023/" + fileName);
                 return false;
             }
 
@@ -32,11 +36,11 @@ public class VoteService {
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
+
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
                 Vote vote = new Vote(entry.getKey(), entry.getValue());
-                add(vote);
+                add(year, vote);
             }
-
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,10 +48,13 @@ public class VoteService {
         }
     }
 
-    public Map<String, Integer> getVotesPerParty() {
+    public Map<String, Integer> getVotesPerParty(String year) {
         Map<String, Integer> partyVotes = new HashMap<>();
+        List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
+
         for (Vote vote : votes) {
-            partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
+            partyVotes.put(vote.getPartyName(),
+                    partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
         }
 
         votes.clear();
@@ -55,6 +62,7 @@ public class VoteService {
     }
 
     public Map<String, Integer> getVotesPerPartyByElectionByProvince(String electionId, String province) {
+
         Map<String, Integer> partyVotes = new HashMap<>();
         String fileName;
 
@@ -65,16 +73,21 @@ public class VoteService {
                             electionId.toUpperCase(),
                             constituency.replaceAll("'", "")
                     );
-                    readResults(fileName);
+
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_2023", fileName, electionId);
                 }
             }
         }
 
-        for (Vote vote : votes) {
-            partyVotes.put(vote.getPartyName(), partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
+        List<Vote> votesPerProvince = votesPerYear.getOrDefault(electionId, List.of());
+        for (Vote vote : votesPerProvince) {
+            partyVotes.put(
+                    vote.getPartyName(),
+                    partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes()
+            );
         }
 
-        votes.clear();
+        votesPerProvince.clear();
         return partyVotes;
     }
 }
