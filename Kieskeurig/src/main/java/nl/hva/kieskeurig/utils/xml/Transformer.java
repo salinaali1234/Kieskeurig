@@ -1,5 +1,7 @@
 package nl.hva.kieskeurig.utils.xml;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 /**
@@ -11,6 +13,7 @@ import java.util.Map;
  * the data in the application specific data classes.
  * @param <E>
  */
+@Component
 public interface Transformer<E> {
     /**
      * Called once per file with the information about the election. The parameter {@code electionData} (should) hold

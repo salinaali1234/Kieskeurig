@@ -58,5 +58,6 @@ async function fetchData(year: string) {
       </tr>
       </tbody>
     </table>
+    <p v-if="isVisible && parties.length === 0">Geen partijen gevonden...</p>
   </div>
 </template>

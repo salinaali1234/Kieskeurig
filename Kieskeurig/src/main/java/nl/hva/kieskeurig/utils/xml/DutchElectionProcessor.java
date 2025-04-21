@@ -146,6 +146,7 @@ public class DutchElectionProcessor<E> {
      */
     public E processResults(String electionId, String folderName) throws IOException, XMLStreamException {
         LOG.info("Loading election data from %s".formatted(folderName));
+        System.out.printf("Loading election data from %s%n", folderName);
 
         Map<String, String> electionData = new HashMap<>();
         electionData.put(ELECTION_IDENTIFIER, electionId);

@@ -24,7 +24,6 @@
 .data-table th,
 .data-table td {
   padding: 12px;
-  border-bottom: 1px solid var(--secondary-clr);
   text-align: left;
 }
 
@@ -52,4 +51,12 @@
   .toggle-btn {
     font-size: 1.2rem;
   }
+}
+
+.data-table tr {
+  border-bottom: 1px solid var(--secondary-clr);
+}
+
+.data-table tr:last-child {
+  border-bottom: none;
 }
