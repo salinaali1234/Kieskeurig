@@ -52,6 +52,7 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
+//        System.out.printf("Found candidate information: %s\n", candidateData);
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         PartyWithInfo party = election.getParty(partyId);
 
@@ -64,6 +65,9 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
 
             // Haal de elected-status op uit candidateData (standaard "no" als niet aanwezig)
             String elected = candidateData.getOrDefault(ELECTED, "no");
+            String test = candidateData.get(ELECTED);
+//            System.out.println("====");
+//            System.out.println(test);
             boolean isElected = "yes".equalsIgnoreCase(elected);
 
             CandidateForPartyInfo candidate = new CandidateForPartyInfo(
@@ -95,6 +99,12 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerConstituents(Map<String, String> constituentData) {
 
+    }
+
+    public void registerElected(Map<String, String> electedData) {
+        // haal de id op (zowel party als canddiates)
+        // zoek de candidate m.b.v. election.candidate.find(x =>
+        // candidate.setElected = electedData.get(ELECTED);
     }
 
     @Override

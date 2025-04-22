@@ -40,6 +40,7 @@ const fetchCandidates = async () => {
     }
 
     candidates.value = await response.json();
+    console.log(candidates.value)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error';
   } finally {
@@ -152,7 +153,6 @@ onMounted(() => {
 }
 
 .sort-select {
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   border: 1px solid #d1a5e6;
   background-color: #DEBFE9;
@@ -165,7 +165,7 @@ onMounted(() => {
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1rem;
-  padding-right: 2rem;
+  padding: 0.5rem 2rem 0.5rem 1rem;
 }
 
 .sort-select:hover {

@@ -25,7 +25,7 @@ public class DutchElectionTransformer implements Transformer<Election> {
     @Override
     public void registerElection(Map<String, String> electionData) {
         election.data = electionData;
-        System.out.printf("Found election information: %s\n", electionData);
+//        System.out.printf("Found election information: %s\n", electionData);
     }
 
     @Override
