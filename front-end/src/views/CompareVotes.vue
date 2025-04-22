@@ -52,16 +52,26 @@ watch([selectedYearA, selectedYearB], loadVotes);
     <div class="dropdowns">
       <div>
         <label>Jaar A</label>
-        <select v-model="selectedYearA" class="dropdown">
-          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-        </select>
+        <div class="dropdown-wrapper">
+          <select v-model="selectedYearA" class="dropdown">
+            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+          </select>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
       </div>
 
       <div>
         <label>Jaar B</label>
-        <select v-model="selectedYearB" class="dropdown">
-          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-        </select>
+        <div class="dropdown-wrapper">
+          <select v-model="selectedYearB" class="dropdown">
+            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+          </select>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </div>
       </div>
     </div>
 
@@ -109,17 +119,20 @@ label {
   color: white;
 }
 
-.dropdown {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--secondary-clr);
-  background-color: #DEBFE9;
-  color: black;
-  min-width: 120px;
-}
-
 .compare-table-wrapper {
   overflow-x: auto;
   padding: 0 1rem;
+}
+
+.dropdown {
+  width: 120px;
+}
+
+.dropdown-icon {
+  right: -12px;
+}
+
+.dropdown-wrapper {
+  margin: 0;
 }
 </style>
