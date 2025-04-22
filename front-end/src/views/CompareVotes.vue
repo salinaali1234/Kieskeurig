@@ -7,7 +7,7 @@ interface Party {
   votes: number;
 }
 
-const years = ["2021", "2023"];
+const years = ["2023", "2021"];
 const selectedYearA = ref("2023");
 const selectedYearB = ref("2021");
 
