@@ -8,15 +8,15 @@ interface Party {
 }
 
 const electionId = "TK2023" // Temp
-const sort = ref("validVotes")
-const asc = ref(false)
+let sort = "validVotes"
+let asc = false
 
 const selectedProvince = ref("");
 const provinces = ref<string[]>([]);
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces?sort=${sort.value}&asc=${asc.value}`;
+let provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
 let partyUrl: string = "";
 
 function toggleVisible() {
@@ -35,10 +35,36 @@ onMounted(async () => {
   }
 });
 
-async function onClick(province: string) {
-  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}`;
+async function onClickDropdown(province: string) {
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}?sort=${sort}&asc=${asc}`;
   isVisible.value = true;
 
+  await fetchPartyData();
+}
+
+async function onClickTable(event) {
+  const targetElement: HTMLElement = event.target;
+  const targetId: string = targetElement.id;
+  const className: string = "sortedColumn";
+
+  if (targetElement.classList[0] === className) {
+    asc = !asc;
+  } else {
+    // Remove the sortedColumn class from the previous element
+    const previousElement: HTMLElement | null = document.querySelector('[class=classname]')
+    if (previousElement != null) previousElement.classList.remove(className)
+
+    // Add the sortedColumn class to the target element
+    event.target.classList.add(className)
+    console.log(event.target.classList)
+  }
+
+  sort = targetId
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${selectedProvince.value}?sort=${sort}&asc=${asc}`
+  await fetchPartyData()
+}
+
+async function fetchPartyData() {
   try {
     const response = await fetch(partyUrl);
 
@@ -60,7 +86,7 @@ async function onClick(province: string) {
         v-for="province in provinces"
         :key="province"
         :value="province"
-        @click="onClick(province)"
+        @click="onClickDropdown(province)"
       >
         {{province}}
       </option>
@@ -74,8 +100,8 @@ async function onClick(province: string) {
     <table class="data-table">
       <thead>
       <tr>
-        <th>Partij</th>
-        <th>Aantal Stemmen</th>
+        <th @click="onClickTable($event)" id="partyName">Partij</th>
+        <th @click="onClickTable($event)" id="validVotes" class="sortedColumn">Aantal Stemmen</th>
       </tr>
       </thead>
       <tbody>
