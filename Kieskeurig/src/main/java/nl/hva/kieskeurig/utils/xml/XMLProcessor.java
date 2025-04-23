@@ -30,10 +30,12 @@ public class XMLProcessor implements CommandLineRunner {
     private void xmlProcessing() throws IOException, XMLStreamException {
         System.out.println("Processing files...");
 
-        // Assuming the election data is contained in {@code src/main/resource} it should be found.
-        // Please note that you can also specify an absolute path to the folder!
-        Election election = dutchElectionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
+        Election election = dutchElectionProcessor.processResults("TK2023",
+                PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
 
+        // Als je ook de uitslagen wilt verwerken, doe dit dan in een aparte variabele of stap:
+        Election results = dutchElectionProcessor.processResults("TK2023",
+                PathUtils.getResourcePath("/Verkiezingsuitslag_Tweede_Kamer_2023"));
         System.out.println("All files are processed.\n");
         // Just print the 'results'
         System.out.println(election);

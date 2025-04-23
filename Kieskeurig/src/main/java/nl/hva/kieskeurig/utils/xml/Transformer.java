@@ -85,5 +85,11 @@ public interface Transformer<E> {
      * Returns an instance that encapsulates all the registered data about the election.
      * @return an instance that encapsulates all the data for an election.
      */
+    /**
+     *
+     * @param electedData a {@code map} contains information about the different constituencies: The id and name
+     */
+    void registerElected(Map<String, String> electedData);
+
     E retrieve();
 }
