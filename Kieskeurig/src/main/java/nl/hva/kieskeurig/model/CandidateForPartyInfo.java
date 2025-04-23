@@ -14,7 +14,7 @@ public class CandidateForPartyInfo {
     private final String lastName;
     private final String gender;
     private final String localityName;
-    private final boolean elected;  // New field
+    private boolean elected;
 
     public CandidateForPartyInfo(int id, int candidateId, String initials, String firstName,
                                  String namePrefix, String lastName, String gender,

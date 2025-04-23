@@ -146,19 +146,19 @@ public class DutchElectionProcessor<E> {
 
         List<Path> files = PathUtils.findFilesToScan(folderName, "Kandidatenlijsten_%s_".formatted(electionId));
 
-//        for (Path electionFile : files) {
-//            LOG.fine("Found: %s".formatted(electionFile));
-//            XMLParser parser = new XMLParser(new FileInputStream(electionFile.toString()));
-//            processElection(electionData, parser);
-//            processContest(electionData, parser);
-//        }
-//
-//        for (Path votesPerReportingStationFile : PathUtils.findFilesToScan(folderName, "Telling_%s_gemeente".formatted(electionId))) {
-//            LOG.fine("Found: %s".formatted(votesPerReportingStationFile));
-//            XMLParser parser = new XMLParser(new FileInputStream(votesPerReportingStationFile.toString()));
-//            processElection(electionData, parser);
-//            processVotes(electionData, parser);
-//        }
+        for (Path electionFile : files) {
+            LOG.fine("Found: %s".formatted(electionFile));
+            XMLParser parser = new XMLParser(new FileInputStream(electionFile.toString()));
+            processElection(electionData, parser);
+            processContest(electionData, parser);
+        }
+
+        for (Path votesPerReportingStationFile : PathUtils.findFilesToScan(folderName, "Telling_%s_gemeente".formatted(electionId))) {
+           LOG.fine("Found: %s".formatted(votesPerReportingStationFile));
+           XMLParser parser = new XMLParser(new FileInputStream(votesPerReportingStationFile.toString()));
+           processElection(electionData, parser);
+            processVotes(electionData, parser);
+       }
 
         for (Path votesPerReportingStationFile : PathUtils.findFilesToScan(folderName, "Resultaat_%s".formatted(electionId))) {
             System.out.println("test!");
@@ -425,6 +425,7 @@ public class DutchElectionProcessor<E> {
             parser.findAndAcceptEndTag(REPORTING_UNIT_VOTES);
         }
     }
+
 
     private void processElected(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
         while (parser.findBeginTag(SELECTION)) {
