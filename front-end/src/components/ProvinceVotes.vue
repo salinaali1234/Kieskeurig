@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
 import "../assets/tableStyle.css"
-import NationalVotes from "@/components/NationalVotes.vue";
 
 interface Party {
-  name: string;
-  votes: number;
+  partyName: string;
+  validVotes: number;
 }
 
 const electionId = "TK2023" // Temp
+const sort = ref("validVotes")
+const asc = ref(false)
 
 const selectedProvince = ref("");
 const provinces = ref<string[]>([]);
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
+const provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces?sort=${sort.value}&asc=${asc.value}`;
 let partyUrl: string = "";
 
 function toggleVisible() {
@@ -42,11 +43,7 @@ async function onClick(province: string) {
     const response = await fetch(partyUrl);
 
     if (response.ok) {
-      const data = await response.json();
-      parties.value = Object.entries(data).map(([name, votes]) => ({
-        name,
-        votes: Number(votes),
-      }));
+      parties.value = await response.json();
     }
   } catch (error) {
     console.error("Er is een fout opgetreden bij het ophalen van de data", error);
@@ -82,9 +79,9 @@ async function onClick(province: string) {
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(party, index) in parties" :key="index">
-        <td>{{ party.name }}</td>
-        <td>{{ party.votes }}</td>
+      <tr v-for="party in parties" :key="party.partyName">
+        <td>{{ party.partyName }}</td>
+        <td>{{ party.validVotes }}</td>
       </tr>
       </tbody>
     </table>

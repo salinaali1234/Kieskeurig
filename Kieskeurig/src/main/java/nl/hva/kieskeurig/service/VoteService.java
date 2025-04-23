@@ -53,22 +53,25 @@ public class VoteService {
         List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
 
         for (Vote vote : votes) {
-            partyVotes.put(vote.getPartyName(),
-                    partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes());
+            partyVotes.put(
+                    vote.getPartyName(),
+                    partyVotes.getOrDefault(vote.getPartyName(),0) + vote.getValidVotes()
+            );
         }
 
         votes.clear();
         return partyVotes;
     }
 
-    public Map<String, Integer> getVotesPerPartyByElectionByProvince(String electionId, String province) {
-
-        Map<String, Integer> partyVotes = new HashMap<>();
+    public Object getVotesPerPartyByElectionByProvince(String electionId, String province, String sort, boolean asc) {
+        if (sort == null) sort = "";
         String fileName;
 
+        // Read the results for every constituency for the selected province
         for (Province provinceName : Province.values()) {
             if (provinceName.getDisplayName().equalsIgnoreCase(province)) {
                 for (String constituency : provinceName.getConstituencies()) {
+                    System.out.println(constituency);
                     fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
                             electionId.toUpperCase(),
                             constituency.replaceAll("'", "")
@@ -79,15 +82,42 @@ public class VoteService {
             }
         }
 
-        List<Vote> votesPerProvince = votesPerYear.getOrDefault(electionId, List.of());
-        for (Vote vote : votesPerProvince) {
-            partyVotes.put(
+        List<Vote> totalPartyVotesList = getVotes(electionId);
+        return sortVotes(totalPartyVotesList, sort, asc);
+    }
+
+    private List<Vote> getVotes(String electionId) {
+        // Calculate the total votes for each party and put it in a map to get rid of duplicates
+        List<Vote> votes = votesPerYear.getOrDefault(electionId, List.of());
+        Map<String, Integer> totalPartyVotesMap = new HashMap<>();
+        for (Vote vote : votes) {
+            totalPartyVotesMap.put(
                     vote.getPartyName(),
-                    partyVotes.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes()
+                    totalPartyVotesMap.getOrDefault(vote.getPartyName(), 0) + vote.getValidVotes()
             );
         }
 
-        votesPerProvince.clear();
-        return partyVotes;
+        // Turn the map into a list containing the total votes for each party
+        List<Vote> totalPartyVotesList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : totalPartyVotesMap.entrySet()) {
+            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue());
+            totalPartyVotesList.add(partyVoteResult);
+        }
+
+        votes.clear();
+
+        return totalPartyVotesList;
+    }
+
+    private List<Vote> sortVotes(List<Vote> votes, String sort, boolean asc) {
+        if (sort.equals("partyName")) {
+            votes.sort(Comparator.comparing(Vote::getPartyName));
+        } else {
+            votes.sort(Comparator.comparing(Vote::getValidVotes));
+        }
+
+        if (!asc) Collections.reverse(votes);
+
+        return votes;
     }
 }
