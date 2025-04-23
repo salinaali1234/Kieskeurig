@@ -56,6 +56,11 @@ public class PartiesInfoRepo {
     public List<ElectionForParty> getAll() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
         return List.of(loadElectionData());
     }
+
+    public List<CandidateForPartyInfo> getAllCandidates() throws IOException, XMLStreamException {
+        return loadElectionData().getAllCandidates();
+    }
+
 }
 
 //    public boolean readResults(String folderName) {
