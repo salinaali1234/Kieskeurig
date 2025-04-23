@@ -24,13 +24,9 @@ onMounted(async () => {
     const response = await fetch(url);
     if (response.ok) {
       const data= await response.json();
-      console.log(data)
-
-
       for(const constituency of Object.entries(data)) {
         constituencies.value.push(constituency)
       }
-      console.log(constituencies)
     }
 
 
@@ -55,7 +51,7 @@ const showConstituency = (id: number) => {
           :key="constituency[0]"
 
           @click="showConstituency(constituency[1])">
-        <td @click="console.log(constituency[1])">{{ constituency[0] }}</td>
+        <td>{{ constituency[0] }}</td>
 
       </tr>
       </tbody>
