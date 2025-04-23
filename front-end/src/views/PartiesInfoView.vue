@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted, watch} from 'vue';
+import { useRoute } from "vue-router";
 
-interface Candidate {
-  candidateId: number;
-  partyId: number;
-  partyName: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  elected: boolean;
-}
+const route = useRoute()
+const parties: string | string[] = route.params.parties
+const partyId: string | string[] = route.params.partyid
+const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL
 
-interface PartySeatInfo {
+interface PartyWithInfo {
   partyId: number;
   partyName: string;
   seats: number;
 }
 
-const candidates = ref<Candidate[]>([]);
+const partiesList = ref<PartyWithInfo[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
@@ -28,19 +24,18 @@ const sortOptions = [
   { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
 ];
 
-const fetchCandidates = async () => {
+const fetchParties = async () => {
   try {
     loading.value = true;
     error.value = null;
 
-    const response = await fetch('http://localhost:8080/api/partiesInfo/parties');
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`);
 
     if (!response.ok) {
-      throw new Error('Failed to load candidates');
+      throw new Error('Failed to load parties');
     }
 
-    candidates.value = await response.json();
-    console.log(candidates.value)
+    partiesList.value = await response.json();
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error';
   } finally {
@@ -48,37 +43,13 @@ const fetchCandidates = async () => {
   }
 };
 
-const groupedByParty = computed<PartySeatInfo[]>(() => {
-  const map = new Map<number, PartySeatInfo>();
 
-  for (const candidate of candidates.value) {
-    if (!map.has(candidate.partyId)) {
-      map.set(candidate.partyId, {
-        partyId: candidate.partyId,
-        partyName: candidate.partyName,
-        seats: 1,
-      });
-    } else {
-      map.get(candidate.partyId)!.seats++;
-    }
-  }
-
-  const parties = Array.from(map.values());
-
-  switch (sortOrder.value) {
-    case 'seats-desc':
-      return parties.sort((a, b) => b.seats - a.seats);
-    case 'seats-asc':
-      return parties.sort((a, b) => a.seats - b.seats);
-    case 'alphabetical':
-      return parties.sort((a, b) => a.partyName.localeCompare(b.partyName));
-    default:
-      return parties;
-  }
+watch(sortOrder, () => {
+  fetchParties();
 });
 
 onMounted(() => {
-  fetchCandidates();
+  fetchParties();
 });
 </script>
 
@@ -108,15 +79,15 @@ onMounted(() => {
 
     <div v-else-if="error" class="error">
       {{ error }}
-      <button @click="fetchCandidates" class="retry-btn">Opnieuw</button>
+      <button @click="fetchParties" class="retry-btn">Opnieuw</button>
     </div>
 
-    <div v-else-if="groupedByParty.length === 0" class="empty">
-      Geen verkozen kandidaten gevonden
+    <div v-else-if="partiesList.length === 0" class="empty">
+      Geen partijen gevonden
     </div>
 
     <div v-else class="party-grid">
-      <div v-for="party in groupedByParty" :key="party.partyId" class="party-card">
+      <div v-for="party in partiesList" :key="party.partyId" class="party-card">
         <h2>{{ party.partyName }}</h2>
         <p><strong>Zetels:</strong> {{ party.seats }}</p>
       </div>
@@ -161,7 +132,6 @@ onMounted(() => {
   color: #2c3e50;
   transition: all 0.3s ease;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c3e50'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
   background-size: 1rem;
