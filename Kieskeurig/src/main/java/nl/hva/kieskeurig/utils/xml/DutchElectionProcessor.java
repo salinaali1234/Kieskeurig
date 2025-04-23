@@ -427,16 +427,110 @@ public class DutchElectionProcessor<E> {
     }
 
     private void processElected(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
-        System.out.println("======");
+        while (parser.findBeginTag(SELECTION)) {
+            Map<String, String> electedData = new HashMap<>(electionData);
+            boolean isCandidateSelection = false;
 
+            // Verwerk Affiliation (Party)
+            if (parser.findBeginTag(AFFILIATION_IDENTIFIER)) {
+                String partyId = parser.getAttributeValue(null, ID);
+                electedData.put(AFFILIATION_IDENTIFIER, partyId);
+                parser.findAndAcceptEndTag(AFFILIATION_IDENTIFIER);
+            }
 
-        while (parser.findBeginTag(ELECTED)) {
-            // ook candidateID meegeven...
-            // partyID meegeven
-            parser.findBeginTag(ELECTED);
-            electionData.put(ELECTED, parser.getElementText().trim());
+            // Verwerk Candidate
+            if (parser.findBeginTag(CANDIDATE)) {
+                isCandidateSelection = true;
+                if (parser.findBeginTag(CANDIDATE_IDENTIFIER)) {
+                    String candidateId = parser.getAttributeValue(null, ID);
+                    electedData.put(CANDIDATE_IDENTIFIER, candidateId);
+                    parser.findAndAcceptEndTag(CANDIDATE_IDENTIFIER);
+                }
+                // Skip overige candidate details
+                while (!(parser.isEndElement() && parser.getLocalName().equals(CANDIDATE))) {
+                    parser.next();
+                }
+                parser.findAndAcceptEndTag(CANDIDATE);
+            }
 
-            parser.findAndAcceptEndTag(ELECTED);
+            // Verwerk Elected status
+            if (parser.findBeginTag(ELECTED)) {
+                String status = parser.getElementText();
+                if ("yes".equalsIgnoreCase(status) && isCandidateSelection) {
+                    System.out.println("Marking as elected: " + electedData);
+                    transformer.registerElected(electedData);
+                }
+                parser.findAndAcceptEndTag(ELECTED);
+            }
+
+            parser.findAndAcceptEndTag(SELECTION);
         }
     }
+
 }
+
+
+
+
+
+
+//    private void processElected(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
+//        System.out.println("======");
+//
+//        while (parser.findBeginTag(ELECTED)) {
+//            // Ook candidateID meegeven...
+//            // partyID meegeven
+//            parser.findBeginTag(ELECTED);
+//            electionData.put(ELECTED, parser.getElementText().trim());
+//
+//            parser.findAndAcceptEndTag(ELECTED);
+//
+//    }
+//        transformer.registerElected(electionData);
+// private void processElected(Map<String, String> electionData, XMLParser parser) throws XMLStreamException {
+//    System.out.println("====== START processElected ======");
+//
+//    if (parser.findBeginTag(CONTEST)) {
+//        Map<String, String> contestData = new HashMap<>(electionData);
+//
+//        while (parser.getLocalName() != null && parser.getLocalName().equals(SELECTION)) {
+//            Map<String, String> selectionData = new HashMap<>(contestData);
+//
+//            int affiliationId = 0;
+//            if (parser.findBeginTag(AFFILIATION_IDENTIFIER)) {
+//                affiliationId = parser.getIntegerAttributeValue(null, ID, 0);
+//                parser.findAndAcceptEndTag(AFFILIATION_IDENTIFIER);
+//                selectionData.put(AFFILIATION_IDENTIFIER, String.valueOf(affiliationId));
+//            }
+//
+//            while (parser.getLocalName() != null && parser.getLocalName().equals(CANDIDATE)) {
+//                Map<String, String> candidateData = new HashMap<>(selectionData);
+//
+//                int candidateId = 0;
+//                String candidateIdAttr = parser.getAttributeValue(null, ID);
+//                if (candidateIdAttr != null && !candidateIdAttr.isBlank()) {
+//                    candidateId = Integer.parseInt(candidateIdAttr);
+//                }
+//                candidateData.put(CANDIDATE_IDENTIFIER, String.valueOf(candidateId));
+//
+//                if (parser.findBeginTag(ELECTED)) {
+//                    String electedValue = parser.getElementText().trim();
+//                    candidateData.put(ELECTED, electedValue);
+//                    parser.findAndAcceptEndTag(ELECTED);
+//                }
+//
+//                transformer.registerElected(candidateData);
+//                parser.findAndAcceptEndTag(CANDIDATE);
+//            }
+//
+//            parser.findAndAcceptEndTag(SELECTION);
+//        }
+//
+//        parser.findAndAcceptEndTag(CONTEST);
+//    }
+//
+//    System.out.println("====== EINDE processElected ======");
+//}
+
+
+

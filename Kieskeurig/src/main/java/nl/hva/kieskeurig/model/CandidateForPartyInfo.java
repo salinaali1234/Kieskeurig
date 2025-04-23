@@ -35,4 +35,7 @@ public class CandidateForPartyInfo {
                                  String lastName, String gender, String localityName, boolean elected) {
         this(id, candidateId, "", firstName, "", lastName, gender, localityName, elected);
     }
+     public void setElected(boolean isElected) {
+        this.elected = isElected;
+    }
 }
