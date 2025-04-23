@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import {ref, onMounted, type Ref} from "vue";
+import {ref, onMounted, type Ref, computed} from "vue";
 import "../assets/tableStyle.css"
 import Constituencies from "@/views/Constituencies.vue";
-import NationalVotes from "@/views/NationalVotes.vue";
 import router from "@/router";
+import {routerKey, useRoute} from "vue-router";
+
 
 interface Constituency {
   id: number;
   name: string;
 }
 
+const route = useRoute();
+const constituencyId = computed(() => route.params.constituencyId);
+console.log("this is the constituencyid"+ constituencyId.value)
+
 const constituencies: Ref<any[]> = ref([]);
 const isVisible = ref(false);
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
-const url = `${backendUrl}/api/constituencies/all/Constituencies/0`;
+const url = `${backendUrl}/api/constituencies/all/municipalities/${constituencyId.value}`;
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
@@ -42,8 +47,6 @@ onMounted(async () => {
 const showConstituency = (id: number) => {
   router.push(`/Constituency/${id}`)
 }
-
-
 </script>
 
 <template>
