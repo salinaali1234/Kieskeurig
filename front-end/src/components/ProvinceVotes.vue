@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
 import "../assets/tableStyle.css"
-import NationalVotes from "@/components/NationalVotes.vue";
 
 interface Party {
-  name: string;
-  votes: number;
+  partyName: string;
+  validVotes: number;
 }
 
 const electionId = "TK2023" // Temp
+let sort = "validVotes"
+let asc = false
 
 const selectedProvince = ref("");
 const provinces = ref<string[]>([]);
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
+let provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
 let partyUrl: string = "";
 
 function toggleVisible() {
@@ -34,19 +35,51 @@ onMounted(async () => {
   }
 });
 
-async function onClick(province: string) {
-  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}`;
+async function onClickDropdown(province: string) {
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}?sort=${sort}&asc=${asc}`;
   isVisible.value = true;
 
+  await fetchPartyData();
+}
+
+async function onClickTable(event) {
+  const targetElement: HTMLElement = event.target;
+  const targetId: string = targetElement.id;
+  const sortedColumnClassName: string = "sortedColumn";
+  const svgElement: HTMLElement = document.querySelector(`#${targetElement.id} svg`)!
+
+  if (targetElement.classList.contains(sortedColumnClassName)) {
+    asc = !asc;
+  } else {
+    asc = false
+
+    const previousElement: HTMLElement = document.querySelector(`.${sortedColumnClassName}`)!
+    previousElement.classList.remove(sortedColumnClassName)
+    targetElement.classList.add(sortedColumnClassName)
+
+    const previousSVG: HTMLElement = document.querySelector(`#${previousElement.id} svg`)!
+    previousSVG.classList.remove("flipped-arrow")
+    previousSVG.classList.add("display-none")
+    svgElement.classList.remove("display-none")
+  }
+
+  // Flips arrow
+  switch (asc) {
+    case true: svgElement.classList.add("flipped-arrow"); break
+    case false: svgElement.classList.remove("flipped-arrow"); break
+  }
+
+  sort = targetId
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${selectedProvince.value}?sort=${sort}&asc=${asc}`
+  await fetchPartyData()
+}
+
+async function fetchPartyData() {
   try {
     const response = await fetch(partyUrl);
 
     if (response.ok) {
-      const data = await response.json();
-      parties.value = Object.entries(data).map(([name, votes]) => ({
-        name,
-        votes: Number(votes),
-      }));
+      parties.value = await response.json();
     }
   } catch (error) {
     console.error("Er is een fout opgetreden bij het ophalen van de data", error);
@@ -63,7 +96,7 @@ async function onClick(province: string) {
         v-for="province in provinces"
         :key="province"
         :value="province"
-        @click="onClick(province)"
+        @click="onClickDropdown(province)"
       >
         {{province}}
       </option>
@@ -77,17 +110,54 @@ async function onClick(province: string) {
     <table class="data-table">
       <thead>
       <tr>
-        <th>Partij</th>
-        <th>Aantal Stemmen</th>
+        <th @click="onClickTable($event)" id="partyName">
+          Partij
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 table-header-icon display-none" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </th>
+        <th @click="onClickTable($event)" id="validVotes" class="sortedColumn">
+          Aantal Stemmen
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 table-header-icon" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(party, index) in parties" :key="index">
-        <td>{{ party.name }}</td>
-        <td>{{ party.votes }}</td>
+      <tr v-for="party in parties" :key="party.partyName">
+        <td>{{ party.partyName }}</td>
+        <td>{{ party.validVotes }}</td>
       </tr>
       </tbody>
     </table>
     <p v-if="parties.length === 0">Geen partijen gevonden...</p>
   </div>
 </template>
+
+<style scoped>
+.flipped-arrow {
+  transform: scale(1,-1) !important;
+}
+
+.display-none {
+  display: none !important;
+}
+
+th {
+  cursor: pointer;
+}
+
+.table-header-wrapper {
+  position: relative;
+}
+
+.table-header-icon {
+  width: 1em;
+  display: inline;
+  margin-right: 0px;
+  vertical-align: bottom;
+  color: black;
+  pointer-events: none;
+}
+</style>

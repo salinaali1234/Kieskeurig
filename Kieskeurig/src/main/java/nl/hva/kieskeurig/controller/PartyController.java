@@ -2,12 +2,7 @@ package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * API handling everything related to parties.
@@ -23,7 +18,12 @@ public class PartyController {
     }
 
     @GetMapping("/{electionId}/{province}")
-    public Map<String, Integer> getVotesPerPartyByElectionByProvince(@PathVariable String electionId, @PathVariable String province) {
-        return voteService.getVotesPerPartyByElectionByProvince(electionId, province);
+    public Object getVotesPerPartyByElectionByProvince(
+            @PathVariable String electionId,
+            @PathVariable String province,
+            @RequestParam(required = false, defaultValue = "validVotes") String sort,
+            @RequestParam(required = false, defaultValue = "false") boolean asc
+    ) {
+        return voteService.getVotesPerPartyByElectionByProvince(electionId, province, sort, asc);
     }
 }
