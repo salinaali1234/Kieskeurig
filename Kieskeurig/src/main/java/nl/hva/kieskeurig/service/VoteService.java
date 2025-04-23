@@ -86,6 +86,11 @@ public class VoteService {
         return sortVotes(totalPartyVotesList, sort, asc);
     }
 
+    /**
+     * Gets the total amount of valid votes each party got and returns it in a {@link List<Vote>} containing objects with the {@link Vote} class.
+     * @param electionId Type {@link String}
+     * @return {@link List<Vote>}
+     */
     private List<Vote> getVotes(String electionId) {
         // Calculate the total votes for each party and put it in a map to get rid of duplicates
         List<Vote> votes = votesPerYear.getOrDefault(electionId, List.of());
@@ -109,6 +114,13 @@ public class VoteService {
         return totalPartyVotesList;
     }
 
+    /**
+     * Takes a {@link List<Vote>} containing objects with the {@link Vote} class and will return a sorted {@link List<Vote>} containing objects of the same class based on the given parameters.
+     * @param votes Type {@link List<Vote>}
+     * @param sort Type {@link String}
+     * @param asc Type {@link Boolean}
+     * @return {@link List<Vote>}
+     */
     private List<Vote> sortVotes(List<Vote> votes, String sort, boolean asc) {
         if (sort.equals("partyName")) {
             votes.sort(Comparator.comparing(Vote::getPartyName));
