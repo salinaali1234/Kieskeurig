@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import {ref, onMounted, type Ref, computed} from "vue";
 import "../assets/tableStyle.css"
-import Constituencies from "@/views/Constituencies.vue";
+
 import router from "@/router";
-import {routerKey, useRoute} from "vue-router";
-
-
-interface Constituency {
-  id: number;
-  name: string;
-}
+import { useRoute} from "vue-router";
 
 const route = useRoute();
 const constituencyId = computed(() => route.params.constituencyId);
 
-const constituencies: Ref<any[]> = ref([]);
+const municipalities: Ref<any[]> = ref([]);
 const isVisible = ref(false);
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
 const url = `${backendUrl}/api/constituencies/all/municipalities/${constituencyId.value}`;
@@ -28,8 +22,8 @@ onMounted(async () => {
     const response = await fetch(url);
     if (response.ok) {
       const data= await response.json();
-      for(const constituency of Object.entries(data)) {
-        constituencies.value.push(constituency)
+      for(const municipality of Object.entries(data)) {
+        municipalities.value.push(municipality)
       }
     }
 
@@ -49,15 +43,14 @@ const showConstituency = (id: number) => {
 
     <table class="data-table">
       <tbody>
-      <tr v-for="constituency in constituencies"
-          :key="constituency[0]"
-
-          @click="showConstituency(constituency[1])">
-        <td>{{ constituency[0] }}</td>
+      <tr v-for="municipality in municipalities"
+          :key="municipality[0]"
+          @click="showConstituency(municipality[1])">
+        <td>{{ municipality[0] }}</td>
 
       </tr>
       </tbody>
     </table>
-    <p v-if="isVisible && constituencies.length === 0">Geen kieskringen gevonden...</p>
+    <p v-if="isVisible && municipalities.length === 0">all gemeentes binnen deze kieskring inladen...</p>
   </div>
 </template>
