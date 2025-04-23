@@ -45,18 +45,28 @@ async function onClickDropdown(province: string) {
 async function onClickTable(event) {
   const targetElement: HTMLElement = event.target;
   const targetId: string = targetElement.id;
-  const className: string = "sortedColumn";
+  const sortedColumnClassName: string = "sortedColumn";
+  const svgElement: HTMLElement = document.querySelector(`#${targetElement.id} svg`)!
 
-  if (targetElement.classList[0] === className) {
+  if (targetElement.classList.contains(sortedColumnClassName)) {
     asc = !asc;
   } else {
-    // Remove the sortedColumn class from the previous element
-    const previousElement: HTMLElement | null = document.querySelector('[class=classname]')
-    if (previousElement != null) previousElement.classList.remove(className)
+    asc = false
 
-    // Add the sortedColumn class to the target element
-    event.target.classList.add(className)
-    console.log(event.target.classList)
+    const previousElement: HTMLElement = document.querySelector(`.${sortedColumnClassName}`)!
+    previousElement.classList.remove(sortedColumnClassName)
+    targetElement.classList.add(sortedColumnClassName)
+
+    const previousSVG: HTMLElement = document.querySelector(`#${previousElement.id} svg`)!
+    previousSVG.classList.remove("flipped-arrow")
+    previousSVG.classList.add("display-none")
+    svgElement.classList.remove("display-none")
+  }
+
+  // Flips arrow
+  switch (asc) {
+    case true: svgElement.classList.add("flipped-arrow"); break
+    case false: svgElement.classList.remove("flipped-arrow"); break
   }
 
   sort = targetId
@@ -100,8 +110,18 @@ async function fetchPartyData() {
     <table class="data-table">
       <thead>
       <tr>
-        <th @click="onClickTable($event)" id="partyName">Partij</th>
-        <th @click="onClickTable($event)" id="validVotes" class="sortedColumn">Aantal Stemmen</th>
+        <th @click="onClickTable($event)" id="partyName">
+          Partij
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 table-header-icon display-none" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </th>
+        <th @click="onClickTable($event)" id="validVotes" class="sortedColumn">
+          Aantal Stemmen
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 table-header-icon" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -114,3 +134,30 @@ async function fetchPartyData() {
     <p v-if="parties.length === 0">Geen partijen gevonden...</p>
   </div>
 </template>
+
+<style scoped>
+.flipped-arrow {
+  transform: scale(1,-1) !important;
+}
+
+.display-none {
+  display: none !important;
+}
+
+th {
+  cursor: pointer;
+}
+
+.table-header-wrapper {
+  position: relative;
+}
+
+.table-header-icon {
+  width: 1em;
+  display: inline;
+  margin-right: 0px;
+  vertical-align: bottom;
+  color: black;
+  pointer-events: none;
+}
+</style>
