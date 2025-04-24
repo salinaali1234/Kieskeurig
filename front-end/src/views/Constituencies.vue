@@ -72,13 +72,12 @@ function toggleSortByName() {
 <template>
   <div>
 
-    <thead>
+    <thead class="sortingButton">
     <tr>
-      <th @click="toggleSortByName()" style="cursor: pointer;" class="sortingButton">
-        sorteren:
-        <span v-if="sortDirection == null">A-Z▼ ▲</span>
-        <span v-if="sortDirection === 'asc'">Z-A ▲ ▼</span>
-        <span v-else-if="sortDirection === 'desc'">origineel</span>
+      <th @click="toggleSortByName()" style="cursor: pointer;" >
+        <span v-if="sortDirection == null">niet gesorteerd</span>
+        <span v-if="sortDirection === 'asc'">A-Z▼ ▲</span>
+        <span v-else-if="sortDirection === 'desc'">Z-A ▲ ▼</span>
       </th>
     </tr>
     </thead>
