@@ -61,7 +61,9 @@ public class DutchElectionTransformer implements Transformer<Election> {
         election.data = constituentData;
         //System.out.printf("Found constituents information: %s\n", constituentData);
     }
-
+    public void registerElected(Map<String, String> electedData) {
+        election.data = electedData;
+    }
 
     @Override
     public Election retrieve() {

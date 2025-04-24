@@ -54,17 +54,39 @@ public class PartiesInfoController {
             return List.of(); // list empty
         }
 
-    }@GetMapping("/parties")
-    public List<PartyWithInfo> getAllParties() {
+    }
+    @GetMapping("/parties")
+    public ResponseEntity<List<PartyWithInfo>> getAllParties(
+            @RequestParam(required = false, defaultValue = "seats-desc") String sort) {
         try {
-            return service.getAllParties();
+            List<PartyWithInfo> parties = service.getAllParties(sort);
+            return ResponseEntity.ok(parties);
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
-            return List.of();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    @GetMapping("/candidates/elected")
+    public ResponseEntity<List<CandidateForPartyInfo>> getElectedCandidates() {
+        try {
+            List<CandidateForPartyInfo> all = service.getAllCandidates();
+            System.out.println("Total candidates: " + all.size());
+            System.out.println("Elected candidates: " + all.stream().filter(CandidateForPartyInfo::isElected).count());
+
+            List<CandidateForPartyInfo> elected = all.stream()
+                    .filter(CandidateForPartyInfo::isElected)
+                    .peek(c -> System.out.println("Elected: " + c.getFirstName() + " " + c.getLastName()))
+                    .toList();
+
+            return ResponseEntity.ok(elected);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
 }
+
 //    @GetMapping("/parties/{partyId}")
 //    public List<Party> getParty(@PathVariable int partyId) {
 //        return service.getParty(partyId);

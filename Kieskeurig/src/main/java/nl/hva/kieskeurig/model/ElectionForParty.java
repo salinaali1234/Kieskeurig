@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -23,6 +24,11 @@ public class ElectionForParty {
         return null;
     }
 
+    public List<CandidateForPartyInfo> getAllCandidates() {
+        return parties.stream()
+                .flatMap(party -> party.getCandidates().stream())
+                .collect(Collectors.toList());
+    }
     public boolean addParty(PartyWithInfo party) {
         return parties.add(party);
     }

@@ -11,12 +11,12 @@ const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL
 const url: string = `${VITE_APP_BACKEND_URL}/api/candidates/${electionId}/${partyName}`
 
 onMounted(async () => {
-    try {
-        const repsonse = await fetch(url)
-        candidates.value = await repsonse.json()
-    } catch (error) {
-        console.log(error)
-    }
+  try {
+    const repsonse = await fetch(url)
+    candidates.value = await repsonse.json()
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 </script>
@@ -29,14 +29,14 @@ onMounted(async () => {
 
     <h1>Kandidaten</h1>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Naam</th>
-        </tr>
-        <tr v-for="candidate in candidates" :key="candidate.candidateIdentifier">
-            <td>{{candidate.candidateIdentifier}}</td>
-            <td>{{candidate.firstName}} {{candidate.namePrefix}} {{candidate.lastName}}</td>
-        </tr>
-    </table>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Naam</th>
+    </tr>
+    <tr v-for="candidate in candidates" :key="candidate.candidateIdentifier">
+      <td>{{candidate.candidateIdentifier}}</td>
+      <td>{{candidate.firstName}} {{candidate.namePrefix}} {{candidate.lastName}}</td>
+    </tr>
+  </table>
 </template>

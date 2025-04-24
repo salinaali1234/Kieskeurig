@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import {ref, onMounted, watch} from "vue";
 import "../assets/tableStyle.css"
 
 interface Party {
@@ -10,27 +10,35 @@ interface Party {
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const url: string = `${VITE_APP_BACKEND_URL}/api/xml/votes/parties`;
+const props = defineProps<{ year: string }>();
+const url: string = `${VITE_APP_BACKEND_URL}/api/xml/votes/parties?year=${props.year}`;
+
+
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
 }
 
-onMounted(async () => {
-  try {
-    const response = await fetch(url);
+watch(() => props.year, async (newYear) => {
+  await fetchData(newYear);
+}, { immediate: true });
 
+async function fetchData(year: string) {
+  try {
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/xml/votes/parties?year=${year}`);
     if (response.ok) {
       const data = await response.json();
       parties.value = Object.entries(data).map(([name, votes]) => ({
         name,
-          votes: Number(votes),
-          }));
-        }
-      } catch (error) {
-    console.error("Er is een fout opgetreden bij het ophalen van de data", error);
+        votes: Number(votes),
+      }));
+    }
+  } catch (error) {
+    console.error("Fout bij ophalen data", error);
   }
-});
+}
+
+
 </script>
 
 <template>
@@ -50,6 +58,6 @@ onMounted(async () => {
       </tr>
       </tbody>
     </table>
-    <p >Geen partijen gevonden...</p>
+    <p v-if="isVisible && parties.length === 0">Geen partijen gevonden...</p>
   </div>
 </template>

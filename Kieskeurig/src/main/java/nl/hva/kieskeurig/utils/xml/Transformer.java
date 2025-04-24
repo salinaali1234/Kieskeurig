@@ -1,5 +1,7 @@
 package nl.hva.kieskeurig.utils.xml;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 /**
@@ -11,6 +13,7 @@ import java.util.Map;
  * the data in the application specific data classes.
  * @param <E>
  */
+@Component
 public interface Transformer<E> {
     /**
      * Called once per file with the information about the election. The parameter {@code electionData} (should) hold
@@ -82,5 +85,11 @@ public interface Transformer<E> {
      * Returns an instance that encapsulates all the registered data about the election.
      * @return an instance that encapsulates all the data for an election.
      */
+    /**
+     *
+     * @param electedData a {@code map} contains information about the different constituencies: The id and name
+     */
+    void registerElected(Map<String, String> electedData);
+
     E retrieve();
 }

@@ -10,6 +10,7 @@ import nl.hva.kieskeurig.model.PartyWithInfo;
 
 
 import java.util.Map;
+import java.util.Optional;
 
 import static nl.hva.kieskeurig.utils.xml.DutchElectionProcessor.*;
 
@@ -26,9 +27,9 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
-        //System.out.printf("Found election information: %s\n", electionData);
         if (election == null) {
             election = new ElectionForParty(electionDate);
+//            LOG.info("Election initialized with date: " + electionDate);
         }
     }
 
@@ -44,53 +45,133 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     public void registerAffiliation(Map<String, String> affiliationData) {
         int partyId = Integer.parseInt(affiliationData.get(AFFILIATION_IDENTIFIER));
         String partyName = affiliationData.get(REGISTERED_NAME);
-
-        //System.out.println("Registering party: ID=" + partyId + ", Name=" + partyName);
-
         PartyWithInfo party = new PartyWithInfo(partyId, partyName);
         election.addParty(party);
-        //System.out.println(election);
+//        LOG.info("Registered party: " + partyName);
     }
 
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
-        //System.out.println("Registering candidate: " + candidateData);
-
+//        System.out.printf("Found candidate information: %s\n", candidateData);
         int partyId = Integer.parseInt(candidateData.get(AFFILIATION_IDENTIFIER));
         PartyWithInfo party = election.getParty(partyId);
 
         if (party != null) {
-
             int candidateId = Integer.parseInt(candidateData.get(CANDIDATE_IDENTIFIER));
             String firstName = candidateData.get(FIRST_NAME);
             String lastName = candidateData.get(LAST_NAME);
             String gender = candidateData.get(GENDER);
-            String localityName = candidateData.getOrDefault("locality", null);
+            String localityName = candidateData.getOrDefault("locality", "Unknown");
 
-            CandidateForPartyInfo candidate = new CandidateForPartyInfo(candidateId, partyId, firstName, lastName, gender, "Unknown");
+            // Haal de elected-status op uit candidateData (standaard "no" als niet aanwezig)
+            String elected = candidateData.getOrDefault(ELECTED, "no");
+            String test = candidateData.get(ELECTED);
+//            System.out.println("====");
+//            System.out.println(test);
+            boolean isElected = "yes".equalsIgnoreCase(elected);
+
+            CandidateForPartyInfo candidate = new CandidateForPartyInfo(
+                    candidateId, partyId, firstName, lastName, gender, localityName, isElected
+            );
+
             party.addCandidate(candidate);
-
-
-            System.out.println("Added candidate " + candidateId + firstName + " to party " + partyId);
-        } else {
-            System.out.println("Party " + partyId + " not found for candidate");
         }
     }
-
     @Override
     public void registerVotes(Map<String, String> votesData) {
-       // election.data = votesData;
-       // System.out.printf("Found votes information: %s\n", votesData);
-    }
+        System.out.println("📥 registerVotes: " + votesData);
+        int partyId = Integer.parseInt(votesData.get(AFFILIATION_IDENTIFIER));
+        int candidateId = Integer.parseInt(votesData.get(CANDIDATE_IDENTIFIER));
+        PartyWithInfo party = election.getParty(partyId);
 
+        if (party != null) {
+            CandidateForPartyInfo candidate = new CandidateForPartyInfo(
+                    candidateId,
+                    partyId,
+                    "", "", "", "Onbekend", false
+            );
+            party.addCandidate(candidate);
+            party.incrementSeats();
+        }
+    }
     @Override
     public void registerConstituents(Map<String, String> constituentData) {
 
     }
 
     @Override
+    public void registerElected(Map<String, String> electedData) {
+        try {
+            int partyId = Integer.parseInt(electedData.get(AFFILIATION_IDENTIFIER));
+            int candidateId = Integer.parseInt(electedData.get(CANDIDATE_IDENTIFIER));
+
+            PartyWithInfo party = election.getParty(partyId);
+            if (party == null) {
+                System.out.println("Party not found: " + partyId);
+                return;
+            }
+            party.getCandidates().stream()
+                    .filter(c -> c.getCandidateId() == candidateId)
+                    .findFirst()
+                    .ifPresentOrElse(
+                            candidate -> {
+                                candidate.setElected(true);
+                                System.out.println("✅ Marked elected: " + candidate.getFirstName()
+                                        + " " + candidate.getLastName());
+                            },
+                            () -> System.out.println("❌ Candidate not found: " + candidateId)
+                    );
+        } catch (Exception e) {
+            System.out.println("Error in registerElected: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+//    public void registerElected(Map<String, String> electedData) {
+//        // haal de id op (zowel party als canddiates)
+        // zoek de candidate m.b.v. election.candidate.find(x =>
+//        // candidate.setElected = electedData.get(ELECTED);
+//    }
+
+    @Override
     public ElectionForParty retrieve() {
         return election;
     }
 }
+
+//@Override
+//public void registerElected(Map<String, String> electedData) {
+//    // 1️⃣ Haal de party- en candidate-ID op uit de map
+//    int partyId = Integer.parseInt(electedData.get(AFFILIATION_IDENTIFIER));
+//    int candidateId = Integer.parseInt(electedData.get(CANDIDATE_IDENTIFIER));
+//
+//    // 2️⃣ Haal de elected status op
+//    String elected = electedData.getOrDefault(ELECTED, "no");
+//    boolean isElected = "yes".equalsIgnoreCase(elected);
+//
+//    // 3️⃣ Zoek de juiste partij op basis van partyId
+//    PartyWithInfo party = election.getParty(partyId);
+//    if (party == null) {
+//        System.out.println("❌ Partij met ID " + partyId + " niet gevonden");
+//        return;
+//    }
+//
+//    // 4️⃣ Zoek de kandidaat binnen de partij
+//    CandidateForPartyInfo candidate = party.getCandidates().stream()
+//            .filter(c -> c.getCandidateId() == candidateId)
+//            .findFirst()
+//            .orElse(null);
+//
+//    // 5️⃣ Als kandidaat bestaat, update de elected status
+//    if (candidate != null) {
+//        candidate.setElected(isElected);
+//        System.out.println("✅ Kandidaat " + candidateId + " van partij " + partyId + " gemarkeerd als elected: " + isElected);
+//    } else {
+//        // 6️⃣ Anders: voeg een nieuwe kandidaat toe (alleen ID + elected status, andere info onbekend)
+//        CandidateForPartyInfo newCandidate = new CandidateForPartyInfo(
+//                candidateId, partyId, "", "", "", "Onbekend", isElected
+//        );
+//        party.addCandidate(newCandidate);
+//        System.out.println("➕ Nieuwe kandidaat toegevoegd (ID " + candidateId + ") met elected: " + isElected);
+//    }
