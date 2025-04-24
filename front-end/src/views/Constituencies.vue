@@ -12,7 +12,6 @@ interface Constituency {
 
 const constituencies: Ref<any[]> = ref([]);
 const isVisible = ref(false);
-const showSorted = ref(false);
 const sortDirection = ref<'asc' | 'desc' | null>(null); // asc = A-Z, desc = Z-A, null = original
 
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
