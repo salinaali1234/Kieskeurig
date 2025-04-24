@@ -16,12 +16,13 @@ interface PartyWithInfo {
 const partiesList = ref<PartyWithInfo[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
+const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical' | 'alphabetical-reverse'>('seats-desc');
 
 const sortOptions = [
   { value: 'seats-desc', label: 'Zetels (hoog → laag)' },
   { value: 'seats-asc', label: 'Zetels (laag → hoog)' },
-  { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
+  { value: 'alphabetical', label: 'Alfabetisch (A → Z)' },
+  { value: 'alphabetical-reverse', label: 'Alfabetisch (A <- Z)' }
 ];
 
 const fetchParties = async () => {
@@ -112,7 +113,7 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 1rem;
   color: white; /* Nu werkt dit wel */
-  background-color: #4a148c; /* Paarse achtergrond voor header */
+  background-color: #3E2858;
   padding: 1rem;
   border-radius: 8px;
 }
