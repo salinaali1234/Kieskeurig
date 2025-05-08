@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import {ref, onMounted, watch} from 'vue';
-import { useRoute } from "vue-router";
+import { ref, onMounted, watch } from 'vue';
 
-const route = useRoute()
-const parties: string | string[] = route.params.parties
-const partyId: string | string[] = route.params.partyid
-const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL
+const VITE_APP_BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 interface PartyWithInfo {
   partyId: number;
@@ -13,84 +9,120 @@ interface PartyWithInfo {
   seats: number;
 }
 
+interface Candidate {
+  id: number;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  localityName: string;
+}
+
+// Partij data
 const partiesList = ref<PartyWithInfo[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
-const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical' | 'alphabetical-reverse'>('seats-desc');
+const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
+
+// Kandidaten modal
+const showModal = ref(false);
+const currentCandidates = ref<Candidate[]>([]);
+const currentPartyName = ref('');
+const candidatesLoading = ref(false);
 
 const sortOptions = [
   { value: 'seats-desc', label: 'Zetels (hoog → laag)' },
   { value: 'seats-asc', label: 'Zetels (laag → hoog)' },
-  { value: 'alphabetical', label: 'Alfabetisch (A → Z)' },
-  { value: 'alphabetical-reverse', label: 'Alfabetisch (A <- Z)' }
+  { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
 ];
 
 const fetchParties = async () => {
   try {
     loading.value = true;
-    error.value = null;
-
     const response = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`);
-
-    if (!response.ok) {
-      throw new Error('Failed to load parties');
-    }
-
+    if (!response.ok) throw new Error('Kon partijen niet laden');
     partiesList.value = await response.json();
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Unknown error';
+    error.value = err instanceof Error ? err.message : 'Onbekende fout';
   } finally {
     loading.value = false;
   }
 };
 
+const showCandidates = async (partyId: number, partyName: string) => {
+  try {
+    candidatesLoading.value = true;
+    currentPartyName.value = partyName;
+    showModal.value = true;
 
-watch(sortOrder, () => {
-  fetchParties();
-});
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/candidates/${partyId}`);
+    if (!response.ok) throw new Error('Kon kandidaten niet laden');
+    currentCandidates.value = await response.json();
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Fout bij laden kandidaten';
+  } finally {
+    candidatesLoading.value = false;
+  }
+};
 
-onMounted(() => {
-  fetchParties();
-});
+watch(sortOrder, fetchParties);
+onMounted(fetchParties);
 </script>
 
 <template>
   <div class="parties-container">
+    <!-- Partij lijst header -->
     <div class="header-container">
       <h1>Verkozen zetels per partij</h1>
       <div class="sort-container">
         <label for="sort-select">Sorteer op:</label>
-        <select
-          id="sort-select"
-          v-model="sortOrder"
-          class="sort-select"
-        >
-          <option
-            v-for="option in sortOptions"
-            :key="option.value"
-            :value="option.value"
-          >
+        <select id="sort-select" v-model="sortOrder" class="sort-select">
+          <option v-for="option in sortOptions" :key="option.value" :value="option.value">
             {{ option.label }}
           </option>
         </select>
       </div>
     </div>
 
+    <!-- Loading/error states -->
     <div v-if="loading" class="loading">Laden...</div>
-
     <div v-else-if="error" class="error">
       {{ error }}
       <button @click="fetchParties" class="retry-btn">Opnieuw</button>
     </div>
+    <div v-else-if="partiesList.length === 0" class="empty">Geen partijen gevonden</div>
 
-    <div v-else-if="partiesList.length === 0" class="empty">
-      Geen partijen gevonden
-    </div>
-
+    <!-- Partijen grid -->
     <div v-else class="party-grid">
-      <div v-for="party in partiesList" :key="party.partyId" class="party-card">
+      <div
+          v-for="party in partiesList"
+          :key="party.partyId"
+          class="party-card"
+          @click="showCandidates(party.partyId, party.partyName)"
+      >
         <h2>{{ party.partyName }}</h2>
         <p><strong>Zetels:</strong> {{ party.seats }}</p>
+      </div>
+    </div>
+
+    <!-- Kandidaten Modal -->
+    <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+      <div class="modal-content">
+        <button class="close-btn" @click="showModal = false">×</button>
+        <h2>Kandidaten van {{ currentPartyName }}</h2>
+
+        <div v-if="candidatesLoading" class="loading">Kandidaten laden...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else-if="currentCandidates.length === 0" class="empty">
+          Geen kandidaten gevonden voor deze partij
+        </div>
+
+        <div v-else class="candidates-list">
+          <div v-for="candidate in currentCandidates" :key="candidate.id" class="candidate-item">
+            <h3>{{ candidate.firstName }} {{ candidate.lastName }}</h3>
+            <p>Geslacht: {{ candidate.gender }}</p>
+            <p>Locatie: {{ candidate.localityName }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
-<!-- src/views/CandidatesView.vue -->
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 interface Candidate {
   id: number;
@@ -10,9 +10,9 @@ interface Candidate {
   localityName: string;
 }
 
-const props = defineProps<{
-  partyId: string
-}>();
+const route = useRoute();
+const VITE_APP_BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
+const partyId = route.params.partyId as string;
 
 const candidates = ref<Candidate[]>([]);
 const loading = ref(true);
@@ -21,16 +21,14 @@ const partyName = ref('');
 
 onMounted(async () => {
   try {
-    // First get party info for the name
-    const partyResponse = await fetch(`http://localhost:8080/api/partiesInfo/parties/${props.partyId}`);
+    // Fetch party info
+    const partyResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties/${partyId}`);
     if (!partyResponse.ok) throw new Error('Party not found');
     const partyData = await partyResponse.json();
-    if (partyData.length > 0) {
-      partyName.value = partyData[0].partyName;
-    }
+    partyName.value = partyData.partyName || '';
 
-    // Then get candidates
-    const candidatesResponse = await fetch(`http://localhost:8080/api/partiesInfo/candidates/${props.partyId}`);
+    // Fetch candidates
+    const candidatesResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/candidates/${partyId}`);
     if (!candidatesResponse.ok) throw new Error('Failed to load candidates');
     candidates.value = await candidatesResponse.json();
   } catch (err) {
@@ -43,15 +41,16 @@ onMounted(async () => {
 
 <template>
   <main class="candidates-container">
-    <h1>Candidates of {{ partyName }}</h1>
+    <h1 v-if="partyName">Kandidaten van {{ partyName }}</h1>
+    <h1 v-else>Kandidaten</h1>
 
-    <div v-if="loading" class="loading">Loading...</div>
+    <div v-if="loading" class="loading">Laden...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else class="candidate-list">
       <div v-for="candidate in candidates" :key="candidate.id" class="candidate-card">
         <h2>{{ candidate.firstName }} {{ candidate.lastName }}</h2>
-        <p>Gender: {{ candidate.gender }}</p>
-        <p>Location: {{ candidate.localityName }}</p>
+        <p>Geslacht: {{ candidate.gender }}</p>
+        <p>Locatie: {{ candidate.localityName }}</p>
       </div>
     </div>
   </main>
