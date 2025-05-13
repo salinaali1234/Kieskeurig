@@ -1,6 +1,7 @@
-<script setup lang="ts">
-import {ref, onMounted} from "vue";
+ChartTest<script setup lang="ts">
+import {ref, onMounted, type Ref} from "vue";
 import "../assets/tableStyle.css"
+import ChartTest from "@/components/charts/donut-charts/ProvinceDonutChart.vue";
 
 interface Party {
   partyName: string;
@@ -18,6 +19,9 @@ const isVisible = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
 let provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
 let partyUrl: string = "";
+
+let labels: Ref<string[]> = ref(["pain"])
+let votes: Ref<number[]> = ref([1])
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
@@ -40,6 +44,7 @@ async function onClickDropdown(province: string) {
   isVisible.value = true;
 
   await fetchPartyData();
+  await populateProps();
 }
 
 async function onClickTable(event) {
@@ -86,6 +91,18 @@ async function fetchPartyData() {
   }
 }
 
+async function populateProps() {
+  const labelsLocal: string[] = []
+  const votesLocal: number[] = []
+
+  for (const party of parties.value) {
+    labelsLocal.push(party.partyName)
+    votesLocal.push(party.validVotes)
+  }
+
+  labels.value = labelsLocal
+  votes.value = votesLocal
+}
 </script>
 
 <template>
@@ -107,6 +124,9 @@ async function fetchPartyData() {
   </div>
 
   <div v-if="isVisible">
+
+    <ChartTest :labels="labels" :votes="votes" />
+
     <table class="data-table">
       <thead>
       <tr>
