@@ -1,6 +1,9 @@
 <template>
-  <div style="height:60vh;">
-    <Doughnut :data="data" :options="options" />
+  <div class="container">
+    <h1 style="text-align: center;">Provinciale Stemresultaten</h1>
+    <div style="height:60vh;">
+      <Doughnut :data="data" :options="options" />
+    </div>
   </div>
 </template>
 
@@ -41,35 +44,38 @@
           return votePercentages
         })()
 
-        const initialPercentageLength: number = votePercentages.length
-        const votes: number[] = this.votes.slice(0, initialPercentageLength)
-        const labels: string[] = this.labels.slice(0, initialPercentageLength)
+        const length: number = votePercentages.length
+        const votes: number[] = this.votes.slice(0, length)
+        const labels: string[] = this.labels.slice(0, length)
 
-        const votesOther: number = this.votes.slice(initialPercentageLength).reduce((partialSum, a) => partialSum + a, 0)
+        const votesOther: number = this.votes.slice(length).reduce((partialSum, a) => partialSum + a, 0)
         votes.push(votesOther)
         labels.push("Overig")
 
-        const length: number = votes.length
-
         const colors: string[] = ((): string[] => {
-          function rgbToHex(r: number, g: number, b: number): string {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+          const stringToColour = (str: string) => {
+            let hash = 0;
+            str.split('').forEach(char => {
+              hash = char.charCodeAt(0) + ((hash << 5) - hash)
+            })
+            let colour = '#'
+            for (let i = 0; i < 3; i++) {
+              const value = (hash >> (i * 8)) & 0xff
+              colour += value.toString(16).padStart(2, '0')
+            }
+            return colour
           }
 
-          const r: number = 100
-          const g: number = 200
-          const bStart: number = 0
-          const bEnd: number = 255
-          const bInterval: number = Math.floor((bEnd - bStart) / length)
           const rgbValues: string[] = []
 
-          let bCurrent: number = bStart
-          for (let i: number = 0; i < length; i++) {
-            rgbValues.unshift(rgbToHex(r, g, bCurrent))
-
-            bCurrent += bInterval
+          for (const label of labels) {
+            if (label.length < 6) {
+              rgbValues.push(stringToColour(label + label))
+              console.log(label + ": " + stringToColour(label))
+            } else {
+              rgbValues.push(stringToColour(label))
+            }
           }
-
           return rgbValues
         })()
 
