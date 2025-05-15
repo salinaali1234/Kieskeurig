@@ -1,7 +1,7 @@
 ChartTest<script setup lang="ts">
 import {ref, onMounted, type Ref} from "vue";
 import "../assets/tableStyle.css"
-import ChartTest from "@/components/charts/donut-charts/ProvinceDonutChart.vue";
+import ProvinceDonutChart from "@/components/charts/donut-charts/ProvinceDonutChart.vue";
 
 interface Party {
   partyName: string;
@@ -20,8 +20,8 @@ const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
 let provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
 let partyUrl: string = "";
 
-let labels: Ref<string[]> = ref(["pain"])
-let votes: Ref<number[]> = ref([1])
+let labels: Ref<string[]> = ref([])
+let votes: Ref<number[]> = ref([])
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
@@ -125,7 +125,7 @@ async function populateProps() {
 
   <div v-if="isVisible">
 
-    <ChartTest :labels="labels" :votes="votes" />
+    <ProvinceDonutChart :labels="labels" :votes="votes" />
 
     <table class="data-table">
       <thead>
@@ -175,7 +175,7 @@ th {
 .table-header-icon {
   width: 1em;
   display: inline;
-  margin-right: 0px;
+  margin-right: 0;
   vertical-align: bottom;
   color: black;
   pointer-events: none;
