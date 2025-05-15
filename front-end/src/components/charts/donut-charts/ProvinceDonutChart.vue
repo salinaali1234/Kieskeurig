@@ -27,8 +27,6 @@
     },
     computed: {
       data() {
-        // const length: number = this.labels.length
-
         const votePercentages: string[] = ((): string[] => {
           const totalVotes: number = this.votes.reduce((partialSum, a) => partialSum + a, 0)
           const votePercentages: string[] = []
