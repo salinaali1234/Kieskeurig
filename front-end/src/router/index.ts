@@ -7,6 +7,9 @@ import PartyView from '@/views/PartyView.vue'
 import VoteView from "@/views/VoteView.vue";
 import Consistuency from "@/views/Consistuency.vue";
 import CompareVotes from "@/views/CompareVotes.vue";
+import NationalVotes from "@/components/NationalVotes.vue";
+import Constituencies from "@/components/Constituencies.vue";
+import ProvinceVotes from "@/components/ProvinceVotes.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,6 +50,22 @@ const router = createRouter({
       name: 'Vergelijken',
       component: CompareVotes,
     },
+    {
+      path: '/national',
+      name: 'national',
+      component: NationalVotes,
+    },
+    {
+      path: '/constituencies',
+      name: 'constituencies',
+      component: Constituencies,
+    },
+    {
+      path: '/provinces',
+      name: 'provinces',
+      component: ProvinceVotes,
+    },
+
   ],
 })
 
