@@ -44,7 +44,10 @@ public class RegionService {
     public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
-
+        if (!constituencyRepository.findAll().isEmpty()) {
+            System.out.println("Data already exists in the database, skipping XML import.");
+            return true;
+        }
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
@@ -108,9 +111,9 @@ public class RegionService {
                 }
 
             } else {
-                for (Constituency constituency : constituencies) {
+                List<Constituency> allConstituencies = constituencyRepository.findAll();
+                for (Constituency constituency : allConstituencies) {
                     map.put(constituency.getName(), constituency.getId());
-                    constituencyRepository.save(constituency);
                 }
             }
             return map;
