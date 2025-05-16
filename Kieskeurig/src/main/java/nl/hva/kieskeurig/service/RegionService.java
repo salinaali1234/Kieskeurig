@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.reader.RegionReader;
+import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepository;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
@@ -35,6 +36,9 @@ public class RegionService {
         this.error = error;
     }
 
+    @Autowired
+    private ConstituencyRepository constituencyRepository;
+
     public List<Constituency> getAll() {return repo.findAll();}
 
     public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
@@ -58,8 +62,10 @@ public class RegionService {
 
                             if (superiorRegionId != null) {
                                 if (superiorRegionId == 0) {
-                                    Constituency constituency = new Constituency(id, name);
-                                    add(constituency);
+                                    Constituency constituency = new Constituency();
+                                    constituency.setName(name);
+                                    Constituency saved = constituencyRepository.save(constituency);
+                                    add(saved);
                                 } else {
                                     Municipality municipality = new Municipality(name, id, superiorRegionId);
                                     add(municipality);
@@ -104,6 +110,7 @@ public class RegionService {
             } else {
                 for (Constituency constituency : constituencies) {
                     map.put(constituency.getName(), constituency.getId());
+                    constituencyRepository.save(constituency);
                 }
             }
             return map;
