@@ -20,10 +20,6 @@ public class VoteController {
 
     @GetMapping("/votes/parties")
     public Map<String, Integer> getVotesPerParty(@RequestParam(defaultValue = "2023") String year) {
-        String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
-        String fileName = year.equals("2021") ? "Totaaltelling_TK2021.eml.xml" : "Totaaltelling_TK2023.eml.xml";
-
-        voteService.readResults(folder, fileName, year);
-        return voteService.getVotesPerParty(year);
+        return voteService.getResults(year);
     }
 }

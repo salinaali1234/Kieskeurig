@@ -15,6 +15,26 @@ public class VoteService {
 
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
 
+    public Map<String, Integer> getResults(String year) {
+        String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
+        String fileName = getFileNameForYear(year);
+
+        boolean success = readResults(folder, fileName, year);
+        if (!success) {
+            throw new RuntimeException("Kon de resultaten niet inlezen voor jaar " + year);
+        }
+
+        return getVotesPerParty(year);
+    }
+
+    private String getFileNameForYear(String year) {
+        return switch (year) {
+            case "2021" -> "Totaaltelling_TK2021.eml.xml";
+            case "2023" -> "Totaaltelling_TK2023.eml.xml";
+            default -> throw new IllegalArgumentException("Ongeldig jaar opgegeven: " + year);
+        };
+    }
+
     public void add(String year, Vote vote) {
         votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
