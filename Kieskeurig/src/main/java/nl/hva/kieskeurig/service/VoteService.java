@@ -4,6 +4,7 @@ package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.enums.Province;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
+import nl.hva.kieskeurig.repository.NationalVotesRepo;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,16 @@ import java.util.*;
 @Service
 public class VoteService {
 
+    private final NationalVotesRepo voteRepo;
+
+    public VoteService(NationalVotesRepo voteRepo) {
+        this.voteRepo = voteRepo;
+    }
+
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
 
     public Map<String, Integer> getResults(String year) {
+        votesPerYear.remove(year);
         String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
         String fileName = getFileNameForYear(year);
 
@@ -56,11 +64,22 @@ public class VoteService {
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
-
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
-                Vote vote = new Vote(entry.getKey(), entry.getValue());
-                add(year, vote);
+                String partyName = entry.getKey();
+                int votes = entry.getValue();
+
+                Optional<Vote> existing = voteRepo.findByPartyNameAndYear(partyName, year);
+
+                if (existing.isEmpty()) {
+                    Vote vote = new Vote(partyName, votes, year);
+                    voteRepo.save(vote);
+                    add(year, vote);
+                } else {
+                    add(year, existing.get());
+                }
             }
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,6 +91,7 @@ public class VoteService {
         Map<String, Integer> partyVotes = new HashMap<>();
         List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
 
+
         for (Vote vote : votes) {
             partyVotes.put(
                     vote.getPartyName(),
@@ -79,7 +99,7 @@ public class VoteService {
             );
         }
 
-        votes.clear();
+//        votes.clear();
         return partyVotes;
     }
 
@@ -125,9 +145,10 @@ public class VoteService {
         // Turn the map into a list containing the total votes for each party
         List<Vote> totalPartyVotesList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : totalPartyVotesMap.entrySet()) {
-            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue());
+            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue(), electionId);
             totalPartyVotesList.add(partyVoteResult);
         }
+
 
         votes.clear();
 
