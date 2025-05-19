@@ -8,7 +8,7 @@ interface Party {
   validVotes: number;
 }
 
-let electionId = "TK2023" // Temp
+let electionId = ""
 let sort = "validVotes"
 let asc = false
 
