@@ -1,15 +1,21 @@
 package nl.hva.kieskeurig.model;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+
+@Entity
+@Data
+@NoArgsConstructor
+@Builder
+@Table(name = "constituencies")
 public class Constituency {
+    @Id
+    private int id;
 
-    private Integer id;
+    @Column(unique = true, nullable = false)
     private String name;
-
 
 }

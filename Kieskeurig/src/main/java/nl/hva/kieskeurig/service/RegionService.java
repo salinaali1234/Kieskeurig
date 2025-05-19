@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.reader.RegionReader;
+import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepository;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepo;
@@ -35,12 +36,18 @@ public class RegionService {
         this.error = error;
     }
 
+    @Autowired
+    private ConstituencyRepository constituencyRepository;
+
     public List<Constituency> getAll() {return repo.findAll();}
 
     public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everthing");
-
+        if (!constituencyRepository.findAll().isEmpty()) {
+            System.out.println("Data already exists in the database, skipping XML import.");
+            return true;
+        }
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
@@ -58,8 +65,11 @@ public class RegionService {
 
                             if (superiorRegionId != null) {
                                 if (superiorRegionId == 0) {
-                                    Constituency constituency = new Constituency(id, name);
-                                    add(constituency);
+                                    Constituency constituency = new Constituency();
+                                    constituency.setId(id);
+                                    constituency.setName(name);
+                                    Constituency saved = constituencyRepository.save(constituency);
+                                    add(saved);
                                 } else {
                                     Municipality municipality = new Municipality(name, id, superiorRegionId);
                                     add(municipality);
@@ -81,35 +91,39 @@ public class RegionService {
 
 
     public Map<String, Integer> getAllRegions(String type, Integer constistuencyId) throws XMLStreamException, IOException {
-        if (connectElectionDefinition(type)) {
-            Map<String, Integer> map = new HashMap<>();
+        if (!constituencyRepository.findAll().isEmpty()) {
+            System.out.println("Data already exists in the database, skipping XML import.");
 
-
-
-            if (type.equals("municipalities")) {
-
-                if (constistuencyId == 0){
-
-                    for (Municipality municipality : municipalities){
-                        map.put(municipality.getName(), municipality.getId());
-                    }
-                } else {
-                    for (Municipality municipality : municipalities) {
-                        if (constistuencyId.equals(municipality.getIdConstituency())){
-                            map.put(municipality.getName(), municipality.getIdConstituency());
-                        }
-                    }
-                }
-
-            } else {
-                for (Constituency constituency : constituencies) {
-                    map.put(constituency.getName(), constituency.getId());
-                }
-            }
-            return map;
+        }else if (connectElectionDefinition(type)) {
+            System.out.println("reading xml");
         } else {
             return null;
         }
+
+        Map<String, Integer> map = new HashMap<>();
+
+        if (type.equals("municipalities")) {
+
+            if (constistuencyId == 0){
+
+                for (Municipality municipality : municipalities){
+                    map.put(municipality.getName(), municipality.getId());
+                }
+            } else {
+                for (Municipality municipality : municipalities) {
+                    if (constistuencyId.equals(municipality.getIdConstituency())){
+                        map.put(municipality.getName(), municipality.getIdConstituency());
+                    }
+                }
+            }
+
+        } else {
+            List<Constituency> allConstituencies = constituencyRepository.findAll();
+            for (Constituency constituency : allConstituencies) {
+                map.put(constituency.getName(), constituency.getId());
+            }
+        }
+        return map;
     }
 }
 
