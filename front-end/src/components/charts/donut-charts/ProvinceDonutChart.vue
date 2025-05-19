@@ -44,7 +44,7 @@
 
           for (const vote of this.votes) {
             const percentage: string = ((vote / totalVotes) * 100).toFixed(2)
-            if (parseFloat(percentage) < 1) {
+            if (parseFloat(percentage) >= 1) {
               votePercentages.push(percentage + "%")
             }
           }
@@ -79,7 +79,6 @@
           for (const label of labels) {
             if (label.length < 6) {
               rgbValues.push(stringToColour(label + label))
-              console.log(label + ": " + stringToColour(label))
             } else {
               rgbValues.push(stringToColour(label))
             }
