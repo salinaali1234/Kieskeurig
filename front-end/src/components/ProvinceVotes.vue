@@ -8,14 +8,17 @@ interface Party {
   validVotes: number;
 }
 
-const electionId = "TK2023" // Temp
+let electionId = "TK2023" // Temp
 let sort = "validVotes"
 let asc = false
 
 const selectedProvince = ref("");
+const selectedYear = ref("");
 const provinces = ref<string[]>([]);
+const years = ref<string[]>([]);
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
+const isVisible2 = ref(false);
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
 let provinceUrl: string = `${VITE_APP_BACKEND_URL}/api/provinces`;
 let partyUrl: string = "";
@@ -25,6 +28,10 @@ let votes: Ref<number[]> = ref([])
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
+}
+
+function toggleVisible2() {
+  isVisible2.value = !isVisible2.value;
 }
 
 onMounted(async () => {
@@ -39,9 +46,23 @@ onMounted(async () => {
   }
 });
 
-async function onClickDropdown(province: string) {
-  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${province}?sort=${sort}&asc=${asc}`;
+async function onClickDropdown() {
   isVisible.value = true;
+
+  if (selectedYear.value === "") {
+    await fetchYearData()
+  } else {
+    partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${selectedProvince.value}?sort=${sort}&asc=${asc}`;
+
+    await fetchPartyData();
+    await populateProps();
+  }
+}
+
+async function onClickDropdown2(year: string) {
+  electionId = "TK" + year
+  partyUrl = `${VITE_APP_BACKEND_URL}/api/party/${electionId}/${selectedProvince.value}?sort=${sort}&asc=${asc}`;
+  isVisible2.value = true;
 
   await fetchPartyData();
   await populateProps();
@@ -91,6 +112,18 @@ async function fetchPartyData() {
   }
 }
 
+async function fetchYearData() {
+  try {
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/year`);
+
+    if (response.ok) {
+      years.value = await response.json();
+    }
+  } catch (error) {
+    console.error("Er is een fout opgetreden bij het ophalen van de data", error);
+  }
+}
+
 async function populateProps() {
   const labelsLocal: string[] = []
   const votesLocal: number[] = []
@@ -113,7 +146,7 @@ async function populateProps() {
         v-for="province in provinces"
         :key="province"
         :value="province"
-        @click="onClickDropdown(province)"
+        @click="onClickDropdown()"
       >
         {{province}}
       </option>
@@ -123,9 +156,26 @@ async function populateProps() {
     </svg>
   </div>
 
-  <div v-if="isVisible">
+  <div v-if="isVisible" class="dropdown-wrapper">
+    <select v-model="selectedYear" class="dropdown">
+      <option disabled value="">Selecteer jaar</option>
+      <option
+        v-for="year in years"
+        :key="year"
+        :value="year"
+        @click="onClickDropdown2(year)"
+      >
+        {{year}}
+      </option>
+    </select>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </div>
 
-    <ProvinceDonutChart :labels="labels" :votes="votes" />
+  <div v-if="isVisible2">
+
+    <ProvinceDonutChart :labels="labels" :votes="votes" :year="selectedYear" />
 
     <table class="data-table">
       <thead>
