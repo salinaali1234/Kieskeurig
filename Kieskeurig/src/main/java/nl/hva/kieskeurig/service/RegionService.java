@@ -66,6 +66,7 @@ public class RegionService {
                             if (superiorRegionId != null) {
                                 if (superiorRegionId == 0) {
                                     Constituency constituency = new Constituency();
+                                    constituency.setId(id);
                                     constituency.setName(name);
                                     Constituency saved = constituencyRepository.save(constituency);
                                     add(saved);
@@ -90,36 +91,39 @@ public class RegionService {
 
 
     public Map<String, Integer> getAllRegions(String type, Integer constistuencyId) throws XMLStreamException, IOException {
-        if (connectElectionDefinition(type)) {
-            Map<String, Integer> map = new HashMap<>();
+        if (!constituencyRepository.findAll().isEmpty()) {
+            System.out.println("Data already exists in the database, skipping XML import.");
 
-
-
-            if (type.equals("municipalities")) {
-
-                if (constistuencyId == 0){
-
-                    for (Municipality municipality : municipalities){
-                        map.put(municipality.getName(), municipality.getId());
-                    }
-                } else {
-                    for (Municipality municipality : municipalities) {
-                        if (constistuencyId.equals(municipality.getIdConstituency())){
-                            map.put(municipality.getName(), municipality.getIdConstituency());
-                        }
-                    }
-                }
-
-            } else {
-                List<Constituency> allConstituencies = constituencyRepository.findAll();
-                for (Constituency constituency : allConstituencies) {
-                    map.put(constituency.getName(), constituency.getId());
-                }
-            }
-            return map;
+        }else if (connectElectionDefinition(type)) {
+            System.out.println("reading xml");
         } else {
             return null;
         }
+
+        Map<String, Integer> map = new HashMap<>();
+
+        if (type.equals("municipalities")) {
+
+            if (constistuencyId == 0){
+
+                for (Municipality municipality : municipalities){
+                    map.put(municipality.getName(), municipality.getId());
+                }
+            } else {
+                for (Municipality municipality : municipalities) {
+                    if (constistuencyId.equals(municipality.getIdConstituency())){
+                        map.put(municipality.getName(), municipality.getIdConstituency());
+                    }
+                }
+            }
+
+        } else {
+            List<Constituency> allConstituencies = constituencyRepository.findAll();
+            for (Constituency constituency : allConstituencies) {
+                map.put(constituency.getName(), constituency.getId());
+            }
+        }
+        return map;
     }
 }
 
