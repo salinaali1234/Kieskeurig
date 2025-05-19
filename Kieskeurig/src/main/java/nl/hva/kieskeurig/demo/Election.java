@@ -13,8 +13,8 @@ import java.util.Map;
 public class Election {
     public Map<String, String> data;
 
-    @Override
-    public String toString() {
-        return "The last information received is: %s".formatted(data);
-    }
+//    @Override
+//    public String toString() {
+//        return "The last information received is: %s".formatted(data);
+//    }
 }

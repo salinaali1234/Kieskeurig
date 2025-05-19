@@ -25,25 +25,25 @@ public class DutchElectionTransformer implements Transformer<Election> {
     @Override
     public void registerElection(Map<String, String> electionData) {
         election.data = electionData;
-//        System.out.printf("Found election information: %s\n", electionData);
+        //System.out.printf("Found election information: %s\n", electionData);
     }
 
     @Override
     public void registerContest(Map<String, String> contestData) {
         election.data = contestData;
-        System.out.printf("Found contest information: %s\n", contestData);
+        //System.out.printf("Found contest information: %s\n", contestData);
     }
 
     @Override
     public void registerAffiliation(Map<String, String> affiliationData) {
         election.data = affiliationData;
-        System.out.printf("Found affiliation information: %s\n", affiliationData);
+        //System.out.printf("Found affiliation information: %s\n", affiliationData);
     }
 
     @Override
     public void registerCandidate(Map<String, String> candidateData) {
         election.data = candidateData;
-        System.out.printf("Found candidate information: %s\n", candidateData);
+       // System.out.printf("Found candidate information: %s\n", candidateData);
 
         Candidate candidate = new CandidateMapper().apply(election.data);
         candidateService.addCandidate(candidate);
@@ -57,9 +57,9 @@ public class DutchElectionTransformer implements Transformer<Election> {
 
     @Override
     public void registerConstituents(Map<String, String> constituentData) {
-        System.out.println(constituentData);
+        //System.out.println(constituentData);
         election.data = constituentData;
-        System.out.printf("Found constituents information: %s\n", constituentData);
+        //System.out.printf("Found constituents information: %s\n", constituentData);
     }
     public void registerElected(Map<String, String> electedData) {
         election.data = electedData;

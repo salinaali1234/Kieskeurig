@@ -55,6 +55,9 @@ public class DutchElectionProcessor<E> {
 
     // Common attribute name that is use on multiple tags.
     public static final String ID = "Id";
+    public static final String REGION_NUMBER = "RegionNumber";
+    public static final String REGION_CATEGORY= "RegionCategory";
+    public static final String SUPERIOR_REGION_NUMBER= "SuperiorRegionNumber";
 
     /*
      The tag names on the election level within the XML files which are also used as keys in the maps when calling
@@ -65,6 +68,10 @@ public class DutchElectionProcessor<E> {
     public static final String ELECTION_NAME = "ElectionName";
     public static final String ELECTION_CATEGORY = "ElectionCategory";
     public static final String ELECTION_DATE = "ElectionDate";
+    public static final String ELECTIONTREE = "ElectionTree";
+    public static final String REGION = "Region";
+    public static final String REGION_NAME = "RegionName";
+
 
     /*
      The tag names on the contest level within the XML files which are also used as keys in the maps when calling
@@ -109,6 +116,7 @@ public class DutchElectionProcessor<E> {
     public static final String ZIPCODE = "ZipCode"; // For convenience, is used as a key in the data-maps.
     public static final String TOTAL_COUNTED = "TotalCounted";
 
+
     // Used internally
     private static final String NAME_TYPE = "NameType";
     private static final String INVALID_NAME = "INVALID";
@@ -140,6 +148,7 @@ public class DutchElectionProcessor<E> {
      */
     public E processResults(String electionId, String folderName) throws IOException, XMLStreamException {
         LOG.info("Loading election data from %s".formatted(folderName));
+        System.out.printf("Loading election data from %s%n", folderName);
 
         Map<String, String> electionData = new HashMap<>();
         electionData.put(ELECTION_IDENTIFIER, electionId);

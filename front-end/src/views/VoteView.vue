@@ -1,95 +1,101 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import NationalVotes from "../components/NationalVotes.vue";
+import Constituencies from "../components/Constituencies.vue";
+import ProvinceVotes from "../components/ProvinceVotes.vue";
 
-interface Party {
-  name: string;
-  votes: number;
-}
+const selectedView = ref("");
+const selectedYear = ref("2023");
 
-const parties = ref<Party[]>([]);
-const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const url: string = `${VITE_APP_BACKEND_URL}/api/xml/votes/parties`;
-console.log("Backend URL:", VITE_APP_BACKEND_URL);
-
-onMounted(async () => {
-  try {
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log("API Response:", data);
-
-      if (data && typeof data === "object") {
-
-        parties.value = Object.entries(data).map(([name, votes]) => ({
-          name,
-          votes: Number(votes),
-        }));
-      } else {
-        console.error("Verkeerd formaat van API-respons", data);
-      }
-    } else {
-      console.error("API-aanroep mislukt", response);
-    }
-  } catch (error) {
-    console.error("Er is een fout opgetreden bij het ophalen van de data", error);
-  }
-});
 </script>
 
 <template>
   <div class="container">
-    <h1>Nationale stemmen per partij</h1>
+    <h1 class="page-title">Statistieken</h1>
 
-    <table v-if="parties.length > 0" class="party-table">
-      <thead>
-      <tr>
-        <th>Partij</th>
-        <th>Aantal Stemmen</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(party, index) in parties" :key="index">
-        <td>{{ party.name }}</td>
-        <td>{{ party.votes }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="dropdown-wrapper">
+      <select v-model="selectedView" class="dropdown">
+        <option disabled value="">Selecteer niveau</option>
+        <option value="national">Nationaal</option>
+        <option value="provinces">Provincies</option>
+        <option value="constituencies">Kieskringen</option>
+      </select>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </div>
 
-    <p v-else>Geen partijen gevonden...</p>
+
+    <div
+      v-if="selectedView === 'national'"
+      class="dropdown-wrapper"
+    >
+      <select v-model="selectedYear" class="dropdown">
+        <option disabled value="">Selecteer jaar</option>
+        <option value="2023">2023</option>
+        <option value="2021">2021</option>
+      </select>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </div>
+
+
+    <div v-if="selectedView === 'national'">
+      <NationalVotes v-if="selectedView === 'national'" :year="selectedYear" />
+    </div>
+
+    <div v-else-if="selectedView === 'provinces'">
+      <ProvinceVotes />
+    </div>
+
+    <div v-else-if="selectedView === 'constituencies'">
+      <Constituencies />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.container {
+
+.page-title {
   text-align: center;
-  padding: 20px;
+  font-size: 2rem;
+  margin-top: 40px;
+  font-weight: bold;
+  color: white;
 }
 
-.party-table {
+
+.dropdown-wrapper {
+  position: relative;
   width: 80%;
   max-width: 600px;
   margin: 20px auto;
-  border-collapse: collapse;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
 }
 
-.party-table th, .party-table td {
+.dropdown {
+  width: 100%;
   padding: 12px;
-  border-bottom: 1px solid var(--secondary-clr);
-  text-align: left;
-}
-
-.party-table th {
-  background-color: var(--accent-clr);
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--secondary-clr);
+  background-color: #DEBFE9;
   color: black;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
 }
 
-.party-table tr:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+.dropdown-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: black;
+  pointer-events: none;
 }
 
 </style>
