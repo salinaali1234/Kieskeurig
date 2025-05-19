@@ -38,25 +38,25 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminView,
-      meta: { requiresAuth: true, requiresAdmin: true }
+      meta: { requiresAuth: false, requiresAdmin: false }
     },
     {
       path: '/statistieken',
       name: 'Vote',
       component: VoteView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: false }
     },
     {
       path: '/Constituency/:constituencyId',
       name: 'constituency',
       component: Consistuency,
-      meta: { requiresAuth: true }
+     meta: { requiresAuth: false }
     },
     {
       path: '/election/:electionId/party/:partyName',
       name: 'party',
       component: PartyView,
-      meta: { requiresAuth: true }
+     meta: { requiresAuth: false }
     },
     {
       path: '/parties',
@@ -69,13 +69,13 @@ const router = createRouter({
       name: 'candidates',
       component: CandidatesView,
       props: true,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: false }
     },
     {
       path: '/vergelijken',
       name: 'Vergelijken',
       component: CompareVotes,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: false }
     },
   ]
 })

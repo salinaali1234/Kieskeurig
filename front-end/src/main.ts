@@ -4,7 +4,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import './service/fetch-interceptor';
-import './service/fetch-interceptor'
+import 'whatwg-fetch'
+
 
 const app = createApp(App)
 

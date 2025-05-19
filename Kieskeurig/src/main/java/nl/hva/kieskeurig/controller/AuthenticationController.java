@@ -20,15 +20,15 @@ import java.util.List;
 public class AuthenticationController {
 
     @Autowired
- APIConfig apiConfig;
+    APIConfig apiConfig;
 
     @Autowired
     private EntityRepository<Account> accountsRepo;
 
     @PostMapping(path = "/login")
     public ResponseEntity<Account> authenticateAccount(
-                            @RequestBody ObjectNode signInInfo,
-                            HttpServletRequest request) {
+            @RequestBody ObjectNode signInInfo,
+            HttpServletRequest request) {
 
         String email = signInInfo.get("email").asText();
         String password = signInInfo.get("password").asText();
@@ -56,5 +56,12 @@ public class AuthenticationController {
         return ResponseEntity.accepted()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
                 .body(account);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        // TODO: voeg dit token toe aan een blacklist (in-memory of Redis e.d.)
+        return ResponseEntity.noContent().build();
     }
 }

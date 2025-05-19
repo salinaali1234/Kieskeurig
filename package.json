@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "fetch-intercept": "^2.4.0"
+    "fetch-intercept": "^2.4.0",
+    "whatwg-fetch": "^3.6.20"
   }
 }

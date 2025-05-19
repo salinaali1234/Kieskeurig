@@ -1,23 +1,29 @@
+// vite.config.ts
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://vite.dev/config/
-export default defineConfig(({mode}) => {
-  return {
-    define: {
-      env: loadEnv(mode, process.cwd(), 'VITE_APP')
+export default defineConfig(({ mode }) => ({
+  define: {
+    env: loadEnv(mode, process.cwd(), 'VITE_APP')
+  },
+  plugins: [
+    vue(),
+    vueDevTools(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     },
-    plugins: [
-      vue(),
-      vueDevTools(),
-    ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      },
-    },
+  },
+  optimizeDeps: {
+    include: ['fetch-intercept'],
+    exclude: []
+  },
+  build: {
+    rollupOptions: {
+      external: ['whatwg-fetch']
+    }
   }
-})
+}))

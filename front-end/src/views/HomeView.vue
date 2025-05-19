@@ -15,17 +15,19 @@ const navigateToParties = () => {
 
 <template>
   <main class="home-container">
-    <h1>Welcome to KiesKeurig</h1>
-    <p>Discover all political parties and their candidates</p>
+    <h1 class="title">Welcome to KiesKeurig</h1>
+    <p class="subtitle">Verken alle politieke partijen en de kandidaten</p>
 
     <div v-if="sessionService.isAuthenticated()">
-      <p>Welcome back, {{ sessionService.currentAccount?.name }}!</p>
-      <button v-if="sessionService.isAdmin()" @click="router.push('/admin')" class="admin-button">
+      <p class="welcome">Welcome back, {{ sessionService.currentAccount?.name }}!</p>
+      <button
+        v-if="sessionService.isAdmin()"
+        @click="router.push('/admin')"
+        class="admin-button"
+      >
         Admin Dashboard
       </button>
     </div>
-
-    <button @click="navigateToParties" class="cta-button">View All Parties</button>
 
     <div v-if="!sessionService.isAuthenticated()" class="auth-buttons">
       <RouterLink to="/login" class="auth-button">Login</RouterLink>
@@ -42,14 +44,22 @@ const navigateToParties = () => {
   margin: 0 auto;
 }
 
-h1 {
+.title {
+  font-size: 3rem;       /* Grotere hoofdtekst */
   color: var(--primary-clr);
   margin-bottom: 1rem;
 }
 
-p {
-  color: #666;
+.subtitle {
+  font-size: 1.5rem;     /* Grotere ondertitel */
+  color: #ffffff;
   margin-bottom: 2rem;
+}
+
+.welcome {
+  font-size: 2rem;       /* Grotere welcome-back tekst */
+  color: #ffffff;
+  margin-bottom: 1.5rem;
 }
 
 .cta-button {
