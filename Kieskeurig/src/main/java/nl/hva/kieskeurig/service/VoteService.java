@@ -23,7 +23,7 @@ public class VoteService {
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
 
     public Map<String, Integer> getResults(String year) {
-        votesPerYear.remove(year);
+//        votesPerYear.remove(year);
         String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
         String fileName = getFileNameForYear(year);
 
@@ -49,6 +49,13 @@ public class VoteService {
 
     public boolean readResults(String folder, String fileName, String year) {
 
+        List<Vote> existingVotes = voteRepo.findAllByYear(year);
+
+        if (!existingVotes.isEmpty()) {
+            votesPerYear.put(year, existingVotes);
+            return true;
+        }
+
         try {
             System.out.println("Trying to load: " + folder + "/" + fileName);
 
@@ -64,23 +71,20 @@ public class VoteService {
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
+            List<Vote> newVotes = new ArrayList<>();
+
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
                 String partyName = entry.getKey();
                 int votes = entry.getValue();
 
-                Optional<Vote> existing = voteRepo.findByPartyNameAndYear(partyName, year);
-
-                if (existing.isEmpty()) {
-                    Vote vote = new Vote(partyName, votes, year);
-                    voteRepo.save(vote);
-                    add(year, vote);
-                } else {
-                    add(year, existing.get());
-                }
+                Vote vote = new Vote(partyName, votes, year);
+                voteRepo.save(vote);
+                newVotes.add(vote);
             }
 
-
+            votesPerYear.put(year, newVotes);
             return true;
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
