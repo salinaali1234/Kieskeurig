@@ -175,7 +175,7 @@ async function populateProps() {
 
   <div v-if="isVisible2">
 
-    <ProvinceDonutChart :labels="labels" :votes="votes" :year="selectedYear" />
+    <ProvinceDonutChart :labels="labels" :votes="votes" :province="selectedProvince" :year="selectedYear" />
 
     <table class="data-table">
       <thead>

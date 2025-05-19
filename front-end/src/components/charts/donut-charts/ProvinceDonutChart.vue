@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 style="text-align: center;">Provinciale Stemresultaten {{year}}</h1>
+    <h1 style="text-align: center;">Stemresultaten {{province}} {{year}}</h1>
     <div style="height:60vh;">
       <Doughnut :data="data" :options="options" />
     </div>
@@ -25,6 +25,10 @@
       },
       votes: {
         type: Array as () => number[],
+        required: true
+      },
+      province: {
+        type: String,
         required: true
       },
       year: {
