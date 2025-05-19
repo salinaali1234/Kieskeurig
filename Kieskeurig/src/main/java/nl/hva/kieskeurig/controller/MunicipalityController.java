@@ -22,8 +22,8 @@ public class MunicipalityController {
     }
 
 
-    @GetMapping("/all/{type}/{consistencyId}")
-    public Map<String, Integer> getAllRegions(@PathVariable String type, @PathVariable Integer consistencyId) throws XMLStreamException, IOException {
-        return municipalityService.getAllMunicipallities(type, consistencyId);
+    @GetMapping("/all/{consistencyId}")
+    public Map<String, Integer> getAllRegions(@PathVariable Integer consistencyId) throws XMLStreamException, IOException {
+        return municipalityService.getAllMunicipallities( consistencyId);
     }
 }

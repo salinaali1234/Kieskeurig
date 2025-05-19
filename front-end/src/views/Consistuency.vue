@@ -11,7 +11,7 @@ const municipalities: Ref<any[]> = ref([]);
 const isVisible = ref(false);
 const sortDirection = ref<'asc' | 'desc' | null>(null); // asc = A-Z, desc = Z-A, null = original
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
-const url = `${backendUrl}/api/municipalities/all/municipalities/${constituencyId.value}`;
+const url = `${backendUrl}/api/municipalities/all/${constituencyId.value}`;
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;

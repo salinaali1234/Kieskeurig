@@ -25,9 +25,9 @@ public class ConstituencyController {
         return service.getAll();}
 
 
-    @GetMapping("/all/{type}/{consistencyId}")
-    public Map<String, Integer> getAllRegions(@PathVariable String type, @PathVariable Integer consistencyId) throws XMLStreamException, IOException {
-        return service.getAllConsituencies(type, consistencyId);
+    @GetMapping("/all")
+    public Map<String, Integer> getAllRegions() throws XMLStreamException, IOException {
+        return service.getAllConsituencies();
     }
 
 

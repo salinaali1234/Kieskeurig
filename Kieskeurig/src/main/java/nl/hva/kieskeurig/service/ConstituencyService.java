@@ -22,14 +22,11 @@ import java.util.Map;
 public class ConstituencyService {
     private final ConstituencyRepo repo;
     private final List<Constituency> constituencies = new ArrayList<Constituency>();
-    private final List<Municipality> municipalities = new ArrayList<Municipality>();
     private final View error;
 
     public void add(Constituency constituency) {
         constituencies.add(constituency);
     }
-    public void add(Municipality municipality) {municipalities.add(municipality);}
-
 
     @Autowired
     public ConstituencyService(ConstituencyRepo repo, View error) {this.repo = repo;
@@ -41,9 +38,9 @@ public class ConstituencyService {
 
     public List<Constituency> getAll() {return repo.findAll();}
 
-    public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
+    public boolean connectElectionDefinition() throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
-        System.out.println("getting everthing");
+        System.out.println("getting everything");
         if (!constituencyRepository.findAll().isEmpty()) {
             System.out.println("Data already exists in the database, skipping XML import.");
             return true;
@@ -82,10 +79,10 @@ public class ConstituencyService {
 
 
 
-    public Map<String, Integer> getAllConsituencies(String type, Integer constistuencyId) throws XMLStreamException, IOException {
+    public Map<String, Integer> getAllConsituencies() throws XMLStreamException, IOException {
         if (!constituencyRepository.findAll().isEmpty()) {
             System.out.println("Data already exists in the database, skipping XML import.");
-        }else if (connectElectionDefinition(type)) {
+        }else if (connectElectionDefinition()) {
             System.out.println("reading xml");
         } else {
             return null;
