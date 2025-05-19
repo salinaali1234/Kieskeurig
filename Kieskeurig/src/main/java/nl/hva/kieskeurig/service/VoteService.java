@@ -49,10 +49,9 @@ public class VoteService {
 
     public boolean readResults(String folder, String fileName, String year) {
 
-        List<Vote> existingVotes = voteRepo.findAllByYear(year);
 
-        if (!existingVotes.isEmpty()) {
-            votesPerYear.put(year, existingVotes);
+        if (!voteRepo.findAllByYear(year).isEmpty()) {
+            votesPerYear.put(year, voteRepo.findAllByYear(year));
             return true;
         }
 
