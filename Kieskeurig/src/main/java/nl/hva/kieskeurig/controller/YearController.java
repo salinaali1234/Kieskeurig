@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * API handling everything related to candidates.
+ * API handling everything related to years.
  */
 @RestController
 @RequestMapping("/api/year")

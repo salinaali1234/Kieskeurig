@@ -61,6 +61,10 @@
         labels.push("Overig")
 
         const colors: string[] = ((): string[] => {
+          /**
+           * Hashes any given string and turns it into a hex color code
+           * @param str
+           */
           const stringToColour = (str: string) => {
             let hash = 0;
             str.split('').forEach(char => {

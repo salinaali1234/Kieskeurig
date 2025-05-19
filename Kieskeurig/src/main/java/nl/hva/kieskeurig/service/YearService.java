@@ -1,11 +1,15 @@
 package nl.hva.kieskeurig.service;
 
 import org.springframework.stereotype.Service;
+import nl.hva.kieskeurig.controller.YearController;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles the logic of {@link YearController}
+ */
 @Service
 public class YearService {
     public List<String>getYears() {
