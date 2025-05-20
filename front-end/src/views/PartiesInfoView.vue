@@ -1,214 +1,209 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
-import { Bar } from 'vue-chartjs';
+import {ref, onMounted, watch} from 'vue';
+import { useRoute } from "vue-router";
+import { fetchWithAuth } from '@/service/fetch-client.ts'
 
-const VITE_APP_BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
+const route = useRoute()
+const parties: string | string[] = route.params.parties
+const partyId: string | string[] = route.params.partyid
+const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL
 
-interface PartyWithInfo { partyId: number; partyName: string; seats: number; }
-interface Candidate    { id: number; firstName: string; lastName: string; gender: string; localityName: string; }
+interface PartyWithInfo {
+  partyId: number;
+  partyName: string;
+  seats: number;
+}
 
-const partiesList       = ref<PartyWithInfo[]>([]);
-const loading           = ref(true);
-const error             = ref<string | null>(null);
-const sortOrder         = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
-const currentPartyId    = ref<number | null>(null);
-const currentPartyName  = ref('');
-const currentCandidates = ref<Candidate[]>([]);
-const candidatesLoading = ref(false);
+const partiesList = ref<PartyWithInfo[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+const sortOrder = ref<'seats-desc' | 'seats-asc' | 'alphabetical'>('seats-desc');
 
 const sortOptions = [
   { value: 'seats-desc', label: 'Zetels (hoog → laag)' },
-  { value: 'seats-asc',  label: 'Zetels (laag → hoog)' },
+  { value: 'seats-asc', label: 'Zetels (laag → hoog)' },
   { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
 ];
 
-async function fetchParties() {
-  loading.value = true;
+
+const fetchParties = async () => {
+  loading.value = true
+  error.value = null
+
   try {
-    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`);
-    if (!res.ok) throw new Error('Kon partijen niet laden');
-    partiesList.value = await res.json();
-  } catch (e) { error.value = e instanceof Error ? e.message : String(e); }
-  finally { loading.value = false; }
-}
-
-async function showCandidates(id: number, name: string) {
-  candidatesLoading.value = true;
-  currentPartyId.value   = id;
-  currentPartyName.value = name;
-  try {
-    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/candidates/${id}`);
-    if (!res.ok) throw new Error('Kon kandidaten niet laden');
-    currentCandidates.value = await res.json();
-  } catch (e) { error.value = e instanceof Error ? e.message : String(e); }
-  finally { candidatesLoading.value = false; }
-}
-
-function resetView() {
-  currentPartyId.value = null;
-  currentCandidates.value = [];
-}
-
-watch(sortOrder, fetchParties);
-onMounted(fetchParties);
-
-// ——— BarChart setup ———
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
-const labels    = ref<string[]>([]);
-const seatsData = ref<number[]>([]);
-
-watch(partiesList, list => {
-  labels.value = list.map(p => p.partyName);
-  seatsData.value = list.map(p => p.seats);
-}, { immediate: true });
-
-const chartOptions = {
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    title: { display: true, text: 'Zetels per partij' },
-    // custom plugin om de achtergrond wit te vullen
-    beforeDraw: {
-      id: 'whiteBackground',
-      beforeDraw: (chart) => {
-        const ctx = chart.ctx;
-        ctx.save();
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.restore();
-      }
-    }
-  },
-  scales: {
-    y: { beginAtZero: true, ticks: { stepSize: 1 } }
-  }
-};
-const options = {
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    title: {
-      display: true,
-      text: 'Zetels per partij'
-    },
-
-    whiteBackground: {
-      beforeDraw: (chart: any) => {
-        const { ctx, width, height } = chart;
-        ctx.save();
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, width, height);
-        ctx.restore();
-      }
-    }
-  },
-  scales: {
-    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+    const res = await fetchWithAuth(
+      `${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`
+    )
+    if (!res.ok) throw new Error(`Load failed (${res.status})`)
+    partiesList.value = await res.json()
+  } catch (err) {
+    error.value = (err as Error).message
+  } finally {
+    loading.value = false
   }
 }
 
-// registreer de plugin
-ChartJS.register({
-  id: 'whiteBackground',
-  beforeDraw: (chart) => options.plugins!.whiteBackground.beforeDraw(chart)
+watch(sortOrder, () => {
+  fetchParties();
+});
+
+onMounted(() => {
+  fetchParties();
 });
 </script>
 
 <template>
   <div class="parties-container">
-    <!-- Bar chart -->
-    <Bar
-      :data="{ labels: labels, datasets: [{ label: 'Zetels', data: seatsData, backgroundColor: '#3E2858' }] }"
-      :options="chartOptions"
-      class="chart"
-    />
-
-    <!-- Header + sort -->
     <div class="header-container">
       <h1>Verkozen zetels per partij</h1>
-      <div class="sort-container" v-if="!currentPartyId">
+      <div class="sort-container">
         <label for="sort-select">Sorteer op:</label>
-        <select id="sort-select" v-model="sortOrder" class="sort-select">
-          <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+        <select
+          id="sort-select"
+          v-model="sortOrder"
+          class="sort-select"
+        >
+          <option
+            v-for="option in sortOptions"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
         </select>
       </div>
     </div>
 
-    <!-- Loading / error -->
     <div v-if="loading" class="loading">Laden...</div>
+
     <div v-else-if="error" class="error">
-      {{ error }} <button @click="fetchParties" class="retry-btn">Opnieuw</button>
+      {{ error }}
+      <button @click="fetchParties" class="retry-btn">Opnieuw</button>
     </div>
 
-    <!-- Partijen of kandidaten -->
-    <div v-if="!currentPartyId" class="party-grid">
-      <div v-for="p in partiesList" :key="p.partyId" class="party-card" @click="showCandidates(p.partyId, p.partyName)">
-        <h2>{{ p.partyName }}</h2>
-        <p><strong>Zetels:</strong> {{ p.seats }}</p>
-      </div>
+    <div v-else-if="partiesList.length === 0" class="empty">
+      Geen partijen gevonden
     </div>
-    <div v-else>
-      <button @click="resetView" class="back-btn">← Terug naar partijen</button>
-      <h1 class="subheader">Kandidaten van {{ currentPartyName }}</h1>
-      <div v-if="candidatesLoading" class="loading">Kandidaten laden...</div>
-      <div v-else-if="currentCandidates.length === 0" class="empty">Geen kandidaten gevonden</div>
-      <div class="candidates-list">
-        <div v-for="c in currentCandidates" :key="c.id" class="candidate-item">
-          <h3>{{ c.firstName }} {{ c.lastName }}</h3>
-          <p>Geslacht: {{ c.gender }}</p>
-          <p>Locatie: {{ c.localityName }}</p>
-        </div>
+
+    <div v-else class="party-grid">
+      <div v-for="party in partiesList" :key="party.partyId" class="party-card">
+        <h2>{{ party.partyName }}</h2>
+        <p><strong>Zetels:</strong> {{ party.seats }}</p>
       </div>
     </div>
   </div>
 </template>
 
+
 <style scoped>
-.parties-container { padding: 2rem; max-width: 900px; margin: 0 auto; }
-.chart { margin-bottom: 2rem; }
+.parties-container {
+  color: black;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-/* Header */
-.header-container { display: flex; justify-content: space-between; align-items: center;
-  background: #3E2858; padding: 1rem; border-radius: 8px; }
-.header-container h1 { color: white; margin:0; }
-.sort-container label { color: white; margin-right: .5rem; }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: white; /* Nu werkt dit wel */
+  background-color: #4a148c; /* Paarse achtergrond voor header */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .sort-select {
-  background: white; color: #2c3e50; border: 1px solid #d1a5e6; border-radius:4px;
-  padding: .5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #d1a5e6;
+  background-color: #DEBFE9;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1rem;
+  padding: 0.5rem 2rem 0.5rem 1rem;
 }
 
-/* Grid */
-.party-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; }
-.party-card, .candidate-item {
-  background:white; color:black; padding:1.5rem; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  transition: transform .2s;
+.sort-select:hover {
+  background-color: #d1a5e6;
 }
-.party-card:hover { transform: translateY(-3px); }
-.candidate-item:hover { transform: translateY(-2px); }
 
-/* Back button & subheader */
-.back-btn {
-  background:#DEBFE9; color:#000; border:none; padding:.5rem 1rem; border-radius:6px; cursor:pointer;
-  margin-bottom:1rem;
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
-.subheader { color: white; background:#3E2858; padding:.5rem 1rem; border-radius:6px; }
 
-/* States */
-.loading { text-align:center; padding:2rem; font-style:italic; color:#666; }
-.error { background:#ffebee; color:#d32f2f; padding:1rem; border-radius:4px; margin:1rem 0;
-  display:flex; justify-content:space-between; align-items:center; }
-.retry-btn { background:#1976d2; color:white; border:none; padding:.5rem 1rem; border-radius:4px; cursor:pointer; }
-.retry-btn:hover { background:#1565c0; }
+.party-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
 
-/* Candidates list */
-.candidates-list { display:grid; gap:1.5rem; margin-top:1rem; }
+.party-card:hover {
+  transform: translateY(-3px);
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
+}
+
+.error {
+  background: #ffebee;
+  color: #d32f2f;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.retry-btn:hover {
+  background: #1565c0;
+}
+
+/* Responsive aanpassingen */
+@media (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+  }
+
+  .sort-container {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
+}
 </style>
