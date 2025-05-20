@@ -92,7 +92,7 @@ button {
   cursor: pointer;
 }
 
-/* === Navigatie links & dropdown toggle === */
+
 nav {
   display: flex;
   gap: 1rem;
@@ -113,12 +113,12 @@ nav {
   gap: 0.4rem;
 }
 
-/* Hover effect */
+
 .nav-link:hover {
   background-color: #d4b6f0;
 }
 
-/* Registratieknop */
+
 .btn {
   background-color: var(--accent-clr);
   color: black;
@@ -133,7 +133,7 @@ nav {
   background-color: #e6b800;
 }
 
-/* === Dropdown menu === */
+
 .dropdown {
   position: relative;
 }
@@ -175,7 +175,7 @@ nav {
   color: black;
 }
 
-/* === Mobiel layout === */
+
 @media (max-width: 768px) {
   .menu-btn {
     display: block;
@@ -197,15 +197,15 @@ nav {
   nav.open {
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Zorgt dat alle kinderen full width krijgen */
+    align-items: stretch;
   }
 
   .nav-link, .btn {
     width: 100%;
-    text-align: center;        /* Tekst horizontaal centreren */
-    display: flex;             /* Maak ze flex containers */
-    justify-content: center;   /* Horizontaal centreren */
-    align-items: center;       /* Verticaal centreren */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     box-sizing: border-box;
   }
 }
