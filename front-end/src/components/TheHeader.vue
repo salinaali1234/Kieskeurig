@@ -9,6 +9,11 @@ function closeMenus() {
   statsDropdownOpen.value = false;
 }
 
+const navLinks = ref([
+  { name: 'Partijen', to: '/parties', class: 'nav-link' },
+  { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
+  { name: 'Registreren', to: '/register', class: 'btn' }
+]);
 </script>
 
 <template>
@@ -18,17 +23,17 @@ function closeMenus() {
         Kies<span class="highlight">Keurig</span>
       </RouterLink>
 
-
       <button class="menu-btn" @click="menuOpen = !menuOpen">
         ☰
       </button>
 
-
-      <nav :class="{ 'open':menuOpen }">
+      <nav :class="{ 'open': menuOpen }">
         <div class="dropdown" @mouseleave="statsDropdownOpen = false">
           <button class="dropdown-toggle" @click="statsDropdownOpen = !statsDropdownOpen">
             Statistieken
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </button>
           <ul v-if="statsDropdownOpen" class="dropdown-menu">
             <li><RouterLink to="/national" @click="closeMenus">Nationaal</RouterLink></li>
@@ -36,9 +41,16 @@ function closeMenus() {
             <li><RouterLink to="/constituencies" @click="closeMenus">Kieskringen</RouterLink></li>
           </ul>
         </div>
-        <RouterLink to="/parties" class="nav-link" @click="menuOpen = false">Partijen</RouterLink>
-        <RouterLink to="/vergelijken" class="nav-link" @click="menuOpen = false">Vergelijken</RouterLink>
-        <RouterLink to="/register" class="btn" @click="menuOpen = false">Registreren</RouterLink>
+
+        <RouterLink
+          v-for="link in navLinks"
+          :key="link.to"
+          :to="link.to"
+          :class="link.class"
+          @click="menuOpen = false"
+        >
+          {{ link.name }}
+        </RouterLink>
       </nav>
     </div>
   </header>
