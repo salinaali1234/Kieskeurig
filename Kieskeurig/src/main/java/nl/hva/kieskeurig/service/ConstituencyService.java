@@ -24,6 +24,7 @@ public class ConstituencyService {
     private final List<Constituency> constituencies = new ArrayList<Constituency>();
     private final View error;
 
+
     public void add(Constituency constituency) {
         constituencies.add(constituency);
     }
@@ -73,6 +74,8 @@ public class ConstituencyService {
             return false;
         }
     }
+
+
 
 
 
