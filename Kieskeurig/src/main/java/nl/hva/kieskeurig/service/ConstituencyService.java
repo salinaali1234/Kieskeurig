@@ -41,10 +41,7 @@ public class ConstituencyService {
     public boolean connectElectionDefinition() throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everything");
-        if (!constituencyRepository.findAll().isEmpty()) {
-            System.out.println("Data already exists in the database, skipping XML import.");
-            return true;
-        }
+
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
@@ -85,6 +82,7 @@ public class ConstituencyService {
         }else if (connectElectionDefinition()) {
             System.out.println("reading xml");
         } else {
+            //this is if the connect Election gives back a false so something went wrong with reading
             return null;
         }
 
