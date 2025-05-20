@@ -36,8 +36,8 @@ function closeMenus() {
             <li><RouterLink to="/constituencies" @click="closeMenus">Kieskringen</RouterLink></li>
           </ul>
         </div>
-        <RouterLink to="/parties" @click="menuOpen = false">Partijen</RouterLink>
-        <RouterLink to="/vergelijken" @click="menuOpen = false">Vergelijken</RouterLink>
+        <RouterLink to="/parties" class="nav-link" @click="menuOpen = false">Partijen</RouterLink>
+        <RouterLink to="/vergelijken" class="nav-link" @click="menuOpen = false">Vergelijken</RouterLink>
         <RouterLink to="/register" class="btn" @click="menuOpen = false">Registreren</RouterLink>
       </nav>
     </div>
@@ -45,6 +45,17 @@ function closeMenus() {
 </template>
 
 <style scoped>
+button {
+  all: unset;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-link, .btn {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .header {
   width: 100%;
   background-color: var(--primary-clr);
@@ -72,12 +83,6 @@ function closeMenus() {
 }
 
 
-nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-
 .menu-btn {
   display: none;
   font-size: 2rem;
@@ -87,26 +92,40 @@ nav {
   cursor: pointer;
 }
 
+/* === Navigatie links & dropdown toggle === */
+nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
 
-nav a {
-  color: var(--secondary-clr);
+.nav-link {
+  background-color: #e0c3f7;
+  color: black;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
   text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-nav a:hover {
-  color: var(--accent-clr);
+/* Hover effect */
+.nav-link:hover {
+  background-color: #d4b6f0;
 }
 
-
+/* Registratieknop */
 .btn {
   background-color: var(--accent-clr);
   color: black;
   padding: 0.5rem 1rem;
-  border-radius: 5px;
-  text-decoration: none;
+  border-radius: 8px;
   font-weight: bold;
+  text-decoration: none;
   transition: 0.3s;
 }
 
@@ -114,7 +133,49 @@ nav a:hover {
   background-color: #e6b800;
 }
 
+/* === Dropdown menu === */
+.dropdown {
+  position: relative;
+}
 
+.icon {
+  transition: transform 0.3s;
+  fill: currentColor;
+}
+
+.dropdown-toggle.open .icon {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--primary-clr);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--secondary-clr);
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--accent-clr);
+  color: black;
+}
+
+/* === Mobiel layout === */
 @media (max-width: 768px) {
   .menu-btn {
     display: block;
@@ -135,12 +196,17 @@ nav a:hover {
 
   nav.open {
     display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Zorgt dat alle kinderen full width krijgen */
+  }
+
+  .nav-link, .btn {
+    width: 100%;
+    text-align: center;        /* Tekst horizontaal centreren */
+    display: flex;             /* Maak ze flex containers */
+    justify-content: center;   /* Horizontaal centreren */
+    align-items: center;       /* Verticaal centreren */
+    box-sizing: border-box;
   }
 }
 </style>
-
-
-
-
-
-
