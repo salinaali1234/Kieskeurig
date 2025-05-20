@@ -177,38 +177,93 @@ ChartJS.register({
 .chart { margin-bottom: 2rem; }
 
 /* Header */
-.header-container { display: flex; justify-content: space-between; align-items: center;
-  background: #3E2858; padding: 1rem; border-radius: 8px; }
-.header-container h1 { color: white; margin:0; }
-.sort-container label { color: white; margin-right: .5rem; }
+.header-container
+{ display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #3E2858;
+  padding: 1rem;
+  border-radius: 8px; }
+
+.header-container h1
+{ color: white;
+  margin:0;
+}
+
+.sort-container label
+{ color: white;
+  margin-right: .5rem;
+}
+
 .sort-select {
-  background: #d1a5e6; color: #2c3e50; border: 1px solid #d1a5e6; border-radius:4px;
+  background: #d1a5e6;
+  color: #2c3e50;
+  border: 1px solid #d1a5e6;
+  border-radius:4px;
   padding: .5rem 1rem;
 }
 
 /* Grid */
-.party-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; }
+.party-grid
+{ display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+  gap:1.5rem;
+}
 .party-card, .candidate-item {
-  background:white; color:black; padding:1.5rem; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  background:white;
+  color:black;
+  padding:1.5rem;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
   transition: transform .2s;
 }
-.party-card:hover { transform: translateY(-3px); }
-.candidate-item:hover { transform: translateY(-2px); }
+.party-card:hover
+{ transform: translateY(-3px);}
+
+.candidate-item:hover
+{ transform: translateY(-2px); }
 
 /* Back button & subheader */
 .back-btn {
-  background:#DEBFE9; color:#000; border:none; padding:.5rem 1rem; border-radius:6px; cursor:pointer;
+  background:#DEBFE9;
+  color:#000; border:none;
+  padding:.5rem 1rem;
+  border-radius:6px;
+  cursor:pointer;
   margin-bottom:1rem;
 }
-.subheader { color: white; background:#3E2858; padding:.5rem 1rem; border-radius:6px; }
+.subheader {
+  color: white;
+  background:#3E2858;
+  padding:.5rem 1rem;
+  border-radius:6px; }
 
 /* States */
-.loading { text-align:center; padding:2rem; font-style:italic; color:#666; }
-.error { background:#ffebee; color:#d32f2f; padding:1rem; border-radius:4px; margin:1rem 0;
+.loading {
+  text-align:center;
+  padding:2rem;
+  font-style:italic;
+  color:#666; }
+.error {
+  background:#ffebee;
+  color:#d32f2f;
+  padding:1rem;
+  border-radius:4px;
+  margin:1rem 0;
   display:flex; justify-content:space-between; align-items:center; }
-.retry-btn { background:#1976d2; color:white; border:none; padding:.5rem 1rem; border-radius:4px; cursor:pointer; }
-.retry-btn:hover { background:#1565c0; }
+.retry-btn
+{ background:#1976d2;
+  color:white;
+  border:none;
+  padding:.5rem 1rem;
+  border-radius:4px;
+  cursor:pointer; }
+
+.retry-btn:hover
+{ background:#1565c0; }
 
 /* Candidates list */
-.candidates-list { display:grid; gap:1.5rem; margin-top:1rem; }
+.candidates-list { display:grid;
+  gap:1.5rem;
+  margin-top:1rem; }
 </style>
