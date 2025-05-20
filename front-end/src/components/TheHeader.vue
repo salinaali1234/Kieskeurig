@@ -2,6 +2,13 @@
 import { ref } from 'vue';
 
 const menuOpen = ref(false);
+const statsDropdownOpen = ref(false);
+
+function closeMenus() {
+  menuOpen.value = false;
+  statsDropdownOpen.value = false;
+}
+
 </script>
 
 <template>
@@ -18,7 +25,17 @@ const menuOpen = ref(false);
 
 
       <nav :class="{ 'open':menuOpen }">
-        <RouterLink to="/statistieken" @click="menuOpen = false">Statistieken</RouterLink>
+        <div class="dropdown" @mouseleave="statsDropdownOpen = false">
+          <button class="dropdown-toggle" @click="statsDropdownOpen = !statsDropdownOpen">
+            Statistieken
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul v-if="statsDropdownOpen" class="dropdown-menu">
+            <li><RouterLink to="/national" @click="closeMenus">Nationaal</RouterLink></li>
+            <li><RouterLink to="/provinces" @click="closeMenus">Provincies</RouterLink></li>
+            <li><RouterLink to="/constituencies" @click="closeMenus">Kieskringen</RouterLink></li>
+          </ul>
+        </div>
         <RouterLink to="/parties" @click="menuOpen = false">Partijen</RouterLink>
         <RouterLink to="/vergelijken" @click="menuOpen = false">Vergelijken</RouterLink>
         <RouterLink to="/register" class="btn" @click="menuOpen = false">Registreren</RouterLink>
