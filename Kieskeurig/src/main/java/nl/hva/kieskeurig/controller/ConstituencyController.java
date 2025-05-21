@@ -23,10 +23,16 @@ public class ConstituencyController {
         return service.getAll();}
 
 
-    @GetMapping()
+    @GetMapping("/all")
     public Map<String, Integer> getAllRegions() throws XMLStreamException, IOException {
         return service.getAllConsituencies();
     }
+
+    @GetMapping("/Info/{ConstituencyId}")
+    public Map<String, Integer> getInfoConstituency(@PathVariable String ConstituencyId) throws XMLStreamException, IOException {
+        return service.getInfoConstituency(ConstituencyId);
+    }
+
 
 
 

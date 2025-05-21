@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.reader.RegionReader;
+import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepository;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
@@ -96,6 +97,26 @@ public class ConstituencyService {
         }
         return map;
     }
+
+
+
+
+    public Map<String, Integer> getInfoConstituency(String constituencyName) throws XMLStreamException, IOException {
+        constituencyName = constituencyName.trim().replace(" ", "_");
+        String path = String.format("Verkiezingsuitslag_Tweede_Kamer_2023/Kieskring tellingen/Telling_TK2023_kieskring_%s.eml.xml", constituencyName);
+        ClassPathResource resource = new ClassPathResource(path);
+        System.out.println("getting everthing");
+        Map<String, Integer> map = new HashMap<>();
+
+        try (InputStream inputStream = resource.getInputStream()) {
+            System.out.println("Processing files...");
+            XMLParser xmlParser = new XMLParser(inputStream);
+            VoteReader reader = new VoteReader(xmlParser);
+
+            map= reader.getValidVotes();
+        }
+        return map; }
+
 }
 
 

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {ref, onMounted, type Ref, computed} from "vue";
 import "../assets/tableStyle.css"
-import Constituencies from "@/views/Constituencies.vue";
-import NationalVotes from "@/views/NationalVotes.vue";
 import router from "@/router";
 
 interface Constituency {
@@ -37,8 +35,8 @@ onMounted(async () => {
   }
 });
 
-const showConstituency = (id: number) => {
-  router.push(`/Constituency/${id}`)
+const showConstituency = (id: number, name: string) => {
+  router.push(`/Constituency/${id}/${name}`)
 }
 
 const displayedConstituencies = computed(() => {
@@ -86,7 +84,7 @@ function toggleSortByName() {
       <tr v-for="constituency in displayedConstituencies"
           :key="constituency[0]"
 
-          @click="showConstituency(constituency[1])">
+          @click="showConstituency(constituency[1], constituency[0])">
         <td>{{ constituency[0] }}</td>
 
       </tr>
@@ -102,3 +100,4 @@ function toggleSortByName() {
 }
 
 </style>
+
