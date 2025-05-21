@@ -10,6 +10,7 @@ import CompareVotes from "@/views/CompareVotes.vue";
 import NationalVotes from "@/components/NationalVotes.vue";
 import Constituencies from "@/components/Constituencies.vue";
 import ProvinceVotes from "@/components/ProvinceVotes.vue";
+import NetherlandsMap from "@/components/NetherlandsMap.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: NetherlandsMap,
     },
     {
       path: '/statistieken',
