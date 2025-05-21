@@ -26,7 +26,7 @@ const router = createRouter({
       component: VoteView,
     },
     {
-      path:  `/Constituency/:constituencyId`,
+      path:  `/Constituency/:constituencyId/:constituencyName`,
       name: `constituency`,
       component: Consistuency,
     },

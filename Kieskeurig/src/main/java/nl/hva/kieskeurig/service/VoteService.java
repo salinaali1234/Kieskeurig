@@ -120,7 +120,7 @@ public class VoteService {
                             constituency.replaceAll("'", "")
                     );
 
-                    readResults("Verkiezingsuitslag_Tweede_Kamer_2023", fileName, electionId);
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(electionId.replace("TK", "")), fileName, electionId);
                 }
             }
         }

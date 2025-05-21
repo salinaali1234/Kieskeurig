@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.controller;
+import lombok.RequiredArgsConstructor;
 import nl.hva.kieskeurig.model.Constituency;
-import nl.hva.kieskeurig.service.RegionService;
+import nl.hva.kieskeurig.service.ConstituencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +12,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/constituencies")
+@RequiredArgsConstructor
 public class ConstituencyController {
-    private final RegionService service;
+    private final ConstituencyService service;
 
-    @Autowired // Tell springboot what controler to use
-    public ConstituencyController(RegionService service) {
-        this.service = service;
-    }
     // with in () is a dependency injection
 
     @GetMapping("/findAll")
@@ -25,10 +23,17 @@ public class ConstituencyController {
         return service.getAll();}
 
 
-    @GetMapping("/all/{type}/{consistencyId}")
-    public Map<String, Integer> getAllRegions(@PathVariable String type, @PathVariable Integer consistencyId) throws XMLStreamException, IOException {
-        return service.getAllRegions(type, consistencyId);
+    @GetMapping("/all")
+    public Map<String, Integer> getAllRegions() throws XMLStreamException, IOException {
+        return service.getAllConsituencies();
     }
+
+    @GetMapping("/Info/{ConstituencyId}")
+    public Map<String, Integer> getInfoConstituency(@PathVariable String ConstituencyId) throws XMLStreamException, IOException {
+        return service.getInfoConstituency(ConstituencyId);
+    }
+
+
 
 
 

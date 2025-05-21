@@ -13,7 +13,6 @@ import lombok.*;
 @Table(name = "constituencies")
 public class Constituency {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true, nullable = false)

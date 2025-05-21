@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.reader.RegionReader;
+import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepository;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import  nl.hva.kieskeurig.model.Constituency;
@@ -19,20 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class RegionService {
+public class ConstituencyService {
     private final ConstituencyRepo repo;
     private final List<Constituency> constituencies = new ArrayList<Constituency>();
-    private final List<Municipality> municipalities = new ArrayList<Municipality>();
     private final View error;
+
 
     public void add(Constituency constituency) {
         constituencies.add(constituency);
     }
-    public void add(Municipality municipality) {municipalities.add(municipality);}
-
 
     @Autowired
-    public RegionService(ConstituencyRepo repo, View error) {this.repo = repo;
+    public ConstituencyService(ConstituencyRepo repo, View error) {this.repo = repo;
         this.error = error;
     }
 
@@ -41,13 +40,10 @@ public class RegionService {
 
     public List<Constituency> getAll() {return repo.findAll();}
 
-    public boolean connectElectionDefinition(String type) throws XMLStreamException, IOException {
+    public boolean connectElectionDefinition() throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
-        System.out.println("getting everthing");
-        if (!constituencyRepository.findAll().isEmpty()) {
-            System.out.println("Data already exists in the database, skipping XML import.");
-            return true;
-        }
+        System.out.println("getting everything");
+
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
@@ -63,22 +59,15 @@ public class RegionService {
                             String name = innerEntry.getKey();
                             Integer superiorRegionId = innerEntry.getValue();
 
-                            if (superiorRegionId != null) {
-                                if (superiorRegionId == 0) {
-                                    Constituency constituency = new Constituency();
-                                    constituency.setName(name);
-                                    Constituency saved = constituencyRepository.save(constituency);
-                                    add(saved);
-                                } else {
-                                    Municipality municipality = new Municipality(name, id, superiorRegionId);
-                                    add(municipality);
-                                }
+                            if (superiorRegionId != null && superiorRegionId == 0) {
+                                Constituency constituency = new Constituency();
+                                constituency.setId(id);
+                                constituency.setName(name);
+                                Constituency saved = constituencyRepository.save(constituency);
+                                add(saved);
                             }
                         }
                     }
-
-
-
             return true;
 
         } catch (Exception e) {
@@ -89,38 +78,45 @@ public class RegionService {
 
 
 
-    public Map<String, Integer> getAllRegions(String type, Integer constistuencyId) throws XMLStreamException, IOException {
-        if (connectElectionDefinition(type)) {
-            Map<String, Integer> map = new HashMap<>();
 
 
-
-            if (type.equals("municipalities")) {
-
-                if (constistuencyId == 0){
-
-                    for (Municipality municipality : municipalities){
-                        map.put(municipality.getName(), municipality.getId());
-                    }
-                } else {
-                    for (Municipality municipality : municipalities) {
-                        if (constistuencyId.equals(municipality.getIdConstituency())){
-                            map.put(municipality.getName(), municipality.getIdConstituency());
-                        }
-                    }
-                }
-
-            } else {
-                List<Constituency> allConstituencies = constituencyRepository.findAll();
-                for (Constituency constituency : allConstituencies) {
-                    map.put(constituency.getName(), constituency.getId());
-                }
-            }
-            return map;
+    public Map<String, Integer> getAllConsituencies() throws XMLStreamException, IOException {
+        if (!constituencyRepository.findAll().isEmpty()) {
+            System.out.println("Data already exists in the database, skipping XML import.");
+        }else if (connectElectionDefinition()) {
+            System.out.println("reading xml");
         } else {
+            //this is if the connect Election gives back a false so something went wrong with reading
             return null;
         }
+
+        Map<String, Integer> map = new HashMap<>();
+        List<Constituency> allConstituencies = constituencyRepository.findAll();
+        for (Constituency constituency : allConstituencies) {
+            map.put(constituency.getName(), constituency.getId());
+        }
+        return map;
     }
+
+
+
+
+    public Map<String, Integer> getInfoConstituency(String constituencyName) throws XMLStreamException, IOException {
+        constituencyName = constituencyName.trim().replace(" ", "_");
+        String path = String.format("Verkiezingsuitslag_Tweede_Kamer_2023/Kieskring tellingen/Telling_TK2023_kieskring_%s.eml.xml", constituencyName);
+        ClassPathResource resource = new ClassPathResource(path);
+        System.out.println("getting everthing");
+        Map<String, Integer> map = new HashMap<>();
+
+        try (InputStream inputStream = resource.getInputStream()) {
+            System.out.println("Processing files...");
+            XMLParser xmlParser = new XMLParser(inputStream);
+            VoteReader reader = new VoteReader(xmlParser);
+
+            map= reader.getValidVotes();
+        }
+        return map; }
+
 }
 
 
