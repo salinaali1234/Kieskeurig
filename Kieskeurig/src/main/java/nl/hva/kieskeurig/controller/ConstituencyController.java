@@ -28,9 +28,9 @@ public class ConstituencyController {
         return service.getAllConsituencies();
     }
 
-    @GetMapping("/Info/{ConstituencyId}")
-    public Map<String, Integer> getInfoConstituency(@PathVariable String ConstituencyId) throws XMLStreamException, IOException {
-        return service.getInfoConstituency(ConstituencyId);
+    @GetMapping("/Info/{ConstituencyName}")
+    public Map<String, Integer> getInfoConstituency(@PathVariable String ConstituencyName) throws XMLStreamException, IOException {
+        return service.getInfoConstituency(ConstituencyName);
     }
 
 
