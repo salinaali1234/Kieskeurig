@@ -4,6 +4,7 @@ package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.enums.Province;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
+import nl.hva.kieskeurig.repository.NationalVotesRepo;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,46 @@ import java.util.*;
 @Service
 public class VoteService {
 
+    private final NationalVotesRepo voteRepo;
+
+    public VoteService(NationalVotesRepo voteRepo) {
+        this.voteRepo = voteRepo;
+    }
+
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
+
+    public Map<String, Integer> getResults(String year) {
+//        votesPerYear.remove(year);
+        String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
+        String fileName = getFileNameForYear(year);
+
+        boolean success = readResults(folder, fileName, year);
+        if (!success) {
+            throw new RuntimeException("Kon de resultaten niet inlezen voor jaar " + year);
+        }
+
+        return getVotesPerParty(year);
+    }
+
+    private String getFileNameForYear(String year) {
+        return switch (year) {
+            case "2021" -> "Totaaltelling_TK2021.eml.xml";
+            case "2023" -> "Totaaltelling_TK2023.eml.xml";
+            default -> throw new IllegalArgumentException("Ongeldig jaar opgegeven: " + year);
+        };
+    }
 
     public void add(String year, Vote vote) {
         votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
 
     public boolean readResults(String folder, String fileName, String year) {
+
+
+        if (!voteRepo.findAllByYear(year).isEmpty()) {
+            votesPerYear.put(year, voteRepo.findAllByYear(year));
+            return true;
+        }
 
         try {
             System.out.println("Trying to load: " + folder + "/" + fileName);
@@ -36,12 +70,20 @@ public class VoteService {
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
+            List<Vote> newVotes = new ArrayList<>();
 
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
-                Vote vote = new Vote(entry.getKey(), entry.getValue());
-                add(year, vote);
+                String partyName = entry.getKey();
+                int votes = entry.getValue();
+
+                Vote vote = new Vote(partyName, votes, year);
+                voteRepo.save(vote);
+                newVotes.add(vote);
             }
+
+            votesPerYear.put(year, newVotes);
             return true;
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -52,6 +94,7 @@ public class VoteService {
         Map<String, Integer> partyVotes = new HashMap<>();
         List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
 
+
         for (Vote vote : votes) {
             partyVotes.put(
                     vote.getPartyName(),
@@ -59,7 +102,7 @@ public class VoteService {
             );
         }
 
-        votes.clear();
+//        votes.clear();
         return partyVotes;
     }
 
@@ -105,9 +148,10 @@ public class VoteService {
         // Turn the map into a list containing the total votes for each party
         List<Vote> totalPartyVotesList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : totalPartyVotesMap.entrySet()) {
-            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue());
+            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue(), electionId);
             totalPartyVotesList.add(partyVoteResult);
         }
+
 
         votes.clear();
 

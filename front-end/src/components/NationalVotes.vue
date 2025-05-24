@@ -11,9 +11,8 @@ interface Party {
 const year = ref<string>("");
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
+const selectedYear = ref("2023"); // Standaard 2023
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
-const props = defineProps<{ year: string }>();
-const url: string = `${VITE_APP_BACKEND_URL}/api/xml/votes/parties?year=${props.year}`;
 
 let labels: Ref<string[]> = ref([])
 let votes: Ref<number[]> = ref([])
@@ -22,9 +21,9 @@ function toggleVisible() {
   isVisible.value = !isVisible.value;
 }
 
-watch(() => props.year, async (newYear) => {
+// Fetch data als selectedYear verandert
+watch(selectedYear, async (newYear) => {
   year.value = newYear;
-
   await fetchData(newYear);
   await populateProps();
 }, { immediate: true });
@@ -38,9 +37,15 @@ async function fetchData(year: string) {
         name,
         votes: Number(votes),
       }));
+      isVisible.value = true;
+    } else {
+      parties.value = [];
+      isVisible.value = true;
     }
   } catch (error) {
     console.error("Fout bij ophalen data", error);
+    parties.value = [];
+    isVisible.value = true;
   }
 }
 
@@ -74,14 +79,23 @@ async function populateProps() {
   votes.value = votesLocal
 }
 
-
 </script>
 
 <template>
+  <div class="dropdown-wrapper">
+    <select v-model="selectedYear" class="dropdown">
+      <option disabled value="">Selecteer jaar</option>
+      <option value="2023">2023</option>
+      <option value="2021">2021</option>
+    </select>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </div>
+
+  <NationalDonutChart :year="year" :votes="votes" :labels="labels" />
+
   <div>
-
-    <NationalDonutChart :year="year" :votes="votes" :labels="labels" />
-
     <table class="data-table">
       <thead>
       <tr>
@@ -96,6 +110,7 @@ async function populateProps() {
       </tr>
       </tbody>
     </table>
+
     <p v-if="isVisible && parties.length === 0">Geen partijen gevonden...</p>
   </div>
 </template>

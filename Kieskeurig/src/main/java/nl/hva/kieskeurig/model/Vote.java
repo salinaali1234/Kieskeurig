@@ -1,15 +1,33 @@
 package nl.hva.kieskeurig.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Builder
+@Entity
+@Table(name = "national_votes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"partyName", "election_year"})
+})
+
 public class Vote {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String partyName;
     private int validVotes;
+
+    @Column(name = "election_year")
+    private String year;
+
+
+    public Vote(String partyName, int validVotes, String year) {
+        this.partyName = partyName;
+        this.validVotes = validVotes;
+        this.year = year;
+    }
 }
