@@ -25,7 +25,7 @@ public class AuthenticationController {
     @Autowired
     private EntityRepository<Account> accountsRepo;
 
-    @PostMapping(path = "/login")
+    @PostMapping(path = "/login", produces = "application/json")
     public ResponseEntity<Account> authenticateAccount(
             @RequestBody ObjectNode signInInfo,
             HttpServletRequest request) {
