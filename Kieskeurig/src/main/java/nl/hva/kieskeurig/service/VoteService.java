@@ -2,6 +2,7 @@ package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.enums.Province;
+import nl.hva.kieskeurig.exception.InvalidPathVariableException;
 import nl.hva.kieskeurig.exception.InvalidRequestParameterException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
@@ -110,17 +111,17 @@ public class VoteService {
 
         // Error handling
         if (!electionId.contains("TK")) {
-            throw new InvalidRequestParameterException("Invalid electionId: " + electionId);
+            throw new InvalidPathVariableException("Invalid electionId: " + electionId);
         }
         if (!new YearService().getYears().contains(year)) {
-            throw new InvalidRequestParameterException("Invalid year: " + year);
+            throw new InvalidPathVariableException("Invalid year: " + year);
         }
         if (!Arrays.stream(Province.values())
                 .map(p -> p.getDisplayName().toUpperCase())
                 .toList()
                 .contains(province.toUpperCase())
         ) {
-            throw new InvalidRequestParameterException("Invalid province: " + province);
+            throw new InvalidPathVariableException("Invalid province: " + province);
         }
 
         // Read the results for every constituency for the selected province
