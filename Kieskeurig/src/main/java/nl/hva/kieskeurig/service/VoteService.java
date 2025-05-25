@@ -2,7 +2,7 @@ package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.enums.Province;
-import nl.hva.kieskeurig.exception.InvalidParameterInputException;
+import nl.hva.kieskeurig.exception.InvalidRequestParameterException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
@@ -110,17 +110,17 @@ public class VoteService {
 
         // Error handling
         if (!electionId.contains("TK")) {
-            throw new InvalidParameterInputException("Invalid electionId: " + electionId);
+            throw new InvalidRequestParameterException("Invalid electionId: " + electionId);
         }
         if (!new YearService().getYears().contains(year)) {
-            throw new InvalidParameterInputException("Invalid year: " + year);
+            throw new InvalidRequestParameterException("Invalid year: " + year);
         }
         if (!Arrays.stream(Province.values())
                 .map(p -> p.getDisplayName().toUpperCase())
                 .toList()
                 .contains(province.toUpperCase())
         ) {
-            throw new InvalidParameterInputException("Invalid province: " + province);
+            throw new InvalidRequestParameterException("Invalid province: " + province);
         }
 
         // Read the results for every constituency for the selected province
@@ -184,7 +184,7 @@ public class VoteService {
         } else if (sort.equalsIgnoreCase("validVotes")) {
             votes.sort(Comparator.comparing(Vote::getValidVotes));
         } else {
-            throw new InvalidParameterInputException("Invalid sort parameter: " + sort);
+            throw new InvalidRequestParameterException("Invalid sort parameter: " + sort);
         }
 
         if (!asc) Collections.reverse(votes);
