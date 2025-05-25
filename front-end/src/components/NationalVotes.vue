@@ -1,20 +1,31 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import "../assets/tableStyle.css";
+import {ref, watch, type Ref} from "vue";
+import "../assets/tableStyle.css"
+import NationalDonutChart from "@/components/charts/donut-charts/NationalDonutChart.vue";
 
 interface Party {
   name: string;
   votes: number;
 }
 
+const year = ref<string>("");
 const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const selectedYear = ref("2023"); // Standaard 2023
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
 
+let labels: Ref<string[]> = ref([])
+let votes: Ref<number[]> = ref([])
+
+function toggleVisible() {
+  isVisible.value = !isVisible.value;
+}
+
 // Fetch data als selectedYear verandert
 watch(selectedYear, async (newYear) => {
+  year.value = newYear;
   await fetchData(newYear);
+  await populateProps();
 }, { immediate: true });
 
 async function fetchData(year: string) {
@@ -37,6 +48,37 @@ async function fetchData(year: string) {
     isVisible.value = true;
   }
 }
+
+async function populateProps() {
+  const labelsLocal: string[] = []
+  const votesLocal: number[] = []
+
+  for (const party of parties.value) {
+    labelsLocal.push(party.name)
+    votesLocal.push(party.votes)
+  }
+
+  const sortArrays = () => {
+    const list = [];
+    for (let j = 0; j < labelsLocal.length; j++)
+      list.push({'labels': labelsLocal[j], 'votes': votesLocal[j]});
+
+    list.sort(function (a, b) {
+      return ((a.votes > b.votes) ? -1 : ((a.votes == b.votes) ? 0 : 1));
+    });
+
+    for (let k = 0; k < list.length; k++) {
+      labelsLocal[k] = list[k].labels;
+      votesLocal[k] = list[k].votes;
+    }
+  }
+
+  sortArrays()
+
+  labels.value = labelsLocal
+  votes.value = votesLocal
+}
+
 </script>
 
 <template>
@@ -50,6 +92,8 @@ async function fetchData(year: string) {
       <path d="m6 9 6 6 6-6"></path>
     </svg>
   </div>
+
+  <NationalDonutChart :year="year" :votes="votes" :labels="labels" />
 
   <div>
     <table class="data-table">
