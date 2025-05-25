@@ -2,6 +2,7 @@ package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.enums.Province;
+import nl.hva.kieskeurig.exception.InvalidParameterInputException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
@@ -13,14 +14,12 @@ import java.util.*;
 
 @Service
 public class VoteService {
-
     private final NationalVotesRepo voteRepo;
+    private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
 
     public VoteService(NationalVotesRepo voteRepo) {
         this.voteRepo = voteRepo;
     }
-
-    private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
 
     public Map<String, Integer> getResults(String year) {
 //        votesPerYear.remove(year);
@@ -48,8 +47,6 @@ public class VoteService {
     }
 
     public boolean readResults(String folder, String fileName, String year) {
-
-
         if (!voteRepo.findAllByYear(year).isEmpty()) {
             votesPerYear.put(year, voteRepo.findAllByYear(year));
             return true;
@@ -107,8 +104,24 @@ public class VoteService {
     }
 
     public Object getVotesPerPartyByElectionByProvince(String electionId, String province, String sort, boolean asc) {
-        if (sort == null) sort = "";
+        electionId = electionId.toUpperCase();
         String fileName;
+        String year = electionId.replace("TK", "");
+
+        // Error handling
+        if (!electionId.contains("TK")) {
+            throw new InvalidParameterInputException("Invalid electionId: " + electionId);
+        }
+        if (!new YearService().getYears().contains(year)) {
+            throw new InvalidParameterInputException("Invalid year: " + year);
+        }
+        if (!Arrays.stream(Province.values())
+                .map(p -> p.getDisplayName().toUpperCase())
+                .toList()
+                .contains(province.toUpperCase())
+        ) {
+            throw new InvalidParameterInputException("Invalid province: " + province);
+        }
 
         // Read the results for every constituency for the selected province
         for (Province provinceName : Province.values()) {
@@ -116,11 +129,11 @@ public class VoteService {
                 for (String constituency : provinceName.getConstituencies()) {
                     System.out.println(constituency);
                     fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
-                            electionId.toUpperCase(),
+                            electionId,
                             constituency.replaceAll("'", "")
                     );
 
-                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(electionId.replace("TK", "")), fileName, electionId);
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(year), fileName, electionId);
                 }
             }
         }
@@ -166,10 +179,12 @@ public class VoteService {
      * @return {@link List<Vote>}
      */
     private List<Vote> sortVotes(List<Vote> votes, String sort, boolean asc) {
-        if (sort.equals("partyName")) {
+        if (sort.equalsIgnoreCase("partyName")) {
             votes.sort(Comparator.comparing(Vote::getPartyName));
-        } else {
+        } else if (sort.equalsIgnoreCase("validVotes")) {
             votes.sort(Comparator.comparing(Vote::getValidVotes));
+        } else {
+            throw new InvalidParameterInputException("Invalid sort parameter: " + sort);
         }
 
         if (!asc) Collections.reverse(votes);
