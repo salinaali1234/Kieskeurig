@@ -22,7 +22,7 @@ const isVisible = ref(false);
 const sortDirection = ref<'asc' | 'desc' | null>(null); // asc = A-Z, desc = Z-A, null = original
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
 const url = `${backendUrl}/api/municipalities/all/${constituencyId.value}`;
-const urlVotes = `${backendUrl}/api/constituencies/Info/Arnhem`
+const urlVotes = `${backendUrl}/api/constituencies/Info/${constituencyName.value}`
 
 
 // interface constituecyInterface {

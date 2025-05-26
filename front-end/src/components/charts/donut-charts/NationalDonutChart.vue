@@ -49,8 +49,23 @@
         })()
 
         const length: number = votePercentages.length
-        const votes: number[] = this.votes.slice(0, length)
         const labels: string[] = this.labels.slice(0, length)
+        const votes: number[] = this.votes.slice(0, length);
+
+        ((): void => {
+          const list = [];
+          for (let j = 0; j < labels.length; j++)
+            list.push({'labels': labels[j], 'votes': votes[j]});
+
+          list.sort(function (a, b) {
+            return ((a.votes > b.votes) ? -1 : ((a.votes == b.votes) ? 0 : 1));
+          });
+
+          for (let k = 0; k < list.length; k++) {
+            labels[k] = list[k].labels;
+            votes[k] = list[k].votes;
+          }
+        })()
 
         const votesOther: number = this.votes.slice(length).reduce((partialSum, a) => partialSum + a, 0)
         votes.push(votesOther)
