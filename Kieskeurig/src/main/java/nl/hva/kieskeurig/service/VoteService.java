@@ -110,7 +110,7 @@ public class VoteService {
         String year = electionId.replace("TK", "");
 
         // Error handling
-        if (!electionId.contains("TK")) {
+        if (!(electionId.replace("TK", "").replaceAll("\\d", "")).isEmpty()) {
             throw new InvalidPathVariableException("Invalid electionId: " + electionId);
         }
         if (!new YearService().getYears().contains(year)) {
