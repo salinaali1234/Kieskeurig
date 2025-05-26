@@ -9,38 +9,55 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static org.springframework.util.ClassUtils.getUserClass;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
+    @Autowired
+    private EntityRepository<Account> accountRepository;
+
     @Override
     @Transactional
-    public void run(String... args)  {
-        System.out.println("Running CommandLine Startup");
+    public void run(String... args) {
+        System.out.println("=== Initializing Database ===");
         this.createInitialAccounts();
 
-        System.out.println("Injected accounts from " +
-                (this.accountsRepo != null ? getUserClass(this.accountsRepo.getClass()).getName() : "none"));
+        // Verify accounts were created
+        List<Account> allAccounts = accountRepository.findAll();
+        System.out.println("Total accounts in database: " + allAccounts.size());
+        allAccounts.forEach(acc -> System.out.printf("Account: ID=%d, Email=%s, Hash=%s%n",
+                acc.getId(), acc.getEmail(), acc.getHashedPassword()));
     }
 
-    @Autowired
-    private EntityRepository<Account> accountsRepo;
-
     private void createInitialAccounts() {
-        // check whether the repo is empty
-        List<Account> accounts = this.accountsRepo.findAll();
-        if (!accounts.isEmpty()) return;
-        System.out.println("Configuring some initial accounts in the repository");
-        accounts.add(this.accountsRepo.save(new Account(0, "admin@hva.nl", "Admin")));
-        accounts.add(this.accountsRepo.save(new Account(0, "user1@hva.nl", "User1")));
-        accounts.add(this.accountsRepo.save(new Account(0, "user2@hva.nl", "User2")));
-        accounts.add(this.accountsRepo.save(new Account(0, "user3@hva.nl", "User3")));
-        // updates will be persisted by the transaction
-        for (Account a : accounts) {
-            a.setPassword("welcome");
-            System.out.println("Added account: " + a + " (initial password = 'welcome')");
-        }
-        accounts.getFirst().setRole("Administrator");
+        addIfNotExists("admin@hva.nl", "Admin", "welcome", "Administrator");
+        addIfNotExists("user1@hva.nl", "User1", "welcome", "User");
+        addIfNotExists("user2@hva.nl", "User2", "welcome", "User");
+        addIfNotExists("user3@hva.nl", "User3", "welcome", "User");
+
+        System.out.println("Accounts in database:");
+        accountRepository.findAll().forEach(System.out::println);
+    }
+
+    private void addIfNotExists(String email, String name, String password, String role) {
+        List<Account> existing = accountRepository.findByQuery("Accounts_find_by_email", email);
+        if (!existing.isEmpty()) return;
+
+        // Create account with basic info
+        Account account = new Account(0, email, name);
+        account.setRole(role);
+
+        // Save to generate ID
+        account = accountRepository.save(account);
+
+        // Set password with proper ID-based hashing
+        account.setPassword(password);
+
+        // Final save
+        accountRepository.save(account);
+
+        System.out.println("Created account: " + email +
+                " ID: " + account.getId() +
+                " Hash: " + account.getHashedPassword());
     }
 }

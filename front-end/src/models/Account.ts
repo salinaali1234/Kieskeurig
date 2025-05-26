@@ -2,12 +2,14 @@ export class Account {
   id: number;
   name: string | null;
   email: string | null;
+  password: string | null;
   role: string | null;
 
   constructor(id: number, name: string | null = null) {
     this.id = id;
     this.name = name;
     this.email = null;
+    this.password = null;
     this.role = null;
   }
 
@@ -15,6 +17,7 @@ export class Account {
     if (!account) return null;
     const copy = new Account(account.id, account.name);
     copy.email = account.email;
+    copy.password = account.password; // ook deze kun je meenemen
     copy.role = account.role;
     return copy;
   }

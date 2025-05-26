@@ -22,7 +22,8 @@ async function handleRegister() {
       id: 0,
       name: name.value,
       email: email.value,
-      role: 'Regular User' // ❗ belangrijk voor type veiligheid
+      password: password.value,
+      role: 'Regular User'
     };
 
     const account = await accountsAdaptor.save(newAccount);
