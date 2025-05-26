@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,30 +25,37 @@ public class AuthenticationController {
 
     @Autowired
     private EntityRepository<Account> accountsRepo;
-
-    @PostMapping(path = "/login", produces = "application/json")
+    @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> authenticateAccount(
             @RequestBody ObjectNode signInInfo,
             HttpServletRequest request) {
 
-        String email = signInInfo.get("email").asText();
+        String email = signInInfo.get("email").asText().trim().toLowerCase();
         String password = signInInfo.get("password").asText();
 
-        // check whether we need and have the source IP-address of the user
-        String ipAddress = JWToken.getIpAddress(request);
-        if (ipAddress == null) {
-            throw new NotAcceptableException("Cannot identify your source IP-Address.");
-        }
+        System.out.println("Login attempt for: " + email);
 
         List<Account> accounts = accountsRepo.findByQuery("Accounts_find_by_email", email);
-        Account account = !accounts.isEmpty() ? accounts.getFirst() : null;
-        System.out.println(accounts);
-
-        if (account == null || !account.verfiyPassword(password)) {
-            throw new NotAcceptableException("Cannot authenticate account with email=" + email);
+        if (accounts.isEmpty()) {
+            System.out.println("No account found for: " + email);
+            throw new NotAcceptableException("Invalid credentials");
         }
 
-        // Issue a token for the account, valid for some time
+        Account account = accounts.get(0);
+        System.out.println("Account found - ID: " + account.getId());
+
+        if (!account.verifyPassword(password)) {
+            System.out.println("Password verification failed");
+            System.out.println("Input: " + account.hashPassword(password));
+            System.out.println("Stored: " + account.getHashedPassword());
+            throw new NotAcceptableException("Invalid credentials");
+        }
+
+        String ipAddress = JWToken.getIpAddress(request);
+        if (ipAddress == null) {
+            throw new NotAcceptableException("Cannot identify source IP");
+        }
+
         JWToken jwToken = new JWToken(account.getName(), account.getId(), account.getRole(), ipAddress);
         String tokenString = jwToken.encode(this.apiConfig.getIssuer(),
                 this.apiConfig.getPassphrase(),

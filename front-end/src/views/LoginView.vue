@@ -14,7 +14,7 @@ const session = new SessionService(`${BASE_URL}/authentication`, 'session_jwt');
 const handleLogin = async () => {
   const account = await session.login(email.value, password.value);
   if (account) {
-    router.push('/'); // of naar je dashboard
+    router.push('/');
   } else {
     error.value = 'Inloggen mislukt. Probeer opnieuw.';
   }

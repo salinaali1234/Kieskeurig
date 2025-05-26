@@ -46,28 +46,44 @@ export class SessionService {
       sessionStorage.removeItem(`${this.STORAGE_KEY}_account`);
     }
   }
-
   async login(email: string, password: string): Promise<Account | null> {
     try {
       const response = await fetch(`${this.RESOURCES_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: password
+        }),
+        credentials: 'include'
       });
 
-      if (response.ok) {
-        const account = await response.json();
-        const token = response.headers.get("Authorization");
-
-        if (token) {
-          this.saveSession(token, Account.copyConstructor(account));
-          return account;
+      if (!response.ok) {
+        // Try to get error message from response
+        let errorMsg = 'Login failed';
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch (e) {
+          errorMsg = await response.text() || errorMsg;
         }
+        throw new Error(errorMsg);
       }
-      return null;
-    } catch (error) {
-      console.error("Login error:", error);
-      return null;
+
+      const token = response.headers.get('Authorization');
+      if (!token) throw new Error('Authentication token missing');
+
+      const account = await response.json();
+      if (!account || !account.id) throw new Error('Invalid account data received');
+
+      this.saveSession(token, account);
+      return Account.copyConstructor(account);
+    } catch (e) {
+      console.error('Login error:', e);
+      throw new Error(e.message || 'Login failed. Please try again.');
     }
   }
 

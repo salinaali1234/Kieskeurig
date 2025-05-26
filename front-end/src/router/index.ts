@@ -1,11 +1,16 @@
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import PartiesInfoView from '../views/PartiesInfoView.vue'
 import CandidatesView from '../views/CandidatesView.vue'
 import PartyView from '@/views/PartyView.vue'
-import VoteView from "@/views/VoteView.vue"
-import Consistuency from "@/views/Consistuency.vue"
-import CompareVotes from "@/views/CompareVotes.vue"
+import VoteView from "@/views/VoteView.vue";
+import Consistuency from "@/views/Consistuency.vue";
+import CompareVotes from "@/views/CompareVotes.vue";
+import NationalVotes from "@/components/NationalVotes.vue";
+import Constituencies from "@/components/Constituencies.vue";
+import ProvinceVotes from "@/components/ProvinceVotes.vue";
+import NetherlandsMap from "@/components/NetherlandsMap.vue";
 import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
@@ -19,7 +24,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: NetherlandsMap,
       meta: { requiresAuth: false }
     },
     {
@@ -47,8 +52,8 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/Constituency/:constituencyId',
-      name: 'constituency',
+      path:  `/Constituency/:constituencyId/:constituencyName`,
+      name: `constituency`,
       component: Consistuency,
      meta: { requiresAuth: false }
     },
@@ -77,7 +82,24 @@ const router = createRouter({
       component: CompareVotes,
       meta: { requiresAuth: false }
     },
+    {
+      path: '/national',
+      name: 'national',
+      component: NationalVotes,
+    },
+    {
+      path: '/constituencies',
+      name: 'constituencies',
+      component: Constituencies,
+    },
+    {
+      path: '/provinces',
+      name: 'provinces',
+      component: ProvinceVotes,
+    },
+
   ]
+
 })
 
 router.beforeEach((to, from, next) => {

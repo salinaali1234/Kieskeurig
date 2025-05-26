@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 style="text-align: center;">Stemresultaten {{province}} {{year}}</h1>
+    <h1 style="text-align: center;">Nationale Stemresultaten {{year}}</h1>
     <div style="height:60vh;">
       <Doughnut :data="data" :options="options" />
     </div>
@@ -14,7 +14,7 @@
   ChartJS.register(ArcElement, Tooltip, Legend)
 
   export default {
-    name: 'ProvinceDonutChart',
+    name: 'NationalDonutChart',
     components: {
       Doughnut
     },
@@ -25,10 +25,6 @@
       },
       votes: {
         type: Array as () => number[],
-        required: true
-      },
-      province: {
-        type: String,
         required: true
       },
       year: {
