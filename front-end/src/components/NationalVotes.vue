@@ -58,23 +58,6 @@ async function populateProps() {
     votesLocal.push(party.votes)
   }
 
-  const sortArrays = () => {
-    const list = [];
-    for (let j = 0; j < labelsLocal.length; j++)
-      list.push({'labels': labelsLocal[j], 'votes': votesLocal[j]});
-
-    list.sort(function (a, b) {
-      return ((a.votes > b.votes) ? -1 : ((a.votes == b.votes) ? 0 : 1));
-    });
-
-    for (let k = 0; k < list.length; k++) {
-      labelsLocal[k] = list[k].labels;
-      votesLocal[k] = list[k].votes;
-    }
-  }
-
-  sortArrays()
-
   labels.value = labelsLocal
   votes.value = votesLocal
 }
