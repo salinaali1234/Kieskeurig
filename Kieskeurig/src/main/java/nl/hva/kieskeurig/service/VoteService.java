@@ -2,8 +2,11 @@ package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
 import nl.hva.kieskeurig.enums.Province;
+import nl.hva.kieskeurig.exception.InvalidPathVariableException;
+import nl.hva.kieskeurig.exception.InvalidRequestParameterException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
+import nl.hva.kieskeurig.repository.NationalVotesRepo;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +15,43 @@ import java.util.*;
 
 @Service
 public class VoteService {
-
+    private final NationalVotesRepo voteRepo;
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
+
+    public VoteService(NationalVotesRepo voteRepo) {
+        this.voteRepo = voteRepo;
+    }
+
+    public Map<String, Integer> getResults(String year) {
+//        votesPerYear.remove(year);
+        String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
+        String fileName = getFileNameForYear(year);
+
+        boolean success = readResults(folder, fileName, year);
+        if (!success) {
+            throw new RuntimeException("Kon de resultaten niet inlezen voor jaar " + year);
+        }
+
+        return getVotesPerParty(year);
+    }
+
+    private String getFileNameForYear(String year) {
+        return switch (year) {
+            case "2021" -> "Totaaltelling_TK2021.eml.xml";
+            case "2023" -> "Totaaltelling_TK2023.eml.xml";
+            default -> throw new IllegalArgumentException("Ongeldig jaar opgegeven: " + year);
+        };
+    }
 
     public void add(String year, Vote vote) {
         votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
 
     public boolean readResults(String folder, String fileName, String year) {
+        if (!voteRepo.findAllByYear(year).isEmpty()) {
+            votesPerYear.put(year, voteRepo.findAllByYear(year));
+            return true;
+        }
 
         try {
             System.out.println("Trying to load: " + folder + "/" + fileName);
@@ -36,12 +68,20 @@ public class VoteService {
 
             Map<String, Integer> partyVotes = reader.getValidVotes();
 
+            List<Vote> newVotes = new ArrayList<>();
 
             for (Map.Entry<String, Integer> entry : partyVotes.entrySet()) {
-                Vote vote = new Vote(entry.getKey(), entry.getValue());
-                add(year, vote);
+                String partyName = entry.getKey();
+                int votes = entry.getValue();
+
+                Vote vote = new Vote(partyName, votes, year);
+                voteRepo.save(vote);
+                newVotes.add(vote);
             }
+
+            votesPerYear.put(year, newVotes);
             return true;
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -52,6 +92,7 @@ public class VoteService {
         Map<String, Integer> partyVotes = new HashMap<>();
         List<Vote> votes = votesPerYear.getOrDefault(year, List.of());
 
+
         for (Vote vote : votes) {
             partyVotes.put(
                     vote.getPartyName(),
@@ -59,13 +100,29 @@ public class VoteService {
             );
         }
 
-        votes.clear();
+//        votes.clear();
         return partyVotes;
     }
 
     public Object getVotesPerPartyByElectionByProvince(String electionId, String province, String sort, boolean asc) {
-        if (sort == null) sort = "";
+        electionId = electionId.toUpperCase();
         String fileName;
+        String year = electionId.replace("TK", "");
+
+        // Error handling
+        if (!(electionId.replace("TK", "").replaceAll("\\d", "")).isEmpty()) {
+            throw new InvalidPathVariableException("Invalid electionId: " + electionId);
+        }
+        if (!new YearService().getYears().contains(year)) {
+            throw new InvalidPathVariableException("Invalid year: " + year);
+        }
+        if (!Arrays.stream(Province.values())
+                .map(p -> p.getDisplayName().toUpperCase())
+                .toList()
+                .contains(province.toUpperCase())
+        ) {
+            throw new InvalidPathVariableException("Invalid province: " + province);
+        }
 
         // Read the results for every constituency for the selected province
         for (Province provinceName : Province.values()) {
@@ -73,11 +130,11 @@ public class VoteService {
                 for (String constituency : provinceName.getConstituencies()) {
                     System.out.println(constituency);
                     fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
-                            electionId.toUpperCase(),
+                            electionId,
                             constituency.replaceAll("'", "")
                     );
 
-                    readResults("Verkiezingsuitslag_Tweede_Kamer_2023", fileName, electionId);
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(year), fileName, electionId);
                 }
             }
         }
@@ -105,9 +162,10 @@ public class VoteService {
         // Turn the map into a list containing the total votes for each party
         List<Vote> totalPartyVotesList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : totalPartyVotesMap.entrySet()) {
-            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue());
+            Vote partyVoteResult = new Vote(entry.getKey(), entry.getValue(), electionId);
             totalPartyVotesList.add(partyVoteResult);
         }
+
 
         votes.clear();
 
@@ -122,10 +180,12 @@ public class VoteService {
      * @return {@link List<Vote>}
      */
     private List<Vote> sortVotes(List<Vote> votes, String sort, boolean asc) {
-        if (sort.equals("partyName")) {
+        if (sort.equalsIgnoreCase("partyName")) {
             votes.sort(Comparator.comparing(Vote::getPartyName));
-        } else {
+        } else if (sort.equalsIgnoreCase("validVotes")) {
             votes.sort(Comparator.comparing(Vote::getValidVotes));
+        } else {
+            throw new InvalidRequestParameterException("Invalid sort parameter: " + sort);
         }
 
         if (!asc) Collections.reverse(votes);

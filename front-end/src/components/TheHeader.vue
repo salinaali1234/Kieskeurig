@@ -2,6 +2,18 @@
 import { ref } from 'vue';
 
 const menuOpen = ref(false);
+const statsDropdownOpen = ref(false);
+
+function closeMenus() {
+  menuOpen.value = false;
+  statsDropdownOpen.value = false;
+}
+
+const navLinks = ref([
+  { name: 'Partijen', to: '/parties', class: 'nav-link' },
+  { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
+  { name: 'Registreren', to: '/register', class: 'btn' }
+]);
 </script>
 
 <template>
@@ -11,23 +23,51 @@ const menuOpen = ref(false);
         Kies<span class="highlight">Keurig</span>
       </RouterLink>
 
-
       <button class="menu-btn" @click="menuOpen = !menuOpen">
         ☰
       </button>
 
+      <nav :class="{ 'open': menuOpen }">
+        <div class="dropdown" @mouseleave="statsDropdownOpen = false">
+          <button class="dropdown-toggle" @click="statsDropdownOpen = !statsDropdownOpen">
+            Statistieken
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <ul v-if="statsDropdownOpen" class="dropdown-menu">
+            <li><RouterLink to="/national" @click="closeMenus">Nationaal</RouterLink></li>
+            <li><RouterLink to="/provinces" @click="closeMenus">Provincies</RouterLink></li>
+            <li><RouterLink to="/constituencies" @click="closeMenus">Kieskringen</RouterLink></li>
+          </ul>
+        </div>
 
-      <nav :class="{ 'open':menuOpen }">
-        <RouterLink to="/statistieken" @click="menuOpen = false">Statistieken</RouterLink>
-        <RouterLink to="/parties" @click="menuOpen = false">Partijen</RouterLink>
-        <RouterLink to="/vergelijken" @click="menuOpen = false">Vergelijken</RouterLink>
-        <RouterLink to="/register" class="btn" @click="menuOpen = false">Registreren</RouterLink>
+        <RouterLink
+          v-for="link in navLinks"
+          :key="link.to"
+          :to="link.to"
+          :class="link.class"
+          @click="menuOpen = false"
+        >
+          {{ link.name }}
+        </RouterLink>
       </nav>
     </div>
   </header>
 </template>
 
 <style scoped>
+button {
+  all: unset;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-link, .btn {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .header {
   width: 100%;
   background-color: var(--primary-clr);
@@ -55,12 +95,6 @@ const menuOpen = ref(false);
 }
 
 
-nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-
 .menu-btn {
   display: none;
   font-size: 2rem;
@@ -71,15 +105,29 @@ nav {
 }
 
 
-nav a {
-  color: var(--secondary-clr);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
+nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
-nav a:hover {
-  color: var(--accent-clr);
+.nav-link {
+  background-color: #e0c3f7;
+  color: black;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+
+.nav-link:hover {
+  background-color: #d4b6f0;
 }
 
 
@@ -87,14 +135,56 @@ nav a:hover {
   background-color: var(--accent-clr);
   color: black;
   padding: 0.5rem 1rem;
-  border-radius: 5px;
-  text-decoration: none;
+  border-radius: 8px;
   font-weight: bold;
+  text-decoration: none;
   transition: 0.3s;
 }
 
 .btn:hover {
   background-color: #e6b800;
+}
+
+
+.dropdown {
+  position: relative;
+}
+
+.icon {
+  transition: transform 0.3s;
+  fill: currentColor;
+}
+
+.dropdown-toggle.open .icon {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--primary-clr);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--secondary-clr);
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--accent-clr);
+  color: black;
 }
 
 
@@ -118,12 +208,17 @@ nav a:hover {
 
   nav.open {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-link, .btn {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
   }
 }
 </style>
-
-
-
-
-
-

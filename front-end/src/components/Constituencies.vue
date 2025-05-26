@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {ref, onMounted, type Ref, computed} from "vue";
 import "../assets/tableStyle.css"
-import Constituencies from "@/views/Constituencies.vue";
-import NationalVotes from "@/views/NationalVotes.vue";
 import router from "@/router";
 
 interface Constituency {
@@ -15,7 +13,7 @@ const isVisible = ref(false);
 const sortDirection = ref<'asc' | 'desc' | null>(null); // asc = A-Z, desc = Z-A, null = original
 
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
-const url = `${backendUrl}/api/constituencies/all/Constituencies/0`;
+const url = `${backendUrl}/api/constituencies/all`;
 
 function toggleVisible() {
   isVisible.value = !isVisible.value;
@@ -37,8 +35,8 @@ onMounted(async () => {
   }
 });
 
-const showConstituency = (id: number) => {
-  router.push(`/Constituency/${id}`)
+const showConstituency = (id: number, name: string) => {
+  router.push(`/Constituency/${id}/${name}`)
 }
 
 const displayedConstituencies = computed(() => {
@@ -86,7 +84,7 @@ function toggleSortByName() {
       <tr v-for="constituency in displayedConstituencies"
           :key="constituency[0]"
 
-          @click="showConstituency(constituency[1])">
+          @click="showConstituency(constituency[1], constituency[0])">
         <td>{{ constituency[0] }}</td>
 
       </tr>
@@ -102,3 +100,4 @@ function toggleSortByName() {
 }
 
 </style>
+
