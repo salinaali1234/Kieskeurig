@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import sessionService from '@/service/session-singleton';
+
 
 const menuOpen = ref(false);
 const statsDropdownOpen = ref(false);
+const user = ref(sessionService.currentAccount); // gebruiker ophalen
 
 function closeMenus() {
   menuOpen.value = false;
   statsDropdownOpen.value = false;
 }
 
+function logout() {
+  sessionService.logout();
+  window.location.reload(); // Refresh de pagina volledig
+}
+
 const navLinks = ref([
   { name: 'Partijen', to: '/parties', class: 'nav-link' },
   { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
-  { name: 'Registreren', to: '/register', class: 'btn' }
 ]);
+
 </script>
 
 <template>
@@ -23,9 +31,7 @@ const navLinks = ref([
         Kies<span class="highlight">Keurig</span>
       </RouterLink>
 
-      <button class="menu-btn" @click="menuOpen = !menuOpen">
-        ☰
-      </button>
+      <button class="menu-btn" @click="menuOpen = !menuOpen">☰</button>
 
       <nav :class="{ 'open': menuOpen }">
         <div class="dropdown" @mouseleave="statsDropdownOpen = false">
@@ -51,12 +57,30 @@ const navLinks = ref([
         >
           {{ link.name }}
         </RouterLink>
+
+        <!-- ✅ Ingelogd -->
+        <div v-if="user" class="user-info">
+           {{ user.name }}
+          <button class="btn" @click="logout">Uitloggen</button>
+        </div>
+
+        <!-- ❌ Niet ingelogd -->
+        <div v-else class="auth-buttons">
+          <RouterLink to="/login" class="btn" @click="closeMenus">Inloggen</RouterLink>
+          <RouterLink to="/register" class="btn" @click="closeMenus">Registreren</RouterLink>
+        </div>
       </nav>
     </div>
   </header>
 </template>
 
 <style scoped>
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 1rem;
+}
 button {
   all: unset;
   cursor: pointer;
@@ -187,6 +211,11 @@ nav {
   color: black;
 }
 
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* of 10px als je dat fijner vindt */
+}
 
 @media (max-width: 768px) {
   .menu-btn {

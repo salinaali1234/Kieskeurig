@@ -1,6 +1,5 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import PartiesInfoView from '../views/PartiesInfoView.vue'
 import CandidatesView from '../views/CandidatesView.vue'
 import PartyView from '@/views/PartyView.vue'
@@ -15,8 +14,10 @@ import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
 import { SessionService } from '@/service/session-service.ts'
+import sessionService from '@/service/session-singleton.ts'
 
-const sessionService = new SessionService('http://your-api-url/auth', 'kieskeurig')
+const BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
+new SessionService(`${BASE_URL}/authentication`, 'session_jwt')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -112,4 +113,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router
+export default router;
