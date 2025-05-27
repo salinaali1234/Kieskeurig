@@ -59,6 +59,9 @@ public class PartiesInfoService {
             case "alphabetical" -> parties.stream()
                     .sorted(Comparator.comparing(PartyWithInfo::getPartyName))
                     .toList();
+            case "alphabetical-reverse" -> parties.stream()
+                    .sorted(Comparator.comparing(PartyWithInfo::getPartyName).reversed())
+                    .toList();
             default -> parties.stream()
                     .sorted(Comparator.comparingInt(PartyWithInfo::getSeats).reversed())
                     .toList();

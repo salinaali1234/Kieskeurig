@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted, watch} from 'vue';
 import { useRoute } from "vue-router";
+import { fetchWithAuth } from '@/service/fetch-client.ts'
 
 const route = useRoute()
 const parties: string | string[] = route.params.parties
@@ -24,25 +25,23 @@ const sortOptions = [
   { value: 'alphabetical', label: 'Alfabetisch (A → Z)' }
 ];
 
+
 const fetchParties = async () => {
+  loading.value = true
+  error.value = null
+
   try {
-    loading.value = true;
-    error.value = null;
-
-    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`);
-
-    if (!response.ok) {
-      throw new Error('Failed to load parties');
-    }
-
-    partiesList.value = await response.json();
+    const res = await fetchWithAuth(
+      `${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`
+    )
+    if (!res.ok) throw new Error(`Load failed (${res.status})`)
+    partiesList.value = await res.json()
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Unknown error';
+    error.value = (err as Error).message
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
-
+}
 
 watch(sortOrder, () => {
   fetchParties();

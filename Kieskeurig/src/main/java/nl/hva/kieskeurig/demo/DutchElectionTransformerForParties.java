@@ -10,7 +10,7 @@ import nl.hva.kieskeurig.model.PartyWithInfo;
 
 
 import java.util.Map;
-import java.util.Optional;
+//import java.util.Optional;
 
 import static nl.hva.kieskeurig.utils.xml.DutchElectionProcessor.*;
 
@@ -27,11 +27,12 @@ public class DutchElectionTransformerForParties implements Transformer<ElectionF
     @Override
     public void registerElection(Map<String, String> electionData) {
         String electionDate = electionData.get(ELECTION_DATE);
+        System.out.printf("Found election information: %s\n", electionData);
         if (election == null) {
             election = new ElectionForParty(electionDate);
-//            LOG.info("Election initialized with date: " + electionDate);
         }
     }
+
 
     @Override
     public void registerContest(Map<String, String> contestData) {
