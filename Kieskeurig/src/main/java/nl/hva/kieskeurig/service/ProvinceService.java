@@ -108,6 +108,7 @@ public class ProvinceService {
 
     /**
      * Gets the total amount of valid votes each party got and returns it in a {@link List<Vote>} containing objects with the {@link Vote} class.
+     *
      * @param electionId Type {@link String}
      * @return {@link List<Vote>}
      */
@@ -138,9 +139,10 @@ public class ProvinceService {
 
     /**
      * Takes a {@link List<Vote>} containing objects with the {@link Vote} class and will return a sorted {@link List<Vote>} containing objects of the same class based on the given parameters.
+     *
      * @param votes Type {@link List<Vote>}
-     * @param sort Type {@link String}
-     * @param asc Type {@link Boolean}
+     * @param sort  Type {@link String}
+     * @param asc   Type {@link Boolean}
      * @return {@link List<Vote>}
      */
     private List<Vote> sortVotes(List<Vote> votes, String sort, boolean asc) {
@@ -157,7 +159,7 @@ public class ProvinceService {
         return votes;
     }
 
-    public int getTotalVotesByProvince(String electionId, String province) {
+    public Map<String, Object> getTotalVotesByProvince(String electionId, String province) {
         electionId = electionId.toUpperCase();
         String year = electionId.replace("TK", "");
 
@@ -190,7 +192,10 @@ public class ProvinceService {
                 .mapToInt(Vote::getValidVotes)
                 .sum();
 
-        return totalVotes;
-    }
+        Map<String, Object> response = new HashMap<>();
+        response.put("province", province);
+        response.put("totalVotes", totalVotes);
 
+        return response;
+    }
 }
