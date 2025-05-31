@@ -13,7 +13,7 @@ import lombok.ToString;
 public enum Province {
     DRENTHE("Drenthe", new String[]{"Assen"}),
     FLEVOLAND("Flevoland", new String[]{"Lelystad"}),
-    FRIESLAND("Friesland", new String[]{"Leeuwarden"}),
+    FRIESLAND("Friesland (Fryslân)", new String[]{"Leeuwarden"}),
     GELDERLAND("Gelderland", new String[]{"Nijmegen", "Arnhem"}),
     GRONINGEN("Groningen", new String[]{"Groningen"}),
     LIMBURG("Limburg", new String[]{"Maastricht"}),
