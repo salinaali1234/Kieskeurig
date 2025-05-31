@@ -2,11 +2,11 @@ package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.service.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * API handling everything related to provinces.
@@ -25,4 +25,12 @@ public class ProvinceController {
     public List<String> getProvinces() {
         return provinceService.getProvinces();
     }
+
+
+    @GetMapping("/{province}/votes")
+    public Map<String, Object> getTotalVotesByProvince(@PathVariable String province, @RequestParam String electionId) {
+        return provinceService.getTotalVotesByProvince(electionId, province);
+    }
+
 }
+
