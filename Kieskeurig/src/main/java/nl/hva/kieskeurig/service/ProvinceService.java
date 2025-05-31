@@ -156,4 +156,41 @@ public class ProvinceService {
 
         return votes;
     }
+
+    public int getTotalVotesByProvince(String electionId, String province) {
+        electionId = electionId.toUpperCase();
+        String year = electionId.replace("TK", "");
+
+        if (!new YearService().getYears().contains(year)) {
+            throw new InvalidPathVariableException("Invalid year: " + year);
+        }
+
+        if (!Arrays.stream(Province.values())
+                .map(p -> p.getDisplayName().toUpperCase())
+                .toList()
+                .contains(province.toUpperCase())
+        ) {
+            throw new InvalidPathVariableException("Invalid province: " + province);
+        }
+
+        for (Province provinceEnum : Province.values()) {
+            if (provinceEnum.getDisplayName().equalsIgnoreCase(province)) {
+                for (String constituency : provinceEnum.getConstituencies()) {
+                    String fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
+                            electionId,
+                            constituency.replaceAll("'", "")
+                    );
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(year), fileName, electionId);
+                }
+            }
+        }
+
+        List<Vote> votes = votesPerYear.getOrDefault(electionId, List.of());
+        int totalVotes = votes.stream()
+                .mapToInt(Vote::getValidVotes)
+                .sum();
+
+        return totalVotes;
+    }
+
 }
