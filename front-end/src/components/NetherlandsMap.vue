@@ -5,14 +5,60 @@ import { onMounted } from "vue"
 
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
 
+const getProvinceColors = async () => {
+  try {
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/provinces`);
+    if (!response.ok) throw new Error("Fout bij ophalen provincies");
+
+    const provinces: string[] = await response.json();
+
+    const colors: Record<string, string> = {};
+    provinces.forEach(province => {
+      colors[province.toLowerCase()] = `hsl(${Math.floor(Math.random() * 360)}, 70%, 75%)`;
+    });
+
+    return colors;
+  } catch (e) {
+    console.error("Provincies ophalen mislukt:", e);
+    return {};
+  }
+};
+
+const normalizeName = (name: string) =>
+  name.toLowerCase().replace(/\s+/g, '').replace(/-/g, '');
+
+const bindProvincePopup = async (feature: any, layer: any, electionId = "TK2023") => {
+  const rawName = feature.properties?.name || 'Onbekend';
+  const name = rawName;
+
+  try {
+    const voteResponse = await fetch(
+      `${VITE_APP_BACKEND_URL}/api/provinces/${encodeURIComponent(name)}/votes?electionId=${electionId}`
+    );
+
+    if (voteResponse.ok) {
+      const voteData = await voteResponse.json();
+      layer.bindPopup(
+        `<b>${name}</b><br/>Totaal stemmen: ${voteData.totalVotes.toLocaleString("nl-NL")}`
+      );
+    } else {
+      layer.bindPopup(`<b>${name}</b><br/>Stemdata niet beschikbaar`);
+    }
+  } catch (err) {
+    console.error(`Fout bij stemmen ophalen voor ${name}:`, err);
+    layer.bindPopup(`<b>${name}</b><br/>Fout bij laden`);
+  }
+};
+
 onMounted(async () => {
+  const provinceColors = await getProvinceColors();
+
   const map = L.map('map', {
-    minZoom: 6,
+    center: [52.1, 5.3],
+    zoom: 7,
+    minZoom: 7,
     maxZoom: 10,
-    maxBounds: L.latLngBounds(
-      [50.5, 3.1],
-      [53.7, 7.3]
-    ),
+    maxBounds: L.latLngBounds([50.7, 3.2], [53.6, 7.2]),
     maxBoundsViscosity: 1.0
   });
 
@@ -22,21 +68,28 @@ onMounted(async () => {
 
   try {
     const response = await fetch(`${VITE_APP_BACKEND_URL}/api/map/map`);
-    if (!response.ok) {
-      throw new Error(`HTTP fout: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP fout: ${response.status}`);
 
     const geojson = await response.json();
 
     const geojsonLayer = L.geoJSON(geojson, {
-      style: {
-        color: '#3388ff',
-        weight: 2,
-        opacity: 1
+      style: feature => {
+        const rawName = feature.properties?.name || '';
+        const normalizedName = normalizeName(rawName);
+        const fillColor = Object.entries(provinceColors).find(
+          ([key]) => normalizeName(key) === normalizedName
+        )?.[1] || '#cccccc';
+
+        return {
+          color: '#000000',
+          weight: 1,
+          opacity: 1,
+          fillColor,
+          fillOpacity: 0.9
+        };
       },
       onEachFeature: (feature, layer) => {
-        const name = feature.properties?.name || 'Onbekend';
-        layer.bindPopup(`<b>${name}</b>`);
+        bindProvincePopup(feature, layer); // async popup
       }
     }).addTo(map);
 
@@ -47,6 +100,7 @@ onMounted(async () => {
 });
 </script>
 
+
 <template>
   <div class="intro-container">
     <h1 class="intro-title">
@@ -55,7 +109,6 @@ onMounted(async () => {
     </h1>
     <p class="intro-text">
       Jouw plek voor een heldere overzicht van de verkiezingsdata van Nederland.
-<!--      Bekijk resultaten op nationaal, provinciaal, gemeentelijk niveau en per kieskring.-->
       Ontdek hoe partijen en kandidaten hebben gescoord in jouw regio!
     </p>
     <div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div>
