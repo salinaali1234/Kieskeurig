@@ -1,10 +1,8 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.exception.*;
-import nl.hva.kieskeurig.exception.ResourceNotFoundException;
 import nl.hva.kieskeurig.model.Account;
-import nl.hva.kieskeurig.repository.EntityRepository;
 import nl.hva.kieskeurig.security.JWToken;
+import nl.hva.kieskeurig.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,38 +15,28 @@ import java.util.List;
 public class AccountsController {
 
     @Autowired
-    EntityRepository<Account> accountsRepo;
+    private AccountService accountService;
 
     @GetMapping(path = "", produces = "application/json")
     public List<Account> getAllAccounts() {
-        return this.accountsRepo.findAll();
+        return accountService.getAllAccounts();
     }
 
     @GetMapping(path = "{id}", produces = "application/json")
-    public ResponseEntity<Account> getOneAccount(@PathVariable() long id) {
-        Account account = this.accountsRepo.findById(id);
-
-        if (account == null) {
-            throw new ResourceNotFoundException("Cannot provide a account with id="+id);
-        }
-
-        return ResponseEntity.ok().body(account);
+    public ResponseEntity<Account> getOneAccount(@PathVariable long id) {
+        Account account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account);
     }
 
     @DeleteMapping(path = "{id}")
-    public Account deleteOneAccount(@PathVariable() long id,
-       @RequestAttribute(name = JWToken.JWT_ATTRIBUTE_NAME) JWToken jwtInfo) {
+    public Account deleteOneAccount(@PathVariable long id,
+                                    @RequestAttribute(name = JWToken.JWT_ATTRIBUTE_NAME) JWToken jwtInfo) {
+        return accountService.deleteAccount(id, jwtInfo);
+    }
 
-        if (jwtInfo == null || !jwtInfo.isAdmin()) {
-            throw new UnAuthorizedException(
-                    "Admin role is required to remove an account");
-        }
-        Account account = this.accountsRepo.deleteById(id);
-
-        if (account == null) {
-            throw new ResourceNotFoundException("Cannot delete an account with id="+id);
-        }
-
-        return account;
+    @PostMapping(path = "", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Account> register(@RequestBody Account account) {
+        Account registered = accountService.registerAccount(account);
+        return ResponseEntity.ok(registered);
     }
 }
