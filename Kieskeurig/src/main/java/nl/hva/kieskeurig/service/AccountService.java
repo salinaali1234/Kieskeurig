@@ -1,17 +1,12 @@
 package nl.hva.kieskeurig.service;
 
 import nl.hva.kieskeurig.config.APIConfig;
-import nl.hva.kieskeurig.exception.NotAcceptableException;
 import nl.hva.kieskeurig.exception.ResourceNotFoundException;
 import nl.hva.kieskeurig.exception.UnAuthorizedException;
 import nl.hva.kieskeurig.model.Account;
 import nl.hva.kieskeurig.repository.EntityRepository;
 import nl.hva.kieskeurig.security.JWToken;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
