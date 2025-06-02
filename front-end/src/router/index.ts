@@ -15,6 +15,7 @@ import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
 import { SessionService } from '@/service/session-service.ts'
+import forum from "@/views/forum.vue";
 
 const sessionService = new SessionService('http://your-api-url/auth', 'kieskeurig')
 
@@ -96,6 +97,11 @@ const router = createRouter({
       path: '/provinces',
       name: 'provinces',
       component: ProvinceVotes,
+    },
+    {
+      path: '/forum',
+      name: 'forum',
+      component: forum,
     },
 
   ]
