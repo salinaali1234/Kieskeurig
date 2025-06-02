@@ -57,31 +57,4 @@ public class AccountService {
         saved.setPassword(account.getPassword());
         return accountsRepo.save(saved);
     }
-
-    public ResponseEntity<Account> login(ObjectNode signInInfo, HttpServletRequest request) {
-        String email = signInInfo.get("email").asText().trim().toLowerCase();
-        String password = signInInfo.get("password").asText();
-
-        List<Account> accounts = accountsRepo.findByQuery("Accounts_find_by_email", email);
-        if (accounts.isEmpty()) {
-            throw new NotAcceptableException("Invalid credentials");
-        }
-
-        Account account = accounts.get(0);
-        if (!account.verifyPassword(password)) {
-            throw new NotAcceptableException("Invalid credentials");
-        }
-
-        String ipAddress = JWToken.getIpAddress(request);
-        if (ipAddress == null) {
-            throw new NotAcceptableException("Cannot identify source IP");
-        }
-
-        JWToken jwToken = new JWToken(account.getName(), account.getId(), account.getRole(), ipAddress);
-        String tokenString = jwToken.encode(apiConfig.getIssuer(), apiConfig.getPassphrase(), apiConfig.getTokenDurationOfValidity());
-
-        return ResponseEntity.accepted()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
-                .body(account);
-    }
 }
