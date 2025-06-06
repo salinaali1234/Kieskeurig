@@ -1,5 +1,7 @@
 package nl.hva.kieskeurig.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import nl.hva.kieskeurig.config.APIConfig;
 import nl.hva.kieskeurig.exception.ResourceNotFoundException;
 import nl.hva.kieskeurig.exception.UnAuthorizedException;
@@ -12,16 +14,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 /**
  * Service class that handles business logic related to user accounts.
- *
  * Provides methods for retrieving, creating, and deleting accounts.
  * Also handles authorization for sensitive actions like deletion.
  */
+@Getter
+@Setter
 @Service
 public class AccountService {
 
     @Autowired
     private EntityRepository<Account> accountsRepo;
 
+    @Getter
+    @Setter
     @Autowired
     private APIConfig apiConfig;
 
@@ -86,4 +91,5 @@ public class AccountService {
         saved.setPassword(account.getPassword()); // Hash password
         return accountsRepo.save(saved);
     }
+
 }

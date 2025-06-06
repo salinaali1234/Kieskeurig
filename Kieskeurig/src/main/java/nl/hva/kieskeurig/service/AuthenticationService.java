@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 /**
  * Service class responsible for authenticating users and issuing JWT tokens.
- *
  * Validates credentials and returns a secure token if successful.
  */
 @Service
@@ -45,7 +44,7 @@ public class AuthenticationService {
             throw new NotAcceptableException("Invalid credentials");
         }
 
-        Account account = accounts.get(0);
+        Account account = accounts.getFirst();
         if (!account.verifyPassword(password)) {
             throw new NotAcceptableException("Invalid credentials");
         }

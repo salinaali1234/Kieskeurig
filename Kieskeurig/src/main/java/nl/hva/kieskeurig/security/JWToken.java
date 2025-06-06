@@ -11,11 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
-@Getter
 /**
  * Represents a JWT token used for authentication and authorization.
  * Includes methods to encode, decode, and verify the token's IP and role.
  */
+@Getter
 public class JWToken {
 
     public static final String JWT_ATTRIBUTE_NAME = "JWTokenInfo";
@@ -23,9 +23,9 @@ public class JWToken {
     private static final String JWT_ROLE_CLAIM = "role";
     private static final String JWT_IPADDRESS_CLAIM = "ipa";
 
-    private String callName;
-    private Long accountId;
-    private String role;
+    private final String callName;
+    private final Long accountId;
+    private final String role;
     /**
      * -- SETTER --
      *  Sets the IP address associated with this token.
