@@ -29,7 +29,6 @@ public class Account {
     private String hashedPassword = null;
 
     @Transient
-    @JsonIgnore
     private String password;
 
     public Account() {}

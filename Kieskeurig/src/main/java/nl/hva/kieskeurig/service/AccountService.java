@@ -86,9 +86,15 @@ public class AccountService {
         if (account.getPassword() == null || account.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Password is required.");
         }
-        account.setId(0L); // Ensure it's treated as a new account
+
+        account.setId(0L);
+        // sla eerst op zonder password (alleen voor ID genereren)
         Account saved = accountsRepo.save(account);
-        saved.setPassword(account.getPassword()); // Hash password
+
+        // nu heeft 'saved' een ID → dus nu kunnen we pas een correct hash maken
+        saved.setPassword(account.getPassword());
+
+        // opnieuw opslaan met gehashte wachtwoord
         return accountsRepo.save(saved);
     }
 

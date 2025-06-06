@@ -49,6 +49,10 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
+        if (request.getMethod().equals("POST") && request.getServletPath().equals("/accounts")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // Extract the JWT from the Authorization header
         String encryptedToken = request.getHeader(HttpHeaders.AUTHORIZATION);

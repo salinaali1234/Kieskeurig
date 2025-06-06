@@ -50,6 +50,7 @@ public class APIConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/accounts").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authentication/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authentication/logout").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -62,7 +63,7 @@ public class APIConfig {
                         .requestMatchers("/api/provinces/**").permitAll()
                         .requestMatchers("/api/xml/**").permitAll()
 
-                        .requestMatchers("/accounts/**").authenticated() // let op: geen /api ervoor?
+                        .requestMatchers("/accounts/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
