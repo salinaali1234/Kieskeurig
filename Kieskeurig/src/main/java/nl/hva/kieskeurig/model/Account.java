@@ -9,9 +9,6 @@ import java.util.*;
 
 @Setter
 @Getter
-/**
- * Entity class representing an application user account.
- */
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Accounts_find_by_email",
