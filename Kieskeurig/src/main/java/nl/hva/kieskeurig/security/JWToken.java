@@ -1,5 +1,7 @@
 package nl.hva.kieskeurig.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import nl.hva.kieskeurig.config.APIConfig;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,23 +11,64 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+@Getter
+/**
+ * Represents a JWT token used for authentication and authorization.
+ * Includes methods to encode, decode, and verify the token's IP and role.
+ */
 public class JWToken {
+
+    public static final String JWT_ATTRIBUTE_NAME = "JWTokenInfo";
 
     private static final String JWT_ROLE_CLAIM = "role";
     private static final String JWT_IPADDRESS_CLAIM = "ipa";
-    public static final String JWT_ATTRIBUTE_NAME = "JWTokenInfo";
 
-    private String callName = null;
-    private Long accountId = null;
-    private String role = null;
+    private String callName;
+    private Long accountId;
+    private String role;
+    /**
+     * -- SETTER --
+     *  Sets the IP address associated with this token.
+     *
+     * @param ipAddress the client's IP address
+     */
+    @Setter
     private String ipAddress;
 
+    /**
+     * Constructs a token with identity information.
+     *
+     * @param callName  the display name of the user
+     * @param accountId the account's ID
+     * @param role      the user's role
+     */
     public JWToken(String callName, Long accountId, String role) {
         this.callName = callName;
         this.accountId = accountId;
         this.role = role;
     }
 
+    /**
+     * Constructs a token with identity information and IP address.
+     *
+     * @param callName        the display name of the user
+     * @param accountId       the account's ID
+     * @param role            the user's role
+     * @param sourceIpAddress the originating IP address of the request
+     */
+    public JWToken(String callName, Long accountId, String role, String sourceIpAddress) {
+        this(callName, accountId, role);
+        this.setIpAddress(sourceIpAddress);
+    }
+
+    /**
+     * Encodes this object into a signed JWT string.
+     *
+     * @param issuer     the issuer name
+     * @param passphrase the secret key
+     * @param expiration token validity in seconds
+     * @return the encoded JWT string
+     */
     public String encode(String issuer, String passphrase, int expiration) {
         Key key = getKey(passphrase);
 
@@ -41,18 +84,20 @@ public class JWToken {
                 .compact();
     }
 
-    private static Key getKey(String passphrase) {
-        byte[] hmacKey = passphrase.getBytes(StandardCharsets.UTF_8);
-        return new SecretKeySpec(hmacKey, SignatureAlgorithm.HS512.getJcaName());
-    }
-
+    /**
+     * Decodes a JWT string into a JWToken object.
+     *
+     * @param token      the JWT token string
+     * @param issuer     the expected issuer
+     * @param passphrase the secret used for signing
+     * @return a validated JWToken instance
+     * @throws ExpiredJwtException if the token has expired
+     * @throws MalformedJwtException if the issuer is invalid or token is corrupted
+     */
     public static JWToken decode(String token, String issuer, String passphrase)
             throws ExpiredJwtException, MalformedJwtException {
         Key key = getKey(passphrase);
-        Jws<Claims> jws = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
+        Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         Claims claims = jws.getBody();
 
         if (!claims.getIssuer().equals(issuer)) {
@@ -68,64 +113,44 @@ public class JWToken {
         return jwToken;
     }
 
-    public JWToken(String callName, Long accountId, String role, String sourceIpAddress) {
-        this(callName, accountId, role);
-        this.setIpAddress(sourceIpAddress);
-    }
-
+    /**
+     * Validates whether the current token can impersonate a target account.
+     *
+     * @param targetAccountId the ID of the target account
+     * @return the ID to use for the action, or -1 if impersonation is not allowed
+     */
     public long validateImpersonation(long targetAccountId) {
-        if (targetAccountId == 0)
-            return this.getAccountId();
-        else if (targetAccountId == this.getAccountId() || this.isAdmin())
-            return targetAccountId;
-        else
-            return -1L;
+        if (targetAccountId == 0) return this.accountId;
+        if (targetAccountId == this.accountId || this.isAdmin()) return targetAccountId;
+        return -1L;
     }
 
-    public String getCallName() {
-        return callName;
-    }
-
-    public void setCallName(String callName) {
-        this.callName = callName;
-    }
-
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
+    /**
+     * Returns true if the user has an admin role.
+     */
     public boolean isAdmin() {
-        return this.role.toLowerCase().contains("admin");
+        return this.role != null && this.role.toLowerCase().contains("admin");
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
+    /**
+     * Gets the IP address of the incoming request.
+     *
+     * @param request the HTTP request
+     * @return the client's IP address
+     */
     public static String getIpAddress(HttpServletRequest request) {
-        String ipAddress = null;
-        if (APIConfig.IP_FORWARDED_FOR != null) {
-            ipAddress = request.getHeader(APIConfig.IP_FORWARDED_FOR);
-        }
-        if (ipAddress == null) {
-            ipAddress = request.getRemoteAddr();
-        }
-        return ipAddress;
+        String ipAddress = request.getHeader(APIConfig.IP_FORWARDED_FOR);
+        return (ipAddress != null) ? ipAddress : request.getRemoteAddr();
+    }
+
+    /**
+     * Creates a cryptographic key based on a passphrase.
+     *
+     * @param passphrase the secret string
+     * @return a cryptographic key
+     */
+    private static Key getKey(String passphrase) {
+        byte[] hmacKey = passphrase.getBytes(StandardCharsets.UTF_8);
+        return new SecretKeySpec(hmacKey, SignatureAlgorithm.HS512.getJcaName());
     }
 }

@@ -13,7 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * Service class responsible for authenticating users and issuing JWT tokens.
+ *
+ * Validates credentials and returns a secure token if successful.
+ */
 @Service
 public class AuthenticationService {
 
@@ -23,6 +27,15 @@ public class AuthenticationService {
     @Autowired
     private EntityRepository<Account> accountsRepo;
 
+    /**
+     * Authenticates a user using their email and password.
+     * If valid, returns a JWT token in the Authorization header.
+     *
+     * @param signInInfo JSON object with "email" and "password"
+     * @param request the HTTP request used to extract the IP address
+     * @return a ResponseEntity containing the authenticated account and JWT
+     * @throws NotAcceptableException if credentials are invalid or IP is unknown
+     */
     public ResponseEntity<Account> authenticate(ObjectNode signInInfo, HttpServletRequest request) {
         String email = signInInfo.get("email").asText().trim().toLowerCase();
         String password = signInInfo.get("password").asText();
@@ -43,7 +56,11 @@ public class AuthenticationService {
         }
 
         JWToken jwToken = new JWToken(account.getName(), account.getId(), account.getRole(), ipAddress);
-        String tokenString = jwToken.encode(apiConfig.getIssuer(), apiConfig.getPassphrase(), apiConfig.getTokenDurationOfValidity());
+        String tokenString = jwToken.encode(
+                apiConfig.getIssuer(),
+                apiConfig.getPassphrase(),
+                apiConfig.getTokenDurationOfValidity()
+        );
 
         return ResponseEntity.accepted()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)

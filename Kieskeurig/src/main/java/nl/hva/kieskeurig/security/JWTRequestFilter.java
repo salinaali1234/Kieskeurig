@@ -15,13 +15,25 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Objects;
-
+/**
+ * A request filter that intercepts HTTP requests and checks for a valid JWT token
+ * in secured paths. If the token is missing, invalid, or doesn't match the source IP,
+ * the request will be blocked with a 401 Unauthorized response.
+ */
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     APIConfig apiConfig;
-
+    /**
+     * Applies filtering logic on each HTTP request to check JWT validity.
+     *
+     * @param request  the HTTP request
+     * @param response the HTTP response
+     * @param chain    the filter chain
+     * @throws IOException      in case of I/O errors
+     * @throws ServletException in case of servlet errors
+     */
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                  FilterChain chain) throws IOException, ServletException {
@@ -73,7 +85,9 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
+    /**
+     * Adds CORS headers to the response (not called in current flow).
+     */
     private void addAccessControlHeaders(HttpServletRequest request,
                                          HttpServletResponse response) {
         // add the access-control headers
@@ -90,7 +104,9 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
                 HttpHeaders.AUTHORIZATION + ", " + HttpHeaders.CONTENT_TYPE + ", " + APIConfig.IP_FORWARDED_FOR);
     }
-
+    /**
+     * Logs request metadata and cookies for debugging purposes.
+     */
     private void logRequestContextAndCookies(HttpServletRequest request) {
         System.out.println("Request Method=" + request.getMethod());
         System.out.println("Request ServerName=" + request.getServerName());

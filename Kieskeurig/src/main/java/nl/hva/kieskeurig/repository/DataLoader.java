@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
+/**
+ * Loads initial sample accounts into the database on application startup.
+ */
 @Component
 public class DataLoader implements CommandLineRunner {
 
@@ -29,6 +31,9 @@ public class DataLoader implements CommandLineRunner {
                 acc.getId(), acc.getEmail(), acc.getHashedPassword()));
     }
 
+    /**
+     * Creates a list of initial accounts if they don't already exist.
+     */
     private void createInitialAccounts() {
         addIfNotExists("admin@hva.nl", "Admin", "welcome", "Administrator");
         addIfNotExists("user1@hva.nl", "User1", "welcome", "User");
@@ -39,6 +44,9 @@ public class DataLoader implements CommandLineRunner {
         accountRepository.findAll().forEach(System.out::println);
     }
 
+    /**
+     * Adds a new account only if no account with the same email exists.
+     */
     private void addIfNotExists(String email, String name, String password, String role) {
         List<Account> existing = accountRepository.findByQuery("Accounts_find_by_email", email);
         if (!existing.isEmpty()) return;
