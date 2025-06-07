@@ -18,8 +18,11 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Initializing data...");
+
         if (provinceService.getAllProvinces().isEmpty()) {
             provinceService.populateDatabase();
         }
+
+        System.out.println("Initialization complete.");
     }
 }
