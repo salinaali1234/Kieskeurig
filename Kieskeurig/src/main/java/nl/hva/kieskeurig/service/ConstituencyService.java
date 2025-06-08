@@ -1,5 +1,6 @@
 package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.enums.ProvinceEnum;
+import nl.hva.kieskeurig.exception.NotFoundException;
 import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.reader.RegionReader;
@@ -21,16 +22,13 @@ import java.util.*;
 @Service
 public class ConstituencyService {
     private final ConstituencyRepo repo;
-    private final List<Constituency> constituencies = new ArrayList<Constituency>();
+    private final List<Constituency> constituencies = new ArrayList<>();
     private final View error;
 
 
-    public void add(Constituency constituency) {
-        constituencies.add(constituency);
-    }
-
     @Autowired
-    public ConstituencyService(ConstituencyRepo repo, View error) {this.repo = repo;
+    public ConstituencyService(ConstituencyRepo repo, View error) {
+        this.repo = repo;
         this.error = error;
     }
 
@@ -40,57 +38,41 @@ public class ConstituencyService {
     @Autowired
     private ProvinceService provinceService;
 
-    public List<Constituency> getAll() {return repo.findAll();}
+    // JPA repo functions
+    public Constituency getById(Integer id) {
+        return constituencyRepository.findById(id).orElseThrow(() -> new NotFoundException("Province not found"));
+    }
 
-    public boolean connectElectionDefinition() throws XMLStreamException, IOException {
-        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
-        System.out.println("getting everything");
+    public boolean isEmpty() {
+        return !constituencyRepository.existsBy();
+    }
+
+    // ArrayList function
+    public void add(Constituency constituency) {
+        constituencies.add(constituency);
+    }
+
+    // Repo class function
+    public List<Constituency> getAll() {
+        return repo.findAll();
+    }
+
+    // XML functions
+    public Map<String, Integer> getInfoConstituency(String constituencyName) throws XMLStreamException, IOException {
+        constituencyName = constituencyName.trim().replace(" ", "_");
+        String path = String.format("Verkiezingsuitslag_Tweede_Kamer_2023/Kieskring tellingen/Telling_TK2023_kieskring_%s.eml.xml", constituencyName);
+        ClassPathResource resource = new ClassPathResource(path);
+        System.out.println("getting everthing");
+        Map<String, Integer> map = new HashMap<>();
 
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
-                RegionReader reader = new RegionReader(xmlParser);
+            VoteReader reader = new VoteReader(xmlParser);
 
-                Map<Integer, Map<String, Integer>> municipalitiesMap = reader.getAllRegions();
-
-                    for (Map.Entry<Integer, Map<String, Integer>> outerEntry : municipalitiesMap.entrySet()) {
-                        Integer id = outerEntry.getKey();
-                        Map<String, Integer> innerMap = outerEntry.getValue();
-
-                        for (Map.Entry<String, Integer> innerEntry : innerMap.entrySet()) {
-                            String name = innerEntry.getKey();
-                            Integer superiorRegionId = innerEntry.getValue();
-
-                            if (superiorRegionId != null && superiorRegionId == 0) {
-                                Constituency constituency = new Constituency();
-
-                                // Set province
-                                for (ProvinceEnum provinceEnum : ProvinceEnum.values()) {
-                                    if (Arrays.stream(provinceEnum.getConstituencies()).toList().contains(name)) {
-                                        Province province = provinceService.getProvinceByName(provinceEnum.getDisplayName());
-                                        constituency.setProvince(province);
-                                        break;
-                                    }
-                                }
-
-                                constituency.setId(id);
-                                constituency.setName(name);
-                                Constituency saved = constituencyRepository.save(constituency);
-                                add(saved);
-                            }
-                        }
-                    }
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            map= reader.getValidVotes();
         }
-    }
-
-
-
-
+        return map; }
 
     public Map<String, Integer> getAllConsituencies() throws XMLStreamException, IOException {
         if (!constituencyRepository.findAll().isEmpty()) {
@@ -110,25 +92,51 @@ public class ConstituencyService {
         return map;
     }
 
-
-
-
-    public Map<String, Integer> getInfoConstituency(String constituencyName) throws XMLStreamException, IOException {
-        constituencyName = constituencyName.trim().replace(" ", "_");
-        String path = String.format("Verkiezingsuitslag_Tweede_Kamer_2023/Kieskring tellingen/Telling_TK2023_kieskring_%s.eml.xml", constituencyName);
-        ClassPathResource resource = new ClassPathResource(path);
-        System.out.println("getting everthing");
-        Map<String, Integer> map = new HashMap<>();
+    public boolean connectElectionDefinition() throws XMLStreamException, IOException {
+        ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
+        System.out.println("getting everything");
 
         try (InputStream inputStream = resource.getInputStream()) {
             System.out.println("Processing files...");
             XMLParser xmlParser = new XMLParser(inputStream);
-            VoteReader reader = new VoteReader(xmlParser);
+            RegionReader reader = new RegionReader(xmlParser);
 
-            map= reader.getValidVotes();
+            Map<Integer, Map<String, Integer>> municipalitiesMap = reader.getAllRegions();
+
+            for (Map.Entry<Integer, Map<String, Integer>> outerEntry : municipalitiesMap.entrySet()) {
+                Integer id = outerEntry.getKey();
+                Map<String, Integer> innerMap = outerEntry.getValue();
+
+                for (Map.Entry<String, Integer> innerEntry : innerMap.entrySet()) {
+                    String name = innerEntry.getKey();
+                    Integer superiorRegionId = innerEntry.getValue();
+
+                    if (superiorRegionId != null && superiorRegionId == 0) {
+                        Constituency constituency = new Constituency();
+
+                        // Set province
+                        for (ProvinceEnum provinceEnum : ProvinceEnum.values()) {
+                            if (Arrays.stream(provinceEnum.getConstituencies()).toList().contains(name)) {
+                                Province province = provinceService.getProvinceByName(provinceEnum.getDisplayName());
+                                constituency.setProvince(province);
+                                break;
+                            }
+                        }
+
+                        constituency.setId(id);
+                        constituency.setName(name);
+                        Constituency saved = constituencyRepository.save(constituency);
+                        add(saved);
+                    }
+                }
+            }
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        return map; }
-
+    }
 }
 
 
