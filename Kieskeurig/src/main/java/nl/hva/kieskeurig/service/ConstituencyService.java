@@ -75,7 +75,7 @@ public class ConstituencyService {
         return map; }
 
     public Map<String, Integer> getAllConsituencies() throws XMLStreamException, IOException {
-        if (!constituencyRepository.findAll().isEmpty()) {
+        if (!isEmpty()) {
             System.out.println("Data already exists in the database, skipping XML import.");
         }else if (connectElectionDefinition()) {
             System.out.println("reading xml");
