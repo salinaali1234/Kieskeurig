@@ -1,5 +1,7 @@
 package nl.hva.kieskeurig.service;
+import nl.hva.kieskeurig.enums.ProvinceEnum;
 import nl.hva.kieskeurig.model.Municipality;
+import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.reader.RegionReader;
 import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.ConstituencyRepo.ConstituencyRepository;
@@ -14,10 +16,7 @@ import org.springframework.web.servlet.View;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ConstituencyService {
@@ -37,6 +36,9 @@ public class ConstituencyService {
 
     @Autowired
     private ConstituencyRepository constituencyRepository;
+
+    @Autowired
+    private ProvinceService provinceService;
 
     public List<Constituency> getAll() {return repo.findAll();}
 
@@ -61,6 +63,16 @@ public class ConstituencyService {
 
                             if (superiorRegionId != null && superiorRegionId == 0) {
                                 Constituency constituency = new Constituency();
+
+                                // Set province
+                                for (ProvinceEnum provinceEnum : ProvinceEnum.values()) {
+                                    if (Arrays.stream(provinceEnum.getConstituencies()).toList().contains(name)) {
+                                        Province province = provinceService.getProvinceByName(provinceEnum.getDisplayName());
+                                        constituency.setProvince(province);
+                                        break;
+                                    }
+                                }
+
                                 constituency.setId(id);
                                 constituency.setName(name);
                                 Constituency saved = constituencyRepository.save(constituency);

@@ -20,8 +20,8 @@ public class ConstituencyController {
 
     @GetMapping("/findAll")
     public List<Constituency> findAll() {
-        return service.getAll();}
-
+        return service.getAll();
+    }
 
     @GetMapping("/all")
     public Map<String, Integer> getAllRegions() throws XMLStreamException, IOException {
