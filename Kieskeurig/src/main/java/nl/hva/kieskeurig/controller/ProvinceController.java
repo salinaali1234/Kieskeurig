@@ -1,18 +1,19 @@
 package nl.hva.kieskeurig.controller;
 
+import lombok.AllArgsConstructor;
+import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.service.ProvinceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.hva.kieskeurig.service.ProvinceVoteService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * API handling everything related to provinces.
  */
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("/api/provinces")
 public class ProvinceController {
     private final ProvinceVoteService provinceVoteService;
@@ -41,7 +42,7 @@ public class ProvinceController {
 
     @GetMapping("/{province}/votes")
     public Map<String, Object> getTotalVotesByProvince(@PathVariable String province, @RequestParam String electionId) {
-        return provinceService.getTotalVotesByProvince(electionId, province);
+        return provinceVoteService.getTotalVotesByProvince(electionId, province);
     }
 
 }

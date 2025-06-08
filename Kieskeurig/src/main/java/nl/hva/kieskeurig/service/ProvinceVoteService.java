@@ -3,6 +3,7 @@ package nl.hva.kieskeurig.service;
 import nl.hva.kieskeurig.enums.ProvinceEnum;
 import nl.hva.kieskeurig.exception.InvalidPathVariableException;
 import nl.hva.kieskeurig.exception.InvalidRequestParameterException;
+import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
@@ -155,5 +156,45 @@ public class ProvinceVoteService {
         if (!asc) Collections.reverse(votes);
 
         return votes;
+    }
+
+    public Map<String, Object> getTotalVotesByProvince(String electionId, String province) {
+        electionId = electionId.toUpperCase();
+        String year = electionId.replace("TK", "");
+
+        if (!new YearService().getYears().contains(year)) {
+            throw new InvalidPathVariableException("Invalid year: " + year);
+        }
+
+        if (!Arrays.stream(ProvinceEnum.values())
+                .map(p -> p.getDisplayName().toUpperCase())
+                .toList()
+                .contains(province.toUpperCase())
+        ) {
+            throw new InvalidPathVariableException("Invalid province: " + province);
+        }
+
+        for (ProvinceEnum provinceEnum : ProvinceEnum.values()) {
+            if (provinceEnum.getDisplayName().equalsIgnoreCase(province)) {
+                for (String constituency : provinceEnum.getConstituencies()) {
+                    String fileName = "Kieskring tellingen/Telling_%s_kieskring_%s.eml.xml".formatted(
+                            electionId,
+                            constituency.replaceAll("'", "")
+                    );
+                    readResults("Verkiezingsuitslag_Tweede_Kamer_%s".formatted(year), fileName, electionId);
+                }
+            }
+        }
+
+        List<Vote> votes = votesPerYear.getOrDefault(electionId, List.of());
+        int totalVotes = votes.stream()
+                .mapToInt(Vote::getValidVotes)
+                .sum();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("province", province);
+        response.put("totalVotes", totalVotes);
+
+        return response;
     }
 }
