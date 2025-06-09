@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+/**
+ * REST controller handles geographic data (GeoJSON) for provinces.
+ */
 @RestController
 @RequestMapping("/api/map")
 public class MapController {

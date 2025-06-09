@@ -158,6 +158,12 @@ public class ProvinceVoteService {
         return votes;
     }
 
+    /**
+     * Calculates the total number of valid votes for a province.
+     * @param electionId Type {@link String}
+     * @param province Type {@link String}
+     * @return {@link Map} containing the province name and the total number of valid votes as an {@link Integer}
+     */
     public Map<String, Object> getTotalVotesByProvince(String electionId, String province) {
         electionId = electionId.toUpperCase();
         String year = electionId.replace("TK", "");

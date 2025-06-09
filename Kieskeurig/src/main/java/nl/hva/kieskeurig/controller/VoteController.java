@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * REST controller handles everything related to national votes.
+ */
 @RestController
 @RequestMapping("/api/xml")
 public class VoteController {

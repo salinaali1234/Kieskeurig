@@ -19,6 +19,12 @@ public class VoteService {
         this.voteRepo = voteRepo;
     }
 
+    /**
+     * Loads election results for a given year and returns a map of valid votes per party.
+     *
+     * @param year Type {@link String}
+     * @return {@link Map} where keys are party names and values are vote counts
+     */
     public Map<String, Integer> getResults(String year) {
 //        votesPerYear.remove(year);
         String folder = "Verkiezingsuitslag_Tweede_Kamer_" + year;
@@ -32,6 +38,12 @@ public class VoteService {
         return getVotesPerParty(year);
     }
 
+    /**
+     * Returns the corresponding file name for a given election year.
+     *
+     * @param year Type {@link String}
+     * @return {@link String} containing the XML file name
+     */
     private String getFileNameForYear(String year) {
         return switch (year) {
             case "2021" -> "Totaaltelling_TK2021.eml.xml";
@@ -40,10 +52,24 @@ public class VoteService {
         };
     }
 
+    /**
+     * Adds a {@link Vote} object to the internal storage for a specific year.
+     *
+     * @param year Type {@link String}
+     * @param vote Type {@link Vote}
+     */
     public void add(String year, Vote vote) {
         votesPerYear.computeIfAbsent(year, key -> new ArrayList<>()).add(vote);
     }
 
+    /**
+     * Reads vote results from an XML file and stores them in memory and in the database.
+     *
+     * @param folder Type {@link String}
+     * @param fileName Type {@link String}
+     * @param year Type {@link String}
+     * @return {@link Boolean}
+     */
     public boolean readResults(String folder, String fileName, String year) {
         if (!voteRepo.findAllByYear(year).isEmpty()) {
             votesPerYear.put(year, voteRepo.findAllByYear(year));
@@ -85,6 +111,12 @@ public class VoteService {
         }
     }
 
+    /**
+     * Returns a map of total valid votes per party for a given year.
+     *
+     * @param year Type {@link String}
+     * @return {@link Map} with party names as keys and vote counts as values
+     */
     public Map<String, Integer> getVotesPerParty(String year) {
         Map<String, Integer> partyVotes = new HashMap<>();
         List<Vote> votes = votesPerYear.getOrDefault(year, List.of());

@@ -8,7 +8,9 @@ import javax.xml.stream.XMLStreamException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Reads and parses valid vote counts from an XML file using {@link XMLParser}
+ */
 public class VoteReader {
     private XMLParser xmlParser;
 
@@ -17,6 +19,13 @@ public class VoteReader {
 
     }
 
+
+    /**
+     * Extracts valid votes per party from the parsed XML.
+     *
+     * @return {@link Map} containing party names as keys and vote counts as values.
+     * @throws XMLStreamException if an error occurs while parsing
+     */
     public Map<String, Integer> getValidVotes() throws XMLStreamException {
         Map<String, Integer> partyVotes = new HashMap<>();
 
