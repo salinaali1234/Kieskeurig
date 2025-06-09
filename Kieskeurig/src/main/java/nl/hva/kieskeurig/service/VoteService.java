@@ -132,4 +132,42 @@ public class VoteService {
 //        votes.clear();
         return partyVotes;
     }
+
+    /**
+     * Returns the election results for a given year, sorted according to the specified sort option.
+     *
+     * @param year Type {@link String}
+     * @param sort Type {@link String}
+     * @return {@link Map} where keys are party names and values are vote counts, sorted as specified
+     */
+    public Map<String, Integer> getSortedResults(String year, String sort) {
+        Map<String, Integer> results = getResults(year);
+
+        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(results.entrySet());
+
+        switch (sort.toLowerCase()) {
+            case "votes-desc":
+                sorted.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
+                break;
+            case "votes-asc":
+                sorted.sort(Map.Entry.comparingByValue());
+                break;
+            case "name-asc":
+                sorted.sort(Map.Entry.comparingByKey());
+                break;
+            case "name-desc":
+                sorted.sort(Map.Entry.<String, Integer>comparingByKey().reversed());
+                break;
+            default:
+
+        }
+
+        Map<String, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> entry : sorted) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
 }

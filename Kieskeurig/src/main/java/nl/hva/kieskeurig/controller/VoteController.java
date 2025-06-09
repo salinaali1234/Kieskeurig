@@ -22,7 +22,9 @@ public class VoteController {
     }
 
     @GetMapping("/votes/parties")
-    public Map<String, Integer> getVotesPerParty(@RequestParam(defaultValue = "2023") String year) {
-        return voteService.getResults(year);
+    public Map<String, Integer> getVotesPerParty(
+            @RequestParam(defaultValue = "2023") String year,
+            @RequestParam (required = false, defaultValue = "none") String sort) {
+        return voteService.getSortedResults(year, sort);
     }
 }
