@@ -1,7 +1,7 @@
 package nl.hva.kieskeurig.service;
+import jakarta.transaction.Transactional;
 import nl.hva.kieskeurig.enums.ProvinceEnum;
 import nl.hva.kieskeurig.exception.NotFoundException;
-import nl.hva.kieskeurig.model.Municipality;
 import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.reader.RegionReader;
 import nl.hva.kieskeurig.reader.VoteReader;
@@ -24,23 +24,25 @@ public class ConstituencyService {
     private final ConstituencyRepo repo;
     private final List<Constituency> constituencies = new ArrayList<>();
     private final View error;
+    private final ConstituencyRepository constituencyRepository;
+    private final ProvinceService provinceService;
 
 
     @Autowired
-    public ConstituencyService(ConstituencyRepo repo, View error) {
+    public ConstituencyService(ConstituencyRepo repo, View error, ConstituencyRepository constituencyRepository, ProvinceService provinceService) {
         this.repo = repo;
         this.error = error;
+        this.constituencyRepository = constituencyRepository;
+        this.provinceService = provinceService;
     }
 
-    @Autowired
-    private ConstituencyRepository constituencyRepository;
-
-    @Autowired
-    private ProvinceService provinceService;
-
     // JPA repo functions
-    public Constituency getById(Integer id) {
-        return constituencyRepository.findById(id).orElseThrow(() -> new NotFoundException("Province not found"));
+    public Constituency getConstituencyById(int id) {
+        return constituencyRepository.findById(id).orElseThrow(() -> new NotFoundException("Constituency with id " + id + " not found"));
+    }
+
+    public List<Constituency> getAllConstituenciesJPA() {
+        return constituencyRepository.findAll();
     }
 
     public boolean isEmpty() {
@@ -92,6 +94,7 @@ public class ConstituencyService {
         return map;
     }
 
+    @Transactional
     public boolean connectElectionDefinition() throws XMLStreamException, IOException {
         ClassPathResource resource = new ClassPathResource("Verkiezingsuitslag_Tweede_Kamer_2023/Verkiezingsdefinitie_TK2023.eml.xml");
         System.out.println("getting everything");

@@ -1,16 +1,22 @@
 package nl.hva.kieskeurig.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
+@ToString(exclude = "province")
+@NoArgsConstructor
 @AllArgsConstructor
 
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
 @Builder
-@Table(name = "constituencies")
+@Table(name = "constituency")
 public class Constituency {
     @Id
     private int id;
@@ -20,5 +26,10 @@ public class Constituency {
 
     @ManyToOne
     @JoinColumn(name = "province_id")
+    @JsonBackReference
     private Province province;
+
+    @OneToMany(mappedBy = "constituency")
+    @JsonManagedReference
+    private List<Municipality> municipalities;
 }
