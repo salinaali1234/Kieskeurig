@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 
 const menuOpen = ref(false);
 const statsDropdownOpen = ref(false);
@@ -14,6 +14,16 @@ const navLinks = ref([
   { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
   { name: 'Registreren', to: '/register', class: 'btn' }
 ]);
+
+onMounted(() => {
+  document.addEventListener("click", (e) => {
+    const header = document.querySelector(".header");
+    if (header && !header.contains(e.target as Node)) {
+      closeMenus();
+    }
+  });
+});
+
 </script>
 
 <template>
@@ -28,8 +38,8 @@ const navLinks = ref([
       </button>
 
       <nav :class="{ 'open': menuOpen }">
-        <div class="dropdown" @mouseleave="statsDropdownOpen = false">
-          <button class="dropdown-toggle" @click="statsDropdownOpen = !statsDropdownOpen">
+        <div class="dropdown">
+          <button class="dropdown-toggle" @click.stop="statsDropdownOpen = !statsDropdownOpen">
             Statistieken
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
               <path d="M6 9l6 6 6-6" />
@@ -42,6 +52,8 @@ const navLinks = ref([
           </ul>
         </div>
 
+
+
         <RouterLink
           v-for="link in navLinks"
           :key="link.to"
@@ -53,6 +65,9 @@ const navLinks = ref([
         </RouterLink>
       </nav>
     </div>
+
+
+
   </header>
 </template>
 
@@ -73,6 +88,8 @@ button {
   background-color: var(--primary-clr);
   padding: 1rem 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1000;
 }
 
 .container {
@@ -109,6 +126,7 @@ nav {
   display: flex;
   gap: 1rem;
   align-items: center;
+  z-index: 999;
 }
 
 .nav-link {
@@ -154,6 +172,7 @@ nav {
   transition: transform 0.3s;
   fill: currentColor;
 }
+
 
 .dropdown-toggle.open .icon {
   transform: rotate(180deg);
@@ -210,6 +229,8 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .nav-link, .btn {
@@ -219,6 +240,17 @@ nav {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 40%;
+    background-color: var(--primary-clr);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: 60px;
+    z-index: 1000;
   }
 }
 </style>
