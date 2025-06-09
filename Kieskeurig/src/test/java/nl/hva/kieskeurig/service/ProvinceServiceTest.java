@@ -144,7 +144,7 @@ class ProvinceServiceTest {
         assertFalse(provinceService.isEmpty());
     }
 
-    // populateDatabse()
+    // populateDatabase()
     @Test
     void provinceService_populateDatabase_shouldPopulateDatabase_withEveryProvince() {
         int totalProvinces = 12;
