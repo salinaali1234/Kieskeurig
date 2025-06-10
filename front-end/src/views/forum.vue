@@ -1,33 +1,60 @@
 <script>
+import { ref, onMounted } from "vue";
+
+const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
+const getAllPostsUrl = `${backendUrl}/api/posts`;
+
 export default {
   data() {
     return {
-      postTitle: '', // this will hold the input text
-      postContent: ''
+      postTitle: '',
+      postContent: '',
+      posts: [] // ✅ to store all posts
     };
   },
   methods: {
+    async fetchAllPosts() {
+      try {
+        const response = await fetch(getAllPostsUrl);
+        if (response.ok) {
+          this.posts = await response.json();
+        }
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    },
     async submitPost() {
       try {
-        const response = await fetch('http://localhost:8080/api/posts', {
+        const response = await fetch(`${backendUrl}/api/posts/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ title: this.postTitle, content: this.postContent, author : 1 })
+          body: JSON.stringify({
+            title: this.postTitle,
+            content: this.postContent,
+            author: 1
+          })
         });
 
-        const result = await response.json();
-        console.log('Server response:', result);
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Server response:', result);
 
-        // Clear input after post
-        this.postContent = '';
+          this.postTitle = '';
+          this.postContent = '';
+
+          this.fetchAllPosts(); // ✅ refresh posts after submit
+        }
       } catch (error) {
         console.error('Failed to send post:', error);
       }
     }
+  },
+  mounted() {
+    this.fetchAllPosts(); // ✅ fetch on page load
   }
-}
+};
 </script>
 
 <template>
@@ -42,6 +69,12 @@ export default {
 
   <div>
     <h3>Gesprekken</h3>
+    <ul>
+      <li class="posts" v-for="post in posts" :key="post.id">
+        <strong>{{ post.title }}</strong><br />
+        {{ post.content }}
+      </li>
+    </ul>
   </div>
 
   <div>
@@ -53,6 +86,10 @@ export default {
 
 <style>
 div {
+  margin-top: 20px;
+}
+
+.posts {
   margin-top: 20px;
 }
 </style>

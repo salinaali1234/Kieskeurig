@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,5 +30,9 @@ public class PostService {
                 .authorId(postRequest.getAuthor())
                 .build();
         return postsRepo.save(post);
+    }
+
+    public List<Post> getAllPosts() {
+        return postsRepo.findAll(); // this method is included by default
     }
 }
