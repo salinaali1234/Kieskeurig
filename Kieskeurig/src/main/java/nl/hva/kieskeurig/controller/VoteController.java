@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.controller;
 
 import nl.hva.kieskeurig.service.VoteService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +23,17 @@ public class VoteController {
     }
 
     @GetMapping("/votes/parties")
-    public Map<String, Integer> getVotesPerParty(
+    public ResponseEntity<Map<String, Integer>> getVotesPerParty(
             @RequestParam(defaultValue = "2023") String year,
-            @RequestParam (required = false, defaultValue = "none") String sort) {
-        return voteService.getSortedResults(year, sort);
+            @RequestParam(defaultValue = "none") String sort) {
+        try {
+            Map<String, Integer> result = voteService.getSortedResults(year, sort);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
+
 }
