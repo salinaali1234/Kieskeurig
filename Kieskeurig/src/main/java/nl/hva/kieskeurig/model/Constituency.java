@@ -18,4 +18,7 @@ public class Constituency {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "province_id")
+    private Province province;
 }

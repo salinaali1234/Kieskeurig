@@ -1,24 +1,39 @@
 package nl.hva.kieskeurig.service;
 
-import nl.hva.kieskeurig.enums.Province;
+import lombok.AllArgsConstructor;
+import nl.hva.kieskeurig.enums.ProvinceEnum;
+import nl.hva.kieskeurig.exception.NotFoundException;
+import nl.hva.kieskeurig.model.Province;
+import nl.hva.kieskeurig.repository.ProvinceRepo;
 import org.springframework.stereotype.Service;
-import nl.hva.kieskeurig.controller.ProvinceController;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handles the logic of {@link ProvinceController}
- */
+@AllArgsConstructor
 @Service
 public class ProvinceService {
-    public List<String> getProvinces() {
-        ArrayList<String> provinces = new ArrayList<>();
+    private ProvinceRepo provinceRepo;
 
-        for (Province province : Province.values()) {
-            provinces.add(province.getDisplayName());
+    public void addProvince(Province province) {
+        provinceRepo.save(province);
+    }
+
+    public Province getProvinceById(int id) {
+        return provinceRepo.findById(id).orElseThrow(() -> new NotFoundException("Province not found"));
+    }
+
+    public Province getProvinceByName(String name) {
+        return provinceRepo.findByName(name);
+    }
+
+    public List<Province> getAllProvinces() {
+        return provinceRepo.findAll();
+    }
+
+    public void populateDatabase() {
+        for (ProvinceEnum province : ProvinceEnum.values()) {
+            Province newProvince = new Province(province.getDisplayName());
+            this.addProvince(newProvince);
         }
-
-        return provinces;
     }
 }
