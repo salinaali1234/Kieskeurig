@@ -2,7 +2,6 @@ package nl.hva.kieskeurig.controller;
 import lombok.RequiredArgsConstructor;
 import nl.hva.kieskeurig.model.Constituency;
 import nl.hva.kieskeurig.service.ConstituencyService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -26,6 +25,11 @@ public class ConstituencyController {
     @GetMapping("/all")
     public Map<String, Integer> getAllRegions() throws XMLStreamException, IOException {
         return service.getAllConsituencies();
+    }
+
+    @GetMapping("/all2")
+    public List<Constituency> getAllConstituencies() {
+        return service.getAllConstituenciesJPA();
     }
 
     @GetMapping("/Info/{ConstituencyName}")
