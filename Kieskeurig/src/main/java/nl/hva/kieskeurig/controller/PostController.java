@@ -3,6 +3,7 @@ package nl.hva.kieskeurig.controller;
 import nl.hva.kieskeurig.model.Post;
 import nl.hva.kieskeurig.model.PostRequest;
 import nl.hva.kieskeurig.service.PostService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class PostController {
     }
 
     @PostMapping("/api/posts/create")
-    public ResponseEntity<Post> createPost(@RequestBody PostRequest post) {
+    public ResponseEntity<Post> createPost(@RequestBody PostRequest post) throws BadRequestException {
         System.out.println("Received: " + post.toString());
         System.out.println(post.getTitle());
         Post savepost = postService.create(post);

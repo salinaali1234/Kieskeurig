@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.config;
 
 import nl.hva.kieskeurig.dto.ErrorResponse;
+import nl.hva.kieskeurig.exception.BadRequestException;
 import nl.hva.kieskeurig.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,13 @@ public class GlobalErrorHandler {
         ErrorResponse response = new ErrorResponse(ex.getMessage(), new Date());
 
         return ResponseEntity.status(getHttpStatus(ex)).body(response);
+    }
+
+
+    @ExceptionHandler(value = {BadRequestException.class})
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), new Date());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private  HttpStatus getHttpStatus(Exception ex) {
