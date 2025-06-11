@@ -141,7 +141,7 @@ async function populateProps() {
 <template>
   <div class="dropdown-wrapper">
     <select v-model="selectedProvince" class="dropdown">
-      <option disabled value="">Selecteer niveau</option>
+      <option disabled value="">Selecteer provincie</option>
       <option
         v-for="province in provinces"
         :key="province"
