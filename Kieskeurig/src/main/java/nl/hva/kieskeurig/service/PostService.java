@@ -1,10 +1,11 @@
 package nl.hva.kieskeurig.service;
 
+import nl.hva.kieskeurig.exception.BadRequestException;
 import nl.hva.kieskeurig.model.Post;
 import nl.hva.kieskeurig.model.PostRequest;
 import nl.hva.kieskeurig.repository.PostRepo;
 import nl.hva.kieskeurig.repository.PostsRepo;
-import org.apache.coyote.BadRequestException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
