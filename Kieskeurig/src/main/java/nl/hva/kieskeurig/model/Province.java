@@ -1,6 +1,8 @@
 package nl.hva.kieskeurig.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class Province {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "province")
+    @JsonManagedReference
     private List<Constituency> constituencies;
 
     public Province(String name) {

@@ -1,16 +1,29 @@
 package nl.hva.kieskeurig.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString(exclude = "constituency")
+@NoArgsConstructor
 @AllArgsConstructor
 
+@Data
+@Entity
+@Builder
+@Table(name = "municipality")
 public class Municipality {
-    private String name;
+    @Id
     private Integer Id;
-    private Integer IdConstituency;
 
+    @Column(unique = true, nullable = false)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "constituency_id")
+    @JsonBackReference
+    private Constituency constituency;
 }

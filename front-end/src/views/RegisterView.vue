@@ -25,14 +25,13 @@ async function handleRegister() {
       password: password.value,
       role: 'Regular User'
     };
-
+    console.log('Sending account:', newAccount);
     const account = await accountsAdaptor.save(newAccount);
     if (account) {
       success.value = 'Registratie gelukt! Je kunt nu inloggen.';
       error.value = '';
-      // Optional: automatische login
-      // await sessionService.login(email.value, password.value);
-      // router.push('/');
+    } else {
+      error.value = 'Account kon niet worden aangemaakt.';
     }
   } catch (err) {
     error.value = 'Registratie mislukt. Probeer opnieuw.';
@@ -127,5 +126,6 @@ input {
 p {
   text-align: center;
   margin-top: 1rem;
+  color: #2c3e50;
 }
 </style>
