@@ -34,7 +34,7 @@ const sortOptions = [
 async function fetchParties() {
   loading.value = true;
   try {
-    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties?sort=${sortOrder.value}`);
+    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/parties?sort=${sortOrder.value}`);
     if (!res.ok) throw new Error('Kon partijen niet laden');
     partiesList.value = await res.json();
   } catch (e) { error.value = e instanceof Error ? e.message : String(e); }
@@ -46,7 +46,7 @@ async function showCandidates(id: number, name: string) {
   currentPartyId.value   = id;
   currentPartyName.value = name;
   try {
-    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/candidates/${id}`);
+    const res = await fetch(`${VITE_APP_BACKEND_URL}/api/candidates/party/${id}`);
     if (!res.ok) throw new Error('Kon kandidaten niet laden');
     currentCandidates.value = await res.json();
   } catch (e) { error.value = e instanceof Error ? e.message : String(e); }

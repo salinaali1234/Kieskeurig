@@ -14,7 +14,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 @Repository
-public class PartiesInfoRepo {
+public class PartyInfoRepo {
 
     public ElectionForParty loadElectionData() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd
         System.out.println("loadElectionData");

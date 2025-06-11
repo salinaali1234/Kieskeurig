@@ -22,13 +22,13 @@ const partyName = ref('');
 onMounted(async () => {
   try {
     // Fetch party info
-    const partyResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/parties/${partyId}`);
+    const partyResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/parties/${partyId}`);
     if (!partyResponse.ok) throw new Error('Party not found');
     const partyData = await partyResponse.json();
     partyName.value = partyData.partyName || '';
 
     // Fetch candidates
-    const candidatesResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/partiesInfo/candidates/${partyId}`);
+    const candidatesResponse = await fetch(`${VITE_APP_BACKEND_URL}/api/candidates/party/${partyId}`);
     if (!candidatesResponse.ok) throw new Error('Failed to load candidates');
     candidates.value = await candidatesResponse.json();
   } catch (err) {
