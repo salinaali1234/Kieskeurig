@@ -44,7 +44,7 @@ public class VoteService {
      * @param year Type {@link String}
      * @return {@link String} containing the XML file name
      */
-    private String getFileNameForYear(String year) {
+    public String getFileNameForYear(String year) {
         return switch (year) {
             case "2021" -> "Totaaltelling_TK2021.eml.xml";
             case "2023" -> "Totaaltelling_TK2023.eml.xml";
