@@ -1,47 +1,56 @@
 package nl.hva.kieskeurig.controller;
 
-
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
-import nl.hva.kieskeurig.service.VoteService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class VoteControllerTest {
+class VoteControllerIntegrationTest {
+
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private NationalVotesRepo voteRepo;
 
-    @Test
-    void testGetVotesPerParty_2023() throws Exception {
-        Vote vote = new Vote("Partij X", 1234, "2023");
-        when(voteRepo.findAllByYear("2023")).thenReturn(List.of(vote));
+    @BeforeEach
+    void setUp() {
+        voteRepo.deleteAll();
+        voteRepo.saveAll(List.of(
+                new Vote("Partij A", 1000, "2023"),
+                new Vote("Partij B", 800, "2023")
+        ));
+    }
 
-        mockMvc.perform(get("/api/xml/votes/parties?year=2023"))
+    @Test
+    void getVotesPerParty_shouldReturnSortedResults_withStatus200() throws Exception {
+        mockMvc.perform(get("/api/xml/votes/parties")
+                        .param("year", "2023")
+                        .param("sort", "votes-desc")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.['Partij X']").value(1234));
+                .andExpect(jsonPath("$.['Partij A']").value(1000))
+                .andExpect(jsonPath("$.['Partij B']").value(800));
+    }
+
+    @Test
+    void getVotesPerParty_shouldReturn400_whenYearIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/xml/votes/parties")
+                        .param("year", "1999")
+                        .param("sort", "none")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
