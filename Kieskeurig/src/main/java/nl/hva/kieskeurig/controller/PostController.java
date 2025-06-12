@@ -11,16 +11,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
+
+/**
+ * Controller responsible for handling HTTP requests related to forum posts.
+ * Provides endpoints to create new posts and fetch all existing posts.
+ */
 @RestController
 public class PostController {
 
     private final PostService postService;
 
+    /**
+     * Constructor for PostController.
+     *
+     * @param postService the service layer used to process post-related logic
+     */
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
+    /**
+     * Endpoint to create a new post.
+     *
+     * @param post the request body containing title, content, and author ID
+     * @return ResponseEntity containing the created Post object
+     * @throws BadRequestException if validation or saving fails
+     *
+     * Example request:
+     * POST /api/posts/create
+     * {
+     *   "title": "My Question",
+     *   "content": "Can someone explain Spring Boot?",
+     *   "author": 1
+     * }
+     */
     @PostMapping("/api/posts/create")
     public ResponseEntity<Post> createPost(@RequestBody PostRequest post) throws BadRequestException {
         System.out.println("Received: " + post.toString());
@@ -29,6 +53,14 @@ public class PostController {
         return ResponseEntity.ok(savepost);
     }
 
+    /**
+     * Endpoint to fetch all forum posts.
+     *
+     * @return ResponseEntity containing a list of all Post objects
+     *
+     * Example request:
+     * GET /api/posts
+     */
     @GetMapping("/api/posts")
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();

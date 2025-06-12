@@ -20,3 +20,12 @@ Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection wa
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 16 more
+2025-06-12 09:41:34.269964+02:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-12 09:43:24.698025+02:00 jdbc[8]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-12 09:43:25.512434+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
