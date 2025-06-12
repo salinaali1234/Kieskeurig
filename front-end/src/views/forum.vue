@@ -17,6 +17,17 @@ export default {
     };
   },
   methods: {
+    async fetchAllPosts() {
+      try {
+        const response = await fetch(getAllPostsUrl);
+        if (response.ok) {
+          this.posts = await response.json();
+        }
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    },
+
     async submitPost() {
       // Reset previous errors
       this.errors.title = false;
@@ -42,7 +53,7 @@ export default {
           this.postTitle = '';
           this.postContent = '';
 
-          this.fetchAllPosts();
+          await this.fetchAllPosts();
         } else {
           const errorResponse = await response.json();
 
@@ -60,7 +71,11 @@ export default {
         console.error('Failed to send post:', error);
       }
     }
-  }}
+  },
+  mounted() {
+    this.fetchAllPosts(); // ✅ fetch on page load
+  }
+};
 
 </script>
 
