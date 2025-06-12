@@ -13,18 +13,33 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for the application.
+ * <p>
+ * This class handles specific custom exceptions and returns a consistent error response structure
+ * to the client. It's annotated with {@link ControllerAdvice} to apply globally to all controllers.
+ */
 @ControllerAdvice
 public class GlobalErrorHandler {
 
+    /**
+     * Handles {@link NotFoundException} exceptions.
+     *
+     * @param ex the exception thrown when a resource is not found
+     * @return a {@link ResponseEntity} containing an {@link ErrorResponse} with a NOT_FOUND status
+     */
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
-
         ErrorResponse response = new ErrorResponse(ex.getMessage(), new Date());
-
         return ResponseEntity.status(getHttpStatus(ex)).body(response);
     }
 
-
+    /**
+     * Handles {@link BadRequestException} exceptions.
+     *
+     * @param ex the exception thrown when a bad request occurs (e.g., invalid input)
+     * @return a {@link ResponseEntity} containing a structured error message with a BAD_REQUEST status
+     */
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> handleBadRequest(BadRequestException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -36,7 +51,13 @@ public class GlobalErrorHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    private  HttpStatus getHttpStatus(Exception ex) {
+    /**
+     * Helper method to determine the appropriate {@link HttpStatus} based on the exception type.
+     *
+     * @param ex the exception to evaluate
+     * @return the corresponding {@link HttpStatus}
+     */
+    private HttpStatus getHttpStatus(Exception ex) {
         if (ex instanceof NotFoundException) {
             return HttpStatus.NOT_FOUND;
         } else {
