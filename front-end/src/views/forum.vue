@@ -9,21 +9,19 @@ export default {
     return {
       postTitle: '',
       postContent: '',
-      posts: [] // ✅ to store all posts
+      posts: [],
+      errors: {
+        title: false,
+        content: false
+      }
     };
   },
   methods: {
-    async fetchAllPosts() {
-      try {
-        const response = await fetch(getAllPostsUrl);
-        if (response.ok) {
-          this.posts = await response.json();
-        }
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      }
-    },
     async submitPost() {
+      // Reset previous errors
+      this.errors.title = false;
+      this.errors.content = false;
+
       try {
         const response = await fetch(`${backendUrl}/api/posts/create`, {
           method: 'POST',
@@ -44,17 +42,26 @@ export default {
           this.postTitle = '';
           this.postContent = '';
 
-          this.fetchAllPosts(); // ✅ refresh posts after submit
+          this.fetchAllPosts();
+        } else {
+          const errorResponse = await response.json();
+
+          if (errorResponse.message?.includes("title")) {
+            this.errors.title = true;
+          }
+
+          if (errorResponse.message?.includes("content")) {
+            this.errors.content = true;
+          }
+
+          console.error('Validation error:', errorResponse);
         }
       } catch (error) {
         console.error('Failed to send post:', error);
       }
     }
-  },
-  mounted() {
-    this.fetchAllPosts(); // ✅ fetch on page load
-  }
-};
+  }}
+
 </script>
 
 <template>
@@ -78,8 +85,16 @@ export default {
   </div>
 
   <div>
-    <input v-model="postTitle" placeholder="Type je vraag hier..." />
-    <input v-model="postContent" placeholder="Voor extra context">
+    <input
+        v-model="postTitle"
+        :class="{ 'input-error': errors.title }"
+        placeholder="Type je vraag hier..."
+    />
+    <input
+        v-model="postContent"
+        :class="{ 'input-error': errors.content }"
+        placeholder="Voor extra context"
+    />
     <button @click="submitPost">Post</button>
   </div>
 </template>
@@ -91,5 +106,10 @@ div {
 
 .posts {
   margin-top: 20px;
+}
+
+.input-error {
+  border: 2px solid red;
+  outline: none;
 }
 </style>
