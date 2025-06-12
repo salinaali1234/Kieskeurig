@@ -6,6 +6,9 @@ import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
 import nl.hva.kieskeurig.utils.xml.XMLParser;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.io.InputStream;
 import java.util.*;
@@ -14,6 +17,9 @@ import java.util.*;
 public class VoteService {
     private final NationalVotesRepo voteRepo;
     private final Map<String, List<Vote>> votesPerYear = new HashMap<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(VoteService.class);
+
 
     public VoteService(NationalVotesRepo voteRepo) {
         this.voteRepo = voteRepo;
@@ -77,7 +83,7 @@ public class VoteService {
         }
 
         try {
-            System.out.println("Trying to load: " + folder + "/" + fileName);
+            logger.info("Trying to load: {}/{}", folder, fileName);
 
             InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream(folder + "/" + fileName);
@@ -106,7 +112,7 @@ public class VoteService {
             return true;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error reading XML files", e);
             return false;
         }
     }
