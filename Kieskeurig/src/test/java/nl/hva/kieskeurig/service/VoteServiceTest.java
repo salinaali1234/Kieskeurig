@@ -1,5 +1,6 @@
 package nl.hva.kieskeurig.service;
 
+import nl.hva.kieskeurig.exception.VoteLoadingException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,8 @@ class VoteServiceTest {
         VoteService spyService = spy(voteService);
         doReturn(false).when(spyService).readResults(anyString(), anyString(), eq("2021"));
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> spyService.getResults("2021"));
-        assertEquals("Kon de resultaten niet inlezen voor jaar 2021", ex.getMessage());
+        VoteLoadingException ex = assertThrows(VoteLoadingException.class, () -> spyService.getResults("2021"));
+        assertEquals("Could not load results for year 2021", ex.getMessage());
     }
 
     @Test

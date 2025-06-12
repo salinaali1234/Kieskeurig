@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 
 //import nl.hva.ict.se.sm3.utils.xml.XMLParser;
+import nl.hva.kieskeurig.exception.VoteLoadingException;
 import nl.hva.kieskeurig.model.Vote;
 import nl.hva.kieskeurig.reader.VoteReader;
 import nl.hva.kieskeurig.repository.NationalVotesRepo;
@@ -38,7 +39,7 @@ public class VoteService {
 
         boolean success = readResults(folder, fileName, year);
         if (!success) {
-            throw new RuntimeException("Kon de resultaten niet inlezen voor jaar " + year);
+            throw new VoteLoadingException("Could not load results for year " + year);
         }
 
         return getVotesPerParty(year);
@@ -54,7 +55,7 @@ public class VoteService {
         return switch (year) {
             case "2021" -> "Totaaltelling_TK2021.eml.xml";
             case "2023" -> "Totaaltelling_TK2023.eml.xml";
-            default -> throw new IllegalArgumentException("Ongeldig jaar opgegeven: " + year);
+            default -> throw new IllegalArgumentException("Invalid year specified: " + year);
         };
     }
 
