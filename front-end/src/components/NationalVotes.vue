@@ -80,7 +80,6 @@ async function populateProps() {
   <NationalDonutChart :year="year" :votes="votes" :labels="labels" />
 
   <div class="dropdown-wrapper">
-    <label for="sort-select">Sorteer op:</label>
     <select id="sort-select" v-model="selectedSort" @change="fetchData(selectedYear)" class="dropdown">
       <option value="votes-desc">Meeste stemmen</option>
       <option value="votes-asc">Minste stemmen</option>

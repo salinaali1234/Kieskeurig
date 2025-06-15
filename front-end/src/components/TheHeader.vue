@@ -20,8 +20,6 @@ function logout() {
 
 const navLinks = ref([
   { name: 'Partijen', to: '/parties', class: 'nav-link' },
-  { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
-  { name: 'Registreren', to: '/register', class: 'btn' },
   { name: 'forum', to: '/forum', class: 'nav-link' }
 ]);
 
@@ -74,15 +72,17 @@ onMounted(() => {
           </ul>
         </div>
 
+
         <RouterLink
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          :class="link.class"
+          class="nav-link nav-button"
           @click="menuOpen = false"
         >
           {{ link.name }}
         </RouterLink>
+
 
         <!-- ✅ Ingelogd -->
         <div v-if="user" class="user-info">
