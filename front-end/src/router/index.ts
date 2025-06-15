@@ -15,6 +15,7 @@ import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
 import { SessionService } from '@/service/session-service.ts'
 import sessionService from '@/service/session-singleton.ts'
+import CompareProvinceVotes from '@/views/CompareProvinceVotesView.vue';
 
 const BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
 new SessionService(`${BASE_URL}/authentication`, 'session_jwt')
@@ -56,13 +57,13 @@ const router = createRouter({
       path:  `/Constituency/:constituencyId/:constituencyName`,
       name: `constituency`,
       component: Consistuency,
-     meta: { requiresAuth: false }
+      meta: { requiresAuth: false }
     },
     {
       path: '/election/:electionId/party/:partyName',
       name: 'party',
       component: PartyView,
-     meta: { requiresAuth: false }
+      meta: { requiresAuth: false }
     },
     {
       path: '/parties',
@@ -78,7 +79,7 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/vergelijken',
+      path: '/vergelijken/national',
       name: 'Vergelijken',
       component: CompareVotes,
       meta: { requiresAuth: false }
@@ -97,6 +98,11 @@ const router = createRouter({
       path: '/provinces',
       name: 'provinces',
       component: ProvinceVotes,
+    },
+    {
+      path: '/vergelijken/provincies',
+      name: 'provincies',
+      component: CompareProvinceVotes,
     },
 
   ]

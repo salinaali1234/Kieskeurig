@@ -17,4 +17,6 @@ public interface ProvinceRepo extends JpaRepository<Province, Integer> {
 
     @Query("SELECT p FROM Province p LEFT JOIN FETCH p.constituencies WHERE p.id = :id")
     Optional<Province> findById(@Param("id") int id);
+
+    Province findTopByOrderByIdDesc();
 }
