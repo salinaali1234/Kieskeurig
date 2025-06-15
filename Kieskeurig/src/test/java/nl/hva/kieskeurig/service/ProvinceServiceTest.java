@@ -1,6 +1,7 @@
 package nl.hva.kieskeurig.service;
 
 import jakarta.transaction.Transactional;
+import nl.hva.kieskeurig.enums.ProvinceEnum;
 import nl.hva.kieskeurig.exception.NotFoundException;
 import nl.hva.kieskeurig.model.Province;
 import nl.hva.kieskeurig.repository.ProvinceRepo;
@@ -18,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class ProvinceServiceTest {
     @Autowired
     private ProvinceRepo provinceRepo;
@@ -30,17 +30,17 @@ class ProvinceServiceTest {
     // addProvince()
     @Test
     void provinceService_addProvince_shouldSaveToRepository() {
-        Province mockProvince = Province.builder()
-                .id(1)
-                .name("Mock Province")
+        Province province = Province.builder()
+                .name("Province")
                 .build();
 
-        provinceService.addProvince(mockProvince);
+        provinceService.addProvince(province);
 
-        Province province = provinceService.getProvinceById(mockProvince.getId());
+        Province returnedProvince = provinceService.getProvinceById(province.getId());
 
-        assertNotNull(province);
-        assertEquals("Mock Province", province.getName());
+        assertNotNull(returnedProvince);
+        assertEquals("Province", returnedProvince.getName());
+        assertEquals(province.getId(), returnedProvince.getId());
     }
 
     @Test
@@ -54,22 +54,22 @@ class ProvinceServiceTest {
     // getProvinceById()
     @Test
     void provinceService_getProvinceById_shouldReturnProvince_whenProvinceExists() {
-        Province mockProvince = Province.builder()
-                .id(1)
-                .name("Mock Province")
+        Province province = Province.builder()
+                .name("Province")
                 .build();
 
-        provinceRepo.save(mockProvince);
+        provinceRepo.save(province);
 
-        Province province = provinceService.getProvinceById(mockProvince.getId());
+        Province returnedProvince = provinceService.getProvinceById(province.getId());
 
-        assertNotNull(province);
-        assertEquals("Mock Province", province.getName());
+        assertNotNull(returnedProvince);
+        assertEquals("Province", returnedProvince.getName());
+        assertEquals(province.getId(), returnedProvince.getId());
     }
 
     @Test
     void provinceService_getProvinceById_shouldThrowException_whenProvinceDoesNotExist() {
-        int id = 100;
+        int id = -1;
 
         assertThrows(NotFoundException.class, () -> provinceService.getProvinceById(id));
     }
@@ -78,22 +78,21 @@ class ProvinceServiceTest {
     // getProvinceByName()
     @Test
     void provinceService_getProvinceByName_shouldReturnProvince_whenProvinceExists() {
-        Province mockProvince = Province.builder()
-                .id(1)
-                .name("Mock Province")
+        Province province = Province.builder()
+                .name("Province")
                 .build();
 
-        provinceRepo.save(mockProvince);
+        provinceRepo.save(province);
 
-        Province province = provinceService.getProvinceByName(mockProvince.getName());
+        Province returnedProvince = provinceService.getProvinceByName(province.getName());
 
-        assertNotNull(province);
-        assertEquals("Mock Province", province.getName());
+        assertNotNull(returnedProvince);
+        assertEquals("Province", returnedProvince.getName());
     }
 
     @Test
     void provinceService_getProvinceByName_shouldThrowException_whenProvinceDoesNotExist() {
-        String name = "Mock Province";
+        String name = "Fake Province";
 
         assertThrows(NotFoundException.class, () -> provinceService.getProvinceByName(name));
     }
@@ -102,21 +101,21 @@ class ProvinceServiceTest {
     // getAllProvinces()
     @Test
     void provinceService_getAllProvinces_shouldReturnAllProvinces_whenProvincesExist() {
-        List<Province> mockProvinces = new ArrayList<>();
+        List<Province> provinces = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
-            Province mockProvince = Province.builder()
-                    .name("Mock Province " + i)
+            Province province = Province.builder()
+                    .name("Province " + i)
                     .build();
 
-            provinceRepo.save(mockProvince);
-            mockProvinces.add(mockProvince);
+            provinceRepo.save(province);
+            provinces.add(province);
         }
 
 
-        List<Province> provinces = provinceService.getAllProvinces();
+        List<Province> returnedProvinces = provinceService.getAllProvinces();
 
-        assertFalse(provinces.isEmpty());
-        assertEquals(mockProvinces.size(), provinces.size());
+        assertFalse(returnedProvinces.isEmpty());
+        assertEquals(provinces.size(), returnedProvinces.size());
     }
 
     @Test
@@ -135,19 +134,20 @@ class ProvinceServiceTest {
 
     @Test
     void provinceService_isEmpty_shouldReturnFalse_whenProvincesDoExist() {
-        Province mockProvince = Province.builder()
-                .name("Mock Province")
+        Province province = Province.builder()
+                .name("Province")
                 .build();
 
-        provinceRepo.save(mockProvince);
+        provinceRepo.save(province);
 
         assertFalse(provinceService.isEmpty());
     }
 
+
     // populateDatabase()
     @Test
     void provinceService_populateDatabase_shouldPopulateDatabase_withEveryProvince() {
-        int totalProvinces = 12;
+        int totalProvinces = ProvinceEnum.values().length;
 
         provinceService.populateDatabase();
         List<Province> provinces = provinceService.getAllProvinces();
