@@ -1,7 +1,11 @@
 package nl.hva.kieskeurig.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a forum post entity stored in the database.
@@ -40,4 +44,10 @@ public class Post {
      * The ID of the user who authored the post.
      */
     private int authorId;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Comment> comments = new ArrayList<>();
+
+
 }
