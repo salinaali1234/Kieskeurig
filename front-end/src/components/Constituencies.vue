@@ -19,6 +19,7 @@ function toggleVisible() {
   isVisible.value = !isVisible.value;
 }
 
+
 onMounted(async () => {
   try {
     const response = await fetch(url);

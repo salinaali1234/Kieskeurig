@@ -20,6 +20,9 @@ function logout() {
 
 const navLinks = ref([
   { name: 'Partijen', to: '/parties', class: 'nav-link' },
+  { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
+  { name: 'Registreren', to: '/register', class: 'btn' },
+  { name: 'forum', to: '/forum', class: 'nav-link' }
 ]);
 
 onMounted(() => {
