@@ -1,24 +1,24 @@
 package nl.hva.kieskeurig.controller;
 
 
-import nl.hva.kieskeurig.model.Account;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import nl.hva.kieskeurig.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller that handles authentication-related operations such as login and logout.
- *
  * Exposes endpoints to authenticate users and optionally perform logout logic.
  * Issues JWT tokens upon successful login.
  */
 @RestController
 @RequestMapping("/authentication")
-@CrossOrigin(origins = "*", exposedHeaders = "Authorization")
+@CrossOrigin(origins = "*", exposedHeaders = HttpHeaders.AUTHORIZATION)
 public class AuthenticationController {
 
     @Autowired
@@ -27,27 +27,39 @@ public class AuthenticationController {
     /**
      * Authenticates a user using provided login credentials.
      *
-     * @param signInInfo JSON object containing "email" and "password" fields
-     * @param request HTTP request used to extract IP address for token generation
-     * @return ResponseEntity with the authenticated Account and a JWT token in the Authorization header
+     * @param signInInfo JSON object with "email" and "password"
+     * @param request HTTP request (for IP logging or token tracking)
+     * @return LoginResponse (account + token), or 401 if invalid
      */
-
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> authenticateAccount(@RequestBody ObjectNode signInInfo, HttpServletRequest request) {
-        return authenticationService.authenticate(signInInfo, request);
+    public ResponseEntity<?> authenticateAccount(@RequestBody ObjectNode signInInfo, HttpServletRequest request) {
+        try {
+            ResponseEntity<AuthenticationService.LoginResponse> result = authenticationService.authenticate(signInInfo, request);
+            AuthenticationService.LoginResponse loginResponse = result.getBody();
+
+            if (loginResponse == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid email or password.");
+            }
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.AUTHORIZATION, result.getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
+                    .body(loginResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Login error: " + e.getMessage());
+        }
     }
 
     /**
      * Handles user logout.
-     * Currently a placeholder – can be extended with JWT token blacklisting if required.
      *
-     * @param authHeader Authorization header containing the JWT token
-     * @return 204 No Content response
+     * @param authHeader JWT token in Authorization header
+     * @return 204 No Content
      */
-
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
-        // Extra: hier kan je in de toekomst een JWT-blacklist logica inbouwen
-        return ResponseEntity.noContent().build();
+        // In de toekomst kun je hier een blacklist of audit log bijhouden
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

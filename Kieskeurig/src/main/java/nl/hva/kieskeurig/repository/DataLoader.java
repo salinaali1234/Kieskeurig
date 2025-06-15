@@ -1,34 +1,31 @@
 package nl.hva.kieskeurig.repository;
 
 import nl.hva.kieskeurig.model.Account;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-
 import java.util.List;
 
 /**
- * Loads initial sample accounts into the database on application startup.
+ * Loads initial sample accounts into the repository on application startup.
  */
 @Component
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
-    private EntityRepository<Account> accountRepository;
+    private AccountRepo accountRepo;
 
     @Override
-    @Transactional
     public void run(String... args) {
-        System.out.println("=== Initializing Database ===");
-        this.createInitialAccounts();
-
-        // Verify accounts were created
-        List<Account> allAccounts = accountRepository.findAll();
-        System.out.println("Total accounts in database: " + allAccounts.size());
-        allAccounts.forEach(acc -> System.out.printf("Account: ID=%d, Email=%s, Hash=%s%n",
-                acc.getId(), acc.getEmail(), acc.getHashedPassword()));
+        System.out.println("=== Initializing In-Memory Account Repo ===");
+        createInitialAccounts();
+// Verify accounts were created
+        List<Account> allAccounts = accountRepo.findAll();
+        System.out.println("Total accounts: " + allAccounts.size());
+        allAccounts.forEach(acc ->
+                System.out.printf("Account: ID=%d, Email=%s, Hash=%s%n",
+                        acc.getId(), acc.getEmail(), acc.getHashedPassword()));
     }
 
     /**
@@ -39,30 +36,27 @@ public class DataLoader implements CommandLineRunner {
         addIfNotExists("user1@hva.nl", "User1", "welcome", "User");
         addIfNotExists("user2@hva.nl", "User2", "welcome", "User");
         addIfNotExists("user3@hva.nl", "User3", "welcome", "User");
-
-        System.out.println("Accounts in database:");
-        accountRepository.findAll().forEach(System.out::println);
     }
 
     /**
      * Adds a new account only if no account with the same email exists.
      */
     private void addIfNotExists(String email, String name, String password, String role) {
-        List<Account> existing = accountRepository.findByQuery("Accounts_find_by_email", email);
+        List<Account> existing = accountRepo.findByEmail(email);
         if (!existing.isEmpty()) return;
 
         // Create account with basic info
-        Account account = new Account(0, email, name);
+        Account account = new Account();
+        account.setEmail(email);
+        account.setName(name);
         account.setRole(role);
+        account = accountRepo.save(account);
 
-        // Save to generate ID
-        account = accountRepository.save(account);
 
-        // Set password with proper ID-based hashing
         account.setPassword(password);
 
-        // Final save
-        accountRepository.save(account);
+
+        accountRepo.save(account);
 
         System.out.println("Created account: " + email +
                 " ID: " + account.getId() +

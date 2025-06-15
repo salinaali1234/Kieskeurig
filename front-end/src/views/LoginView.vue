@@ -11,19 +11,22 @@ const BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
 const session = new SessionService(`${BASE_URL}/authentication`, 'session_jwt');
 
 const handleLogin = async () => {
-  const account = await session.login(email.value, password.value);
-  if (account) {
-    window.location.reload(); // in plaats van router.push('/')
-  } else {
-    error.value = 'Inloggen mislukt. Probeer opnieuw.';
+  error.value = null; // reset foutmelding bij elke poging
+  try {
+    const account = await session.login(email.value, password.value);
+    if (account) {
+      window.location.reload();
+    }
+  } catch (e: never) {
+    error.value = e.message || 'Inloggen mislukt. Probeer opnieuw.';
   }
 };
 </script>
 
 <template>
   <form @submit.prevent="handleLogin">
-    <input v-model="email" type="email" placeholder="E-mail" required />
-    <input v-model="password" type="password" placeholder="Wachtwoord" required />
+    <input v-model="email" type="email" placeholder="E-mail" required autocomplete="email" />
+    <input v-model="password" type="password" placeholder="Wachtwoord" required autocomplete="current-password" />
     <button type="submit">Inloggen</button>
     <p v-if="error">{{ error }}</p>
   </form>
