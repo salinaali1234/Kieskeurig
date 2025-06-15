@@ -79,7 +79,7 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/vergelijken',
+      path: '/vergelijken/national',
       name: 'Vergelijken',
       component: CompareVotes,
       meta: { requiresAuth: false }
