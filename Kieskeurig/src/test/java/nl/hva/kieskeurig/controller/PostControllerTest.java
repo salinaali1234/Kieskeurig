@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,7 +31,7 @@ public class PostControllerTest {
         // Arrange
         PostRequest inputPost = new PostRequest( "Test Title", "Test Content", 0);
 
-        Post expectedPost = new Post(1, "Test Title", "Test Content", 0);
+        Post expectedPost = new Post(1, "Test Title", "Test Content", 0, Collections.emptyList());
 
         when(postService.create(inputPost)).thenReturn(expectedPost);
 
