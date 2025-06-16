@@ -109,7 +109,7 @@ onMounted(async () => {
     </h1>
     <p class="intro-text">
       Jouw plek voor een heldere overzicht van de verkiezingsdata van Nederland.
-      Ontdek hoe partijen en kandidaten hebben gescoord in jouw regio!
+      Ontdek hoe partijen hebben gescoord in jouw regio!
     </p>
     <div id="map" style="height: 600px; width: 100%; margin-top: 20px;"></div>
   </div>

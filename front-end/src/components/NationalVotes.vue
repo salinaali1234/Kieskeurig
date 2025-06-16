@@ -13,6 +13,7 @@ const parties = ref<Party[]>([]);
 const isVisible = ref(false);
 const selectedYear = ref("2023"); // Standaard 2023
 const VITE_APP_BACKEND_URL: string = import.meta.env.VITE_APP_BACKEND_URL;
+const selectedSort = ref("votes-desc");
 
 let labels: Ref<string[]> = ref([])
 let votes: Ref<number[]> = ref([])
@@ -30,7 +31,7 @@ watch(selectedYear, async (newYear) => {
 
 async function fetchData(year: string) {
   try {
-    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/xml/votes/parties?year=${year}`);
+    const response = await fetch(`${VITE_APP_BACKEND_URL}/api/xml/votes/parties?year=${year}&sort=${selectedSort.value}`);
     if (response.ok) {
       const data = await response.json();
       parties.value = Object.entries(data).map(([name, votes]) => ({
@@ -77,6 +78,20 @@ async function populateProps() {
   </div>
 
   <NationalDonutChart :year="year" :votes="votes" :labels="labels" />
+
+  <div class="dropdown-wrapper">
+    <select id="sort-select" v-model="selectedSort" @change="fetchData(selectedYear)" class="dropdown">
+      <option value="votes-desc">Meeste stemmen</option>
+      <option value="votes-asc">Minste stemmen</option>
+      <option value="name-asc">A-Z</option>
+      <option value="name-desc">Z-A</option>
+    </select>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 opacity-50 dropdown-icon" aria-hidden="true">
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </div>
+
+
 
   <div>
     <table class="data-table">

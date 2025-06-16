@@ -14,6 +14,7 @@ import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
 import { SessionService } from '@/service/session-service.ts'
+import forum from "@/views/forum.vue";
 import sessionService from '@/service/session-singleton.ts'
 import CompareProvinceVotes from '@/views/CompareProvinceVotesView.vue';
 
@@ -103,6 +104,11 @@ const router = createRouter({
       path: '/vergelijken/provincies',
       name: 'provincies',
       component: CompareProvinceVotes,
+    },
+    {
+      path: '/forum',
+      name: 'forum',
+      component: forum,
     },
 
   ]

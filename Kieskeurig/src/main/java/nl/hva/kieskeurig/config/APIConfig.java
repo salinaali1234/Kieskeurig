@@ -62,6 +62,13 @@ public class APIConfig {
                         .requestMatchers("/api/party/**").permitAll()
                         .requestMatchers("/api/provinces/**").permitAll()
                         .requestMatchers("/api/xml/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/api-docs"
+                        ).permitAll()
+
 
                         .requestMatchers("/accounts/**").authenticated()
                         .anyRequest().permitAll()

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import sessionService from '@/service/session-singleton';
-
 
 const menuOpen = ref(false);
 const statsDropdownOpen = ref(false);
@@ -21,7 +20,18 @@ function logout() {
 
 const navLinks = ref([
   { name: 'Partijen', to: '/parties', class: 'nav-link' },
+  { name: 'forum', to: '/forum', class: 'nav-link' }
 ]);
+
+onMounted(() => {
+  document.addEventListener("click", (e) => {
+    const header = document.querySelector(".header");
+    if (header && !header.contains(e.target as Node)) {
+      closeMenus();
+    }
+  });
+});
+
 
 </script>
 
@@ -35,8 +45,8 @@ const navLinks = ref([
       <button class="menu-btn" @click="menuOpen = !menuOpen">☰</button>
 
       <nav :class="{ 'open': menuOpen }">
-        <div class="dropdown" @mouseleave="statsDropdownOpen = false">
-          <button class="dropdown-toggle" @click="statsDropdownOpen = !statsDropdownOpen">
+        <div class="dropdown">
+          <button class="dropdown-toggle" @click.stop="statsDropdownOpen = !statsDropdownOpen">
             Statistieken
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
               <path d="M6 9l6 6 6-6" />
@@ -62,15 +72,17 @@ const navLinks = ref([
           </ul>
         </div>
 
+
         <RouterLink
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          :class="link.class"
+          class="nav-link nav-button"
           @click="menuOpen = false"
         >
           {{ link.name }}
         </RouterLink>
+
 
         <!-- ✅ Ingelogd -->
         <div v-if="user" class="user-info">
@@ -111,6 +123,8 @@ button {
   background-color: var(--primary-clr);
   padding: 1rem 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1000;
 }
 
 .container {
@@ -147,6 +161,7 @@ nav {
   display: flex;
   gap: 1rem;
   align-items: center;
+  z-index: 999;
 }
 
 .nav-link {
@@ -165,7 +180,7 @@ nav {
 
 
 .nav-link:hover {
-  background-color: #d4b6f0;
+  background-color: #d4aef6;
 }
 
 
@@ -257,6 +272,8 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .nav-link, .btn {
@@ -266,6 +283,17 @@ nav {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 40%;
+    background-color: var(--primary-clr);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: 60px;
+    z-index: 1000;
   }
 }
 </style>

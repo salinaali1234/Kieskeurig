@@ -45,15 +45,15 @@ async function handleRegister() {
     <h1>Registreren</h1>
     <form @submit.prevent="handleRegister">
       <div class="form-group">
-        <label for="name">Naam:</label>
+        <label for="name">Naam</label>
         <input v-model="name" type="text" id="name" required>
       </div>
       <div class="form-group">
-        <label for="email">Email:</label>
+        <label for="email">Email</label>
         <input v-model="email" type="email" id="email" required>
       </div>
       <div class="form-group">
-        <label for="password">Wachtwoord:</label>
+        <label for="password">Wachtwoord</label>
         <input v-model="password" type="password" id="password" required>
       </div>
       <button type="submit" class="btn">Registreren</button>
@@ -128,4 +128,12 @@ p {
   margin-top: 1rem;
   color: #2c3e50;
 }
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #000;
+}
+
 </style>
