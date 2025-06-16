@@ -21,7 +21,7 @@ public class PartyInfoRepo {
         DutchElectionTransformerForParties transformer = new DutchElectionTransformerForParties();
         DutchElectionProcessor<ElectionForParty> electionProcessor = new DutchElectionProcessor<>(transformer);
         System.out.println("PartiesInfoRepo.loadElectionData()");
-        return electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA"));
+        return electionProcessor.processResults("TK2023", PathUtils.getResourcePath("/EML_bestanden_TK2023_HvA_UvA/Kandidatenlijsten_TK2023_Amsterdam.eml.xml"));
     }
 
     public List<PartyWithInfo> getParties() throws IOException, XMLStreamException { // ✅ XMLStreamException toegevoegd

@@ -25,6 +25,7 @@ const currentPartyName  = ref('');
 const currentCandidates = ref<Candidate[]>([]);
 const candidatesLoading = ref(false);
 
+
 const sortOptions = [
   { value: 'seats-desc', label: 'Zetels (hoog → laag)' },
   { value: 'seats-asc',  label: 'Zetels (laag → hoog)' },
@@ -33,12 +34,25 @@ const sortOptions = [
 
 async function fetchParties() {
   loading.value = true;
+  error.value = null;
   try {
     const res = await fetch(`${VITE_APP_BACKEND_URL}/api/parties?sort=${sortOrder.value}`);
     if (!res.ok) throw new Error('Kon partijen niet laden');
-    partiesList.value = await res.json();
-  } catch (e) { error.value = e instanceof Error ? e.message : String(e); }
-  finally { loading.value = false; }
+    const data: PartyWithInfo[] = await res.json();
+
+
+    const dummyParties = data.map(p => ({
+      ...p,
+      seats: Math.floor(Math.random() * 31) + 5 // zetels van 5 t/m 35
+    }));
+
+    partiesList.value = dummyParties;
+
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : String(e);
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function showCandidates(id: number, name: string) {
@@ -102,7 +116,7 @@ const options = {
     },
 
     whiteBackground: {
-      beforeDraw: (chart: any) => {
+      beforeDraw: (chart: never) => {
         const { ctx, width, height } = chart;
         ctx.save();
         ctx.fillStyle = 'white';
