@@ -22,12 +22,18 @@ export default {
       try {
         const response = await fetch(getAllPostsUrl);
         if (response.ok) {
-          this.posts = await response.json();
+          const rawPosts = await response.json();
 
-          // Fetch comments for each post
-          for (const post of this.posts) {
-            await this.fetchComments(post.id);
+          // Sorteer eerst
+          const sortedPosts = rawPosts.sort((a, b) => b.id - a.id);
+
+          // Voeg reacties toe
+          for (const post of sortedPosts) {
+            const comments = await this.fetchComments(post.id);
+            // post.comments = comments || [];
           }
+
+          this.posts = sortedPosts;
         }
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -40,6 +46,7 @@ export default {
         if (response.ok) {
           const comments = await response.json();
           this.$set(this.commentsByPost, postId, comments);
+          return comments; // <-- zodat je het kunt gebruiken
         }
       } catch (err) {
         console.error("Failed to fetch comments:", err);
@@ -168,7 +175,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 div {
   margin-top: 20px;
 }
@@ -193,4 +200,65 @@ div {
 .new-post {
   margin-top: 30px;
 }
+
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+input {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+.new-post,
+.posts {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.comments {
+  margin-top: 10px;
+  padding-left: 10px;
+  border-left: 3px solid #ccc;
+}
+
+.posts,
+.new-post,
+.comments {
+  color: #000;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+
 </style>

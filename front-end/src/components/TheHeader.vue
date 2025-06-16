@@ -180,7 +180,7 @@ nav {
 
 
 .nav-link:hover {
-  background-color: #d4b6f0;
+  background-color: #d4aef6;
 }
 
 

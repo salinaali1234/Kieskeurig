@@ -854,3 +854,109 @@ alter table if exists municipality add constraint FK49ad14rkjxqgpfoo9y8i91jpi fo
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+2025-06-15 23:41:44.692319+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:41:44.708951+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:50:27.126341+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:50:27.133831+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:50:27.201354+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: General error: "java.lang.RuntimeException: object already exists: UKWTAA866SK6YUBNADT7VKNBUV"; SQL statement:
+alter table if exists national_votes add constraint UKwtaa866sk6yubnadt7vknbuv unique (party_name, election_year) [50000-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:566)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:212)
+	at org.h2.message.DbException.convert(DbException.java:407)
+	at org.h2.command.Command.executeUpdate(Command.java:268)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94)
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java)
+	at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:80)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlString(AbstractSchemaMigrator.java:576)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applySqlStrings(AbstractSchemaMigrator.java:516)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.applyUniqueKeys(AbstractSchemaMigrator.java:411)
+	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.performTablesMigration(GroupedSchemaMigratorImpl.java:98)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.performMigration(AbstractSchemaMigrator.java:233)
+	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:112)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:280)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:144)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429)
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:141)
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37)
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:324)
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:463)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1517)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:66)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1859)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1808)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:601)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:346)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:970)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+	at nl.hva.kieskeurig.KieskeurigApplication.main(KieskeurigApplication.java:13)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.RuntimeException: object already exists: UKWTAA866SK6YUBNADT7VKNBUV
+	at org.h2.message.DbException.getInternalError(DbException.java:355)
+	at org.h2.schema.Schema.add(Schema.java:274)
+	at org.h2.engine.Database.addSchemaObject(Database.java:914)
+	at org.h2.command.ddl.AlterTableAddConstraint.addConstraintToTable(AlterTableAddConstraint.java:348)
+	at org.h2.command.ddl.AlterTableAddConstraint.tryUpdate(AlterTableAddConstraint.java:301)
+	at org.h2.command.ddl.AlterTableAddConstraint.update(AlterTableAddConstraint.java:74)
+	at org.h2.command.ddl.AlterTable.update(AlterTable.java:46)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	... 45 more
+2025-06-15 23:50:27.234185+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:50:27.235731+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:51:43.190252+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:51:43.202477+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:51:43.365659+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-15 23:51:43.366643+02:00 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-16 01:17:24.138941+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-16 01:17:24.172416+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-16 01:18:57.037383+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_ACCOUNT" already exists; SQL statement:
+create global temporary table HTE_account(rn_ integer not null, id bigint, email varchar(255), hashed_password varchar(255), name varchar(255), role varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
+2025-06-16 01:18:57.043897+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "HTE_PROVINCE" already exists; SQL statement:
+create global temporary table HTE_province(id integer, rn_ integer not null, name varchar(255), primary key (rn_)) TRANSACTIONAL [42101-224]
