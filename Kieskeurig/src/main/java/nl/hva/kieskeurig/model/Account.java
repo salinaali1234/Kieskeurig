@@ -10,25 +10,28 @@ import java.util.*;
 @Setter
 @Getter
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "Accounts_find_by_email",
-                query = "select a from Account a where a.email = ?1")
-})
+@Table(name = "accounts") // optioneel, maar goed voor duidelijkheid
 public class Account {
 
-    @SequenceGenerator(name = "Account_ids", initialValue = 100001)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Account_ids")
     @Id
-    private long id = 0L;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // laat de database zelf het ID genereren
+    @Column(name = "id")
+    private long id;
 
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email = "";
+
+    @Column(name = "role", nullable = false, length = 50)
     private String role = "Regular User";
 
     @JsonIgnore
+    @Column(name = "hashed_password", nullable = false, length = 255)
     private String hashedPassword = null;
 
-    @Transient
+    @Transient // dit wordt niet opgeslagen in de database
     private String password;
 
     public Account() {}
@@ -43,12 +46,6 @@ public class Account {
         this.name = name;
     }
 
-    /**
-     * Hashes a password using a consistent salt based on account ID.
-     *
-     * @param password the plain text password
-     * @return the hashed version
-     */
     public String hashPassword(String password) {
         if (this.id == 0) {
             throw new IllegalStateException("Account must have an ID before hashing password");
@@ -57,11 +54,6 @@ public class Account {
         return SecureHasher.secureHash(salt + password);
     }
 
-    /**
-     * Sets and hashes the password based on the current ID.
-     *
-     * @param password the plain text password
-     */
     public void setPassword(String password) {
         this.password = password;
         if (password != null && this.id > 0) {
@@ -71,20 +63,11 @@ public class Account {
         }
     }
 
-    /**
-     * Verifies a password by comparing it to the stored hash.
-     *
-     * @param password the input password
-     * @return true if the hash matches, false otherwise
-     */
     public boolean verifyPassword(String password) {
         if (this.hashedPassword == null || password == null) return false;
         return this.hashedPassword.equals(hashPassword(password));
     }
 
-    /**
-     * Creates a random sample account with the given ID.
-     */
     public static Account createSample(long id) {
         return createSample(id, callNames[randomizer.nextInt(Account.callNames.length)]);
     }
@@ -97,7 +80,8 @@ public class Account {
 
     private static final Random randomizer = new Random();
     private static final String[] callNames = {
-            "Boekenwurm", "Pageturner", "Papiervreter", "Hobbyist", "Philosopher", "Journalist", "Scientist", "Teacher"
+            "Boekenwurm", "Pageturner", "Papiervreter", "Hobbyist",
+            "Philosopher", "Journalist", "Scientist", "Teacher"
     };
 
     @Override
@@ -114,6 +98,6 @@ public class Account {
 
     @Override
     public String toString() {
-        return String.format("{ login=%s, callName=%s, id=%d }", this.email, this.name, this.id);
+        return String.format("{ login=%s, name=%s, id=%d }", this.email, this.name, this.id);
     }
 }

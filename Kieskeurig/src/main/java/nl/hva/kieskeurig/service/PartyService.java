@@ -1,34 +1,26 @@
 package nl.hva.kieskeurig.service;
 
-import nl.hva.kieskeurig.model.CandidateForPartyInfo;
-import nl.hva.kieskeurig.model.ElectionForParty;
 import nl.hva.kieskeurig.model.PartyWithInfo;
-import nl.hva.kieskeurig.repository.PartiesInfoRepo;
+import nl.hva.kieskeurig.repository.PartyInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.io.IOException;
-import java.util.List;
 import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class PartiesInfoService {
-    private final PartiesInfoRepo repo;
+public class PartyService {
+    private final PartyInfoRepo repo;
 
     @Autowired
-    public PartiesInfoService(PartiesInfoRepo repo) {
+    public PartyService(PartyInfoRepo repo) {
         this.repo = repo;
     }
 
-    // gets election data
-    public List<ElectionForParty> getAll() throws IOException, XMLStreamException {
-        return repo.getAll();
-    }
-
-    // picks up party
-    public List<PartyWithInfo> getAllParties(String sortOrder) throws IOException, XMLStreamException {
+    public List<PartyWithInfo> getAllParties(String sortOrder) throws XMLStreamException, IOException {
         List<PartyWithInfo> parties = repo.getParties();
         return sortParties(parties, sortOrder);
     }
@@ -37,20 +29,8 @@ public class PartiesInfoService {
         return Optional.ofNullable(repo.getPartyById(partyId));
     }
 
-    // note to self: picks up candidate
-    public List<CandidateForPartyInfo> getCandidatesOfParty(int partyId) throws IOException, XMLStreamException {
-        return repo.getCandidatesOfParty(partyId);
-    }
-
-    public List<CandidateForPartyInfo> getAllCandidates() throws IOException, XMLStreamException {
-        return repo.getAllCandidates();
-    }
-
-
     private List<PartyWithInfo> sortParties(List<PartyWithInfo> parties, String sortOrder) {
-        if (parties == null) {
-            return List.of();
-        }
+        if (parties == null) return List.of();
 
         return switch (sortOrder) {
             case "seats-asc" -> parties.stream()
@@ -68,6 +48,3 @@ public class PartiesInfoService {
         };
     }
 }
-//    public boolean readResults(String folderName) {
-//        return repo.readResults(folderName);
-//    }

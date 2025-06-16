@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nl.hva.kieskeurig.config.APIConfig;
 import nl.hva.kieskeurig.exception.NotAcceptableException;
 import nl.hva.kieskeurig.model.Account;
-import nl.hva.kieskeurig.repository.EntityRepository;
+import nl.hva.kieskeurig.repository.AccountRepo;
 import nl.hva.kieskeurig.security.JWToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,9 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 /**
  * Service class responsible for authenticating users and issuing JWT tokens.
- * Validates credentials and returns a secure token if successful.
+ * It validates email and password against stored accounts, and returns a token upon success.
  */
 @Service
 public class AuthenticationService {
@@ -24,22 +25,22 @@ public class AuthenticationService {
     private APIConfig apiConfig;
 
     @Autowired
-    private EntityRepository<Account> accountsRepo;
+    private AccountRepo accountsRepo;
 
     /**
-     * Authenticates a user using their email and password.
-     * If valid, returns a JWT token in the Authorization header.
+     * Authenticates a user using email and password.
+     * If valid, returns an account and JWT token in the Authorization header.
      *
-     * @param signInInfo JSON object with "email" and "password"
-     * @param request the HTTP request used to extract the IP address
-     * @return a ResponseEntity containing the authenticated account and JWT
-     * @throws NotAcceptableException if credentials are invalid or IP is unknown
+     * @param signInInfo JSON containing "email" and "password"
+     * @param request HTTP request used to extract the client's IP address
+     * @return ResponseEntity with LoginResponse (account + token) and Authorization header
+     * @throws NotAcceptableException if email/password are invalid or IP is unknown
      */
-    public ResponseEntity<Account> authenticate(ObjectNode signInInfo, HttpServletRequest request) {
+    public ResponseEntity<LoginResponse> authenticate(ObjectNode signInInfo, HttpServletRequest request) {
         String email = signInInfo.get("email").asText().trim().toLowerCase();
         String password = signInInfo.get("password").asText();
 
-        List<Account> accounts = accountsRepo.findByQuery("Accounts_find_by_email", email);
+        List<Account> accounts = accountsRepo.findByEmail(email);
         if (accounts.isEmpty()) {
             throw new NotAcceptableException("Invalid credentials");
         }
@@ -63,6 +64,14 @@ public class AuthenticationService {
 
         return ResponseEntity.accepted()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
-                .body(account);
+                .body(new LoginResponse(account, tokenString));
     }
+
+    /**
+     * Simple DTO that holds an account and its associated JWT token.
+     *
+     * @param account The authenticated account
+     * @param token The issued JWT token
+     */
+    public record LoginResponse(Account account, String token) {}
 }
