@@ -58,8 +58,8 @@ const router = createRouter({
       path:  `/Constituency/:constituencyId/:constituencyName`,
       name: `constituency`,
       component: Consistuency,
-      meta: { requiresAuth: false }
     },
+
     {
       path: '/election/:electionId/party/:partyName',
       name: 'party',

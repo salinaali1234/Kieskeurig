@@ -56,13 +56,13 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("=========================");
         }
 
-        if (municipalityService.isEmpty()) {
-            System.out.println("Initializing municipality data...");
-            municipalityService.connectElectionDefinition();
-            System.out.println("Initializing municipality data complete.");
-            System.out.println("=========================");
-        }
-
-        System.out.println("Initialization complete.");
+//        if (municipalityService.isEmpty()) {
+//            System.out.println("Initializing municipality data...");
+//            municipalityService.connectElectionDefinition();
+//            System.out.println("Initializing municipality data complete.");
+//            System.out.println("=========================");
+//        }
+//
+//        System.out.println("Initialization complete.");
     }
 }

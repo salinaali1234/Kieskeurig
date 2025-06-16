@@ -22,8 +22,5 @@ public class Municipality {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "constituency_id")
-    @JsonBackReference
-    private Constituency constituency;
+    private Integer constituency;
 }

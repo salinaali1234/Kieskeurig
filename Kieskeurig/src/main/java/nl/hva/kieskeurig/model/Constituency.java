@@ -29,7 +29,4 @@ public class Constituency {
     @JsonBackReference
     private Province province;
 
-    @OneToMany(mappedBy = "constituency")
-    @JsonManagedReference
-    private List<Municipality> municipalities;
 }

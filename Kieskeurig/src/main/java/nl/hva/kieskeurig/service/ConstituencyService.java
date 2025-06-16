@@ -73,6 +73,7 @@ public class ConstituencyService {
             VoteReader reader = new VoteReader(xmlParser);
 
             map= reader.getValidVotes();
+            System.out.println(map);
         }
         return map; }
 

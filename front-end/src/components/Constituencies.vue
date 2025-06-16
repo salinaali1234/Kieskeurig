@@ -2,6 +2,7 @@
 import {ref, onMounted, type Ref, computed} from "vue";
 import "../assets/tableStyle.css"
 import router from "@/router";
+import Consistuency from "@/views/Consistuency.vue";
 
 interface Constituency {
   id: number;
@@ -9,16 +10,12 @@ interface Constituency {
 }
 
 const constituencies: Ref<any[]> = ref([]);
+let constituencyName: Ref<any[]> = ref([])
 const isVisible = ref(false);
 const sortDirection = ref<'asc' | 'desc' | null>(null); // asc = A-Z, desc = Z-A, null = original
 
 const backendUrl = import.meta.env.VITE_APP_BACKEND_URL;
 const url = `${backendUrl}/api/constituencies/all`;
-
-function toggleVisible() {
-  isVisible.value = !isVisible.value;
-}
-
 
 onMounted(async () => {
   try {
@@ -36,6 +33,18 @@ onMounted(async () => {
   }
 });
 
+function showsdataIfclicked() {
+  console.log("hello there")
+
+  const consttuency = constituencyName.value
+  console.log(consttuency)
+
+  if (consttuency == null ){
+    console.log("there is no name")
+  }else {
+    console.log("there is a name")
+  }
+}
 const showConstituency = (id: number, name: string) => {
   router.push(`/Constituency/${id}/${name}`)
 }
@@ -89,6 +98,7 @@ function toggleSortByName() {
         <td>{{ constituency[0] }}</td>
 
       </tr>
+
       </tbody>
     </table>
     <p v-if="isVisible && constituencies.length === 0">Geen kieskringen gevonden...</p>

@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface ConstituencyRepository extends JpaRepository<Constituency, Integer> {
     boolean existsBy();
 
-    @Query("SELECT c FROM Constituency c LEFT JOIN FETCH c.municipalities WHERE c.id = :id")
-    Optional<Constituency> findById(@Param("id") int id);
+    Optional<Constituency> findById(int id);
 }
