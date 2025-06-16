@@ -10,6 +10,7 @@ export default {
       posts: [],
       commentsByPost: {},
       newComment: {},
+      commentErrors: {},
       errors: {
         title: false,
         content: false
@@ -45,8 +46,8 @@ export default {
         const response = await fetch(`${backendUrl}/api/comments/${postId}`);
         if (response.ok) {
           const comments = await response.json();
-          this.$set(this.commentsByPost, postId, comments);
-          return comments; // <-- zodat je het kunt gebruiken
+          this.commentsByPost[postId] = comments;
+          return comments;
         }
       } catch (err) {
         console.error("Failed to fetch comments:", err);
@@ -93,7 +94,12 @@ export default {
 
     async submitComment(postId) {
       const content = this.newComment[postId];
-      if (!content) return;
+      if (!content) {
+        this.commentErrors[postId] = true;
+        return;
+      } else {
+        this.commentErrors[postId] = false;
+      }
 
       try {
         const response = await fetch(`${backendUrl}/api/comments`, {
@@ -163,8 +169,10 @@ export default {
 
           <input
             v-model="newComment[post.id]"
+            :class="{ 'input-error': commentErrors[post.id] }"
             placeholder="Typ een reactie..."
           />
+
           <button @click="submitComment(post.id)">Reageer</button>
         </li>
 
