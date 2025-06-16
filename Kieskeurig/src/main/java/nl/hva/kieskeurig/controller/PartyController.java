@@ -1,6 +1,6 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.service.VoteService;
+import nl.hva.kieskeurig.service.ProvinceVoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/party")
 public class PartyController {
-    private final VoteService voteService;
+    private final ProvinceVoteService provinceVoteService;
 
     @Autowired
-    public PartyController(VoteService voteService) {
-        this.voteService = voteService;
+    public PartyController(ProvinceVoteService voteService) {
+        this.provinceVoteService = voteService;
     }
 
     @GetMapping("/{electionId}/{province}")
@@ -24,6 +24,6 @@ public class PartyController {
             @RequestParam(required = false, defaultValue = "validVotes") String sort,
             @RequestParam(required = false, defaultValue = "false") boolean asc
     ) {
-        return voteService.getVotesPerPartyByElectionByProvince(electionId, province, sort, asc);
+        return provinceVoteService.getVotesPerPartyByElectionByProvince(electionId, province, sort, asc);
     }
 }

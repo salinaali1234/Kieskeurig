@@ -1,75 +1,65 @@
 package nl.hva.kieskeurig.controller;
 
-import nl.hva.kieskeurig.config.APIConfig;
-import nl.hva.kieskeurig.exception.NotAcceptableException;
-import nl.hva.kieskeurig.model.Account;
-import nl.hva.kieskeurig.repository.EntityRepository;
-import nl.hva.kieskeurig.security.JWToken;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
+import nl.hva.kieskeurig.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@CrossOrigin(origins = "*", exposedHeaders = "Authorization")
+/**
+ * Controller that handles authentication-related operations such as login and logout.
+ * Exposes endpoints to authenticate users and optionally perform logout logic.
+ * Issues JWT tokens upon successful login.
+ */
 @RestController
 @RequestMapping("/authentication")
+@CrossOrigin(origins = "*", exposedHeaders = HttpHeaders.AUTHORIZATION)
 public class AuthenticationController {
 
     @Autowired
-    APIConfig apiConfig;
+    private AuthenticationService authenticationService;
 
-    @Autowired
-    private EntityRepository<Account> accountsRepo;
+    /**
+     * Authenticates a user using provided login credentials.
+     *
+     * @param signInInfo JSON object with "email" and "password"
+     * @param request HTTP request (for IP logging or token tracking)
+     * @return LoginResponse (account + token), or 401 if invalid
+     */
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> authenticateAccount(
-            @RequestBody ObjectNode signInInfo,
-            HttpServletRequest request) {
+    public ResponseEntity<?> authenticateAccount(@RequestBody ObjectNode signInInfo, HttpServletRequest request) {
+        try {
+            ResponseEntity<AuthenticationService.LoginResponse> result = authenticationService.authenticate(signInInfo, request);
+            AuthenticationService.LoginResponse loginResponse = result.getBody();
 
-        String email = signInInfo.get("email").asText().trim().toLowerCase();
-        String password = signInInfo.get("password").asText();
+            if (loginResponse == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid email or password.");
+            }
 
-        System.out.println("Login attempt for: " + email);
-
-        List<Account> accounts = accountsRepo.findByQuery("Accounts_find_by_email", email);
-        if (accounts.isEmpty()) {
-            System.out.println("No account found for: " + email);
-            throw new NotAcceptableException("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.AUTHORIZATION, result.getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
+                    .body(loginResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Login error: " + e.getMessage());
         }
-
-        Account account = accounts.get(0);
-        System.out.println("Account found - ID: " + account.getId());
-
-        if (!account.verifyPassword(password)) {
-            System.out.println("Password verification failed");
-            System.out.println("Input: " + account.hashPassword(password));
-            System.out.println("Stored: " + account.getHashedPassword());
-            throw new NotAcceptableException("Invalid credentials");
-        }
-
-        String ipAddress = JWToken.getIpAddress(request);
-        if (ipAddress == null) {
-            throw new NotAcceptableException("Cannot identify source IP");
-        }
-
-        JWToken jwToken = new JWToken(account.getName(), account.getId(), account.getRole(), ipAddress);
-        String tokenString = jwToken.encode(this.apiConfig.getIssuer(),
-                this.apiConfig.getPassphrase(),
-                this.apiConfig.getTokenDurationOfValidity());
-
-        return ResponseEntity.accepted()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
-                .body(account);
     }
 
+    /**
+     * Handles user logout.
+     *
+     * @param authHeader JWT token in Authorization header
+     * @return 204 No Content
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        // TODO: voeg dit token toe aan een blacklist (in-memory of Redis e.d.)
-        return ResponseEntity.noContent().build();
+        // In de toekomst kun je hier een blacklist of audit log bijhouden
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

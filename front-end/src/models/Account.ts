@@ -17,7 +17,7 @@ export class Account {
     if (!account) return null;
     const copy = new Account(account.id, account.name);
     copy.email = account.email;
-    copy.password = account.password; // ook deze kun je meenemen
+    copy.password = account.password;
     copy.role = account.role;
     return copy;
   }

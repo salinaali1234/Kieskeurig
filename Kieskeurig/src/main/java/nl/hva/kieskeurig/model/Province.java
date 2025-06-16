@@ -1,5 +1,5 @@
 package nl.hva.kieskeurig.model;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
@@ -9,27 +9,27 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString(exclude = "province")
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Data
 @Entity
 @Builder
-@Table(name = "constituency")
-public class Constituency {
+@Table(name = "province")
+public class Province {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(unique = true, nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "province_id")
-    @JsonBackReference
-    private Province province;
-
-    @OneToMany(mappedBy = "constituency")
+    @OneToMany(mappedBy = "province")
     @JsonManagedReference
-    private List<Municipality> municipalities;
+    private List<Constituency> constituencies;
+
+    public Province(String name) {
+        this.name = name;
+    }
 }

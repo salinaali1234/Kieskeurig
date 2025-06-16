@@ -1,44 +1,38 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { SessionService } from '@/service/session-service';
 
 const email = ref('');
 const password = ref('');
 const error = ref<string | null>(null);
-const router = useRouter();
+
 
 const BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
 const session = new SessionService(`${BASE_URL}/authentication`, 'session_jwt');
 
 const handleLogin = async () => {
-  const account = await session.login(email.value, password.value);
-  if (account) {
-    router.push('/');
-  } else {
-    error.value = 'Inloggen mislukt. Probeer opnieuw.';
+  error.value = null; // reset foutmelding bij elke poging
+  try {
+    const account = await session.login(email.value, password.value);
+    if (account) {
+      window.location.reload();
+    }
+  } catch (e: never) {
+    error.value = e.message || 'Inloggen mislukt. Probeer opnieuw.';
   }
 };
 </script>
 
 <template>
   <form @submit.prevent="handleLogin">
-    <input v-model="email" type="email" placeholder="E-mail" required />
-    <input v-model="password" type="password" placeholder="Wachtwoord" required />
+    <input v-model="email" type="email" placeholder="E-mail" required autocomplete="email" />
+    <input v-model="password" type="password" placeholder="Wachtwoord" required autocomplete="current-password" />
     <button type="submit">Inloggen</button>
     <p v-if="error">{{ error }}</p>
   </form>
 </template>
 
 <style scoped>
-.login-container {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
 
 h1 {
   text-align: center;
@@ -46,9 +40,6 @@ h1 {
   color: var(--primary-clr);
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
 
 label {
   display: block;

@@ -1,6 +1,5 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import PartiesInfoView from '../views/PartiesInfoView.vue'
 import CandidatesView from '../views/CandidatesView.vue'
 import PartyView from '@/views/PartyView.vue'
@@ -15,8 +14,11 @@ import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 import AdminView from "@/views/AdminView.vue"
 import { SessionService } from '@/service/session-service.ts'
+import sessionService from '@/service/session-singleton.ts'
+import CompareProvinceVotes from '@/views/CompareProvinceVotesView.vue';
 
-const sessionService = new SessionService('http://your-api-url/auth', 'kieskeurig')
+const BASE_URL = import.meta.env.VITE_APP_BACKEND_URL;
+new SessionService(`${BASE_URL}/authentication`, 'session_jwt')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,13 +57,13 @@ const router = createRouter({
       path:  `/Constituency/:constituencyId/:constituencyName`,
       name: `constituency`,
       component: Consistuency,
-     meta: { requiresAuth: false }
+      meta: { requiresAuth: false }
     },
     {
       path: '/election/:electionId/party/:partyName',
       name: 'party',
       component: PartyView,
-     meta: { requiresAuth: false }
+      meta: { requiresAuth: false }
     },
     {
       path: '/parties',
@@ -77,7 +79,7 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/vergelijken',
+      path: '/vergelijken/national',
       name: 'Vergelijken',
       component: CompareVotes,
       meta: { requiresAuth: false }
@@ -97,6 +99,11 @@ const router = createRouter({
       name: 'provinces',
       component: ProvinceVotes,
     },
+    {
+      path: '/vergelijken/provincies',
+      name: 'provincies',
+      component: CompareProvinceVotes,
+    },
 
   ]
 
@@ -112,4 +119,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router
+export default router;

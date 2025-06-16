@@ -61,27 +61,31 @@ export class SessionService {
         credentials: 'include'
       });
 
+      const contentType = response.headers.get("Content-Type") || "";
+
       if (!response.ok) {
-        // Try to get error message from response
-        let errorMsg = 'Login failed';
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.message || errorMsg;
-        } catch (e) {
-          errorMsg = await response.text() || errorMsg;
-        }
+        const errorMsg = contentType.includes("application/json")
+          ? (await response.json()).message || 'Login failed'
+          : await response.text();
+
         throw new Error(errorMsg);
       }
+
+      if (!contentType.includes("application/json")) {
+        throw new Error("Expected JSON response");
+      }
+
+      const body = await response.json();
 
       const token = response.headers.get('Authorization');
       if (!token) throw new Error('Authentication token missing');
 
-      const account = await response.json();
+      const { account } = body;
       if (!account || !account.id) throw new Error('Invalid account data received');
 
       this.saveSession(token, account);
       return Account.copyConstructor(account);
-    } catch (e) {
+    } catch (e: never) {
       console.error('Login error:', e);
       throw new Error(e.message || 'Login failed. Please try again.');
     }

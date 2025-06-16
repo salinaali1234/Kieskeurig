@@ -19,11 +19,11 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['fetch-intercept'],
-    exclude: ['fsevents']  // <-- voeg dit toe
+    exclude: ['fsevents']
   },
   build: {
     rollupOptions: {
-      external: ['whatwg-fetch', 'fsevents']  // <-- en dit ook
+      external: ['whatwg-fetch', 'fsevents']
     }
   }
 }))

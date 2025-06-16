@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import sessionService from '@/service/session-singleton';
+
 
 const menuOpen = ref(false);
 const statsDropdownOpen = ref(false);
+const compareDropdownOpen = ref(false);
+const user = ref(sessionService.currentAccount); // gebruiker ophalen
 
 function closeMenus() {
   menuOpen.value = false;
   statsDropdownOpen.value = false;
+  compareDropdownOpen.value = false;
+}
+
+function logout() {
+  sessionService.logout();
+  window.location.reload(); // Refresh de pagina volledig
 }
 
 const navLinks = ref([
   { name: 'Partijen', to: '/parties', class: 'nav-link' },
-  { name: 'Vergelijken', to: '/vergelijken', class: 'nav-link' },
-  { name: 'Registreren', to: '/register', class: 'btn' }
 ]);
+
 </script>
 
 <template>
@@ -23,9 +32,7 @@ const navLinks = ref([
         Kies<span class="highlight">Keurig</span>
       </RouterLink>
 
-      <button class="menu-btn" @click="menuOpen = !menuOpen">
-        ☰
-      </button>
+      <button class="menu-btn" @click="menuOpen = !menuOpen">☰</button>
 
       <nav :class="{ 'open': menuOpen }">
         <div class="dropdown" @mouseleave="statsDropdownOpen = false">
@@ -42,6 +49,19 @@ const navLinks = ref([
           </ul>
         </div>
 
+        <div class="dropdown" @mouseleave="compareDropdownOpen = false">
+          <button class="dropdown-toggle" @click="compareDropdownOpen = !compareDropdownOpen">
+            Vergelijken
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <ul v-if="compareDropdownOpen" class="dropdown-menu">
+            <li><RouterLink to="/vergelijken/national" @click="closeMenus">Nationaal</RouterLink></li>
+            <li><RouterLink to="/vergelijken/provincies" @click="closeMenus">Provincies</RouterLink></li>
+          </ul>
+        </div>
+
         <RouterLink
           v-for="link in navLinks"
           :key="link.to"
@@ -51,12 +71,30 @@ const navLinks = ref([
         >
           {{ link.name }}
         </RouterLink>
+
+        <!-- ✅ Ingelogd -->
+        <div v-if="user" class="user-info">
+          {{ user.name }}
+          <button class="btn" @click="logout">Uitloggen</button>
+        </div>
+
+        <!-- ❌ Niet ingelogd -->
+        <div v-else class="auth-buttons">
+          <RouterLink to="/login" class="btn" @click="closeMenus">Inloggen</RouterLink>
+          <RouterLink to="/register" class="btn" @click="closeMenus">Registreren</RouterLink>
+        </div>
       </nav>
     </div>
   </header>
 </template>
 
 <style scoped>
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 1rem;
+}
 button {
   all: unset;
   cursor: pointer;
@@ -159,6 +197,10 @@ nav {
   transform: rotate(180deg);
 }
 
+.dropdown-toggle {
+  white-space: nowrap; /* prevent line breaks */
+}
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -187,6 +229,11 @@ nav {
   color: black;
 }
 
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* of 10px als je dat fijner vindt */
+}
 
 @media (max-width: 768px) {
   .menu-btn {

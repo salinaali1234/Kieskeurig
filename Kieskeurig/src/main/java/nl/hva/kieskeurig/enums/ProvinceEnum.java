@@ -10,10 +10,10 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString
-public enum Province {
+public enum ProvinceEnum {
     DRENTHE("Drenthe", new String[]{"Assen"}),
     FLEVOLAND("Flevoland", new String[]{"Lelystad"}),
-    FRIESLAND("Friesland", new String[]{"Leeuwarden"}),
+    FRIESLAND("Friesland (Fryslân)", new String[]{"Leeuwarden"}),
     GELDERLAND("Gelderland", new String[]{"Nijmegen", "Arnhem"}),
     GRONINGEN("Groningen", new String[]{"Groningen"}),
     LIMBURG("Limburg", new String[]{"Maastricht"}),

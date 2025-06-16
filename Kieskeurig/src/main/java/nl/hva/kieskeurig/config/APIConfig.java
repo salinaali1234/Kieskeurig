@@ -1,18 +1,20 @@
 package nl.hva.kieskeurig.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -29,32 +31,31 @@ public class APIConfig {
     public static final Set<String> SECURED_PATHS = Set.of("/accounts");
     private static final double REBOOT_CODE = 63.0427;
 
-    // JWT-instellingen (kan @Value gebruiken als je dat wilt)
-    private String issuer = "private company";
-    private String passphrase = "This is very secret information for my private encryption key. extra words blalala salina is cool.";
-    private int tokenDurationOfValidity = 1200; // 20 min
+//    // JWT-instellingen (kan @Value gebruiken als je dat wilt)
+//    private String issuer = "private company";
+//    private String passphrase = "This is very secret information for my private encryption key. extra words blalala salina is cool.";
+//    private int tokenDurationOfValidity = 1200; // 20 min
 
     public static String getHostIPAddressPattern() {
         try {
-            return "http://" + Inet4Address.getLocalHost().getHostAddress() + ":*";
+            return "https://" + Inet4Address.getLocalHost().getHostAddress() + ":*";
         } catch (UnknownHostException ignored) {
         }
-        return "http://192.168.*.*:*";
+        return "https://192.168.*.*:*";
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and()
-                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // endpoints die wél vrij zijn:
+                        .requestMatchers(HttpMethod.POST, "/accounts").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authentication/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/authentication/logout").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/public/**", "/h2-console/**").permitAll()
 
-                        // álle overige GET/POST/etc kun je hier expliciet openzetten:
                         .requestMatchers("/api/partiesInfo/**").permitAll()
                         .requestMatchers("/api/candidates/**").permitAll()
                         .requestMatchers("/api/constituencies/**").permitAll()
@@ -62,10 +63,7 @@ public class APIConfig {
                         .requestMatchers("/api/provinces/**").permitAll()
                         .requestMatchers("/api/xml/**").permitAll()
 
-                        // alleen /accounts/** moet beveiligd:
-                        .requestMatchers("/api/accounts/**").authenticated()
-
-                        // en als je écht klaar bent, laat je de rest óók open (of je gooit 'm weg):
+                        .requestMatchers("/accounts/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
@@ -106,12 +104,15 @@ public class APIConfig {
         return String.format("%s-%f", this.issuer, REBOOT_CODE);
     }
 
-    public String getPassphrase() {
-        return passphrase;
-    }
+    @Value("${api.jwt.passphrase}")
+    private String passphrase;
 
-    public int getTokenDurationOfValidity() {
-        return tokenDurationOfValidity;
-    }
+    @Value("${api.jwt.issuer}")
+    private String issuer;
+
+    @Value("${api.jwt.duration}")
+    private int tokenDurationOfValidity;
+
 
 }
+
