@@ -118,7 +118,14 @@
       options() {
         return {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: 'white' // Set the color for the legend labels
+              }
+            }
+          },
         }
       }
     }
