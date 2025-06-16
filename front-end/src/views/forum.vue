@@ -115,10 +115,13 @@ export default {
         if (response.ok) {
           this.newComment[postId] = "";
           await this.fetchComments(postId);
+
+          location.reload();
         }
       } catch (err) {
         console.error("Failed to post comment:", err);
       }
+
     }
   },
 
